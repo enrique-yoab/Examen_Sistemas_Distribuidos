@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "./archivero/archivos.h"
+#include "./consultas/consulta.h"
 #include "./estructuras/entidades.h"
 
-#define RUTA_ARCHIVOS "./archivero"
 #define RUTA_TABLAS "./tablas"
 
 void iniciar_bd(void);
-void llenar_estudiantes(ARCHIVERO dicc);
 
 int main()
 {
@@ -49,12 +48,7 @@ void iniciar_bd(void)
     }
     printf("--- LLENANDO BASE DE DATOS ---\n");
     llenar_estudiantes(diccionario);
+    llenar_direcciones(diccionario);
     printf("--- BASE DE DATOS LLENA ---\n");
     printf("--- CONSTRUCCION COMPLETADA ---\n\n");
-}
-
-void llenar_direcciones(ARCHIVERO dicc)
-{
-    int datos = 20;
-    printf("[OK] Tablas 'direccion' llenada con %d registros\n", datos);
 }

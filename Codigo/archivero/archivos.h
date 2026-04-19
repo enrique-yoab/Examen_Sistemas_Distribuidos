@@ -15,7 +15,6 @@ void crear_archivo(char *ruta_carpeta, char *nombre_tabla, char *ruta_salida);
 void eliminar_archivo(char *ruta);
 void eliminar_archivero(ARCHIVERO *diccionario);
 void almacenar_archivo(char **almacen, int lugar, char *ruta);
-void obtener_estudiantes(char *ruta, char atributos[], int *cantidad, char *salida[]);
 
 
 
