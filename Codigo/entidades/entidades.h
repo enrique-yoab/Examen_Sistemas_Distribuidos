@@ -90,8 +90,8 @@ typedef struct
 
 typedef struct
 {
-    ID_horario[5];
-    char horas[3]
+    char ID_horario[5];
+    char horas[3];
 } HORARIO;
 
 typedef struct
