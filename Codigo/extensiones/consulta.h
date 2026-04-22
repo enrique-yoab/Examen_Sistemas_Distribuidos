@@ -1,7 +1,8 @@
 #ifndef CONSULTA_H 
 #define CONSULTA_H
+#include "entidades.h"
 
-void consulta_estudiante(char *parametros, char *salida[]);
-void consulta_domicilio(char *snum, char *parametros, char *salida[]);
+void solicitud_consulta(CONSULTA *cliente, ARCHIVERO *dir);
+void consulta_estudiantes(CONSULTA *cliente, ARCHIVERO *dir);
 
 #endif

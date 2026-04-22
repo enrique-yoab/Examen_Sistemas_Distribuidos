@@ -2,23 +2,56 @@
 #define ENTIDADES_H
 #include <stdio.h>
 
+// Estructuras complejas para la resolucion de las consultas, modificacion, insercion y eliminacion
+// de los datos sobre las tablas
 typedef struct
 {
-    char snum[4]; // LLave primaria de estudiante
-    int DNI; // DNI de los estudiantes
-    char nombre[15]; // Nombres
-    char apellido_m[15]; // Apellido materno
-    char apellido_p[15]; // Apellido paterno
-    char fecha_na[11]; // Fecha nacimiento
-    char sexo; // Genero de la persona
-    char semestre[13]; // Semestre cursando
-    char domicilio_permanente[50]; // Domicilio Permanente
-    char telefono_permanente[21]; // Telefono Permanente
+    int cantidad;
+    char *rutas[13];
+} ARCHIVERO;
+
+
+typedef struct 
+{
+    int numero_tabla;            // indice de tablas estudiante = 0, direcciones[1] ...
+    int cantidad_columnas;       // Cantidad total de columnas en la tabla
+    char *parametros;            // Máscara: "1" captura, "0" ignora
+    char *llave;                 // Identificador único (llave primaria)
+    int cantidad_resultados;     // Cuántos resultados se encontraron
+    char **resultado;            // Array dinámico de strings con resultados
+} CONSULTA;
+    
+
+// ESTRUCTURA FINAL PARA LA PETICION DEL USUARIO POR EL MOMENTO NO ES RELEVANTE
+typedef struct 
+{
+    int operacion; // 1=Consulta, 2=Modificar, 3=Eliminar, 4=Actualizar
+    int tabla;     // El índice de tu ARCHIVERO (0=Estudiante, 1=Direccion, etc.)
+    char snum[4];  // La llave primaria para buscar
+} PETICION;
+
+
+void imprimir_rutas(ARCHIVERO *dir);
+void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, int cantidad_archivos);
+
+// Entidades Principales de la base de datos
+typedef struct
+{
+    char *snum; // LLave primaria de estudiante
+    char *DNI; // DNI de los estudiantes
+    char *nombre; // Nombres
+    char *apellido_m; // Apellido materno
+    char *apellido_p; // Apellido paterno
+    char *fecha_na; // Fecha nacimiento
+    char *sexo; // Genero de la persona
+    char *domicilio_permanente; // Domicilio Permanente
+    char *telefono_permanente; // Telefono Permanente
+    char *id_semestre; // Semestre cursando
 } ESTUDIANTE;
 
 typedef struct
 {
-    int id_dir;
+    char id_dir[5];
     char snum[4];
     char domicilio[50];
     char ciudad[30];
@@ -93,6 +126,12 @@ typedef struct
     char ID_horario[5];
     char horas[3];
 } HORARIO;
+
+typedef struct
+{
+    char ID_semestre[5];
+    char nombre[15];
+} SEMESTRE;
 
 typedef struct
 {
