@@ -37,11 +37,11 @@ ANALISIS_ARCHIVO analizar_archivo(char *ruta)
                 }
                 ptr++;
             }
-            analisis.num_columnas++; // +1 por el último campo
+            analisis.num_columnas++; // Contar ultimo renglon por sintaxis .csv
             primera_linea = 0;
         }
     }
-
+    // Cerramos el archivo y regresamos el analisis
     fclose(archivo);
     return analisis;
 }

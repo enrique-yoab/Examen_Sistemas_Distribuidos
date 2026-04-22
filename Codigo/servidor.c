@@ -39,14 +39,19 @@ int main(void){
 
     CONSULTA cliente;
     cliente.numero_tabla = 0;             // 0 = Estudiante
-    cliente.cantidad_columnas = 10;        // Según tu estructura ESTUDIANTE
-    cliente.llave = "S1015";                // El snum que quieres buscar
-    cliente.parametros = "1111111111";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
+    cliente.error = NULL;
+    cliente.llave = "low";                // El snum que quieres buscar
+    cliente.parametros = "1000000000";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
     cliente.cantidad_resultados = 0;
     cliente.resultado = NULL;              // Se llenará en la función
 
     printf("\n--- Iniciando consulta de prueba ---\n");
     solicitud_consulta(&cliente, &directorio);
+
+    if (cliente.error != NULL)
+    {
+        printf("%s", cliente.error);
+    }
 
     // 2. Revisión de resultados
     if (cliente.cantidad_resultados > 0) {
