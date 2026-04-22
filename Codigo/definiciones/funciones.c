@@ -19,6 +19,33 @@ void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tip
     }
 }
 
+ANALISIS_ARCHIVO analizar_archivo(char *ruta)
+{
+    ANALISIS_ARCHIVO analisis = {0, 0};
+    FILE *archivo = fopen(ruta, "r");
+
+    char linea[512];
+    int primera_linea = 1;
+    while (fgets(linea, sizeof(linea), archivo) != NULL) {
+        analisis.num_lineas++;
+        if (primera_linea) {
+            // Contar columnas: número de comas + 1
+            char *ptr = linea;
+            while (*ptr) {
+                if (*ptr == ',') {
+                    analisis.num_columnas++;
+                }
+                ptr++;
+            }
+            analisis.num_columnas++; // +1 por el último campo
+            primera_linea = 0;
+        }
+    }
+
+    fclose(archivo);
+    return analisis;
+}
+
 void imprimir_rutas(ARCHIVERO *dir)
 {
     int i = 0;

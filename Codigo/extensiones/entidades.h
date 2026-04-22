@@ -51,95 +51,101 @@ typedef struct
 
 typedef struct
 {
-    char id_dir[5];
-    char snum[4];
-    char domicilio[50];
-    char ciudad[30];
-    char estado[30];
-    char codigo_pst[15];
+    char *id_dir;
+    char *snum;
+    char *domicilio;
+    char *ciudad;
+    char *estado;
+    char *codigo_pst;
 } DIRECCION;
 
 typedef struct 
 {
-    char snum[4];
-    char matricula[7];
-    char ID_carrera[4];
-    char tipo[10];
+    char *snum;
+    char *matricula;
+    char *ID_carrera;
+    char *tipo;
 } HISTORIAL;
 
 typedef struct 
 {
-    char id_folio[5];
-    char snum[4];
-    char ID_AUX[4];
+    char *id_folio;
+    char *snum;
+    char *ID_AUX;
 } INSCRIPCION;
 
 typedef struct
 {
-    char ID_AUX[4];
-    char dpto[4];
-    char Num_curso[8];
-    char ID_seccion[7];
-    char Num_seccion[2];
-    char ID_año[5];
-    char ID_horas[5];
-    char ID_nivel[5];
-    char ID_profesor[5];
+    char *ID_AUX;
+    char *dpto;
+    char *Num_curso;
+    char *ID_seccion;
+    char *Num_seccion;
+    char *ID_año;
+    char *ID_horas;
+    char *ID_nivel;
+    char *ID_profesor;
 } SECCION;
 
 typedef struct
 {
-    char ID_profesor[5];
-    char profesor[35];
-    char Nombre_curso[35];
-    char Descripcion[50];
+    char *ID_profesor;
+    char *profesor;
+    char *Nombre_curso;
+    char *Descripcion;
 } PROFESOR;
 
 typedef struct
 {
-    char depto[4];
-    char nombre[40];
-    char telefono[30];
-    char facultad[40];
+    char *depto;
+    char *nombre;
+    char *telefono;
+    char *facultad;
 } DEPARTAMENTO;
 
 typedef struct
 {
-    char num_curso[8];
-    char semestre[10];
+    char *num_curso;
+    char *semestre;
 } CURSO;
 
 typedef struct
 {
-    char ID_año[5];
-    char Año[5];
+    char *ID_año;
+    char *Año;
 } AÑOS;
 
 typedef struct
 {
-    char ID_nivel[5];
-    char nivel[15];
+    char *ID_nivel;
+    char *nivel;
 } NIVELES;
 
 typedef struct
 {
-    char ID_horario[5];
-    char horas[3];
+    char *ID_horario;
+    char *horas;
 } HORARIO;
 
 typedef struct
 {
-    char ID_semestre[5];
-    char nombre[15];
+    char *ID_semestre;
+    char *nombre;
 } SEMESTRE;
 
 typedef struct
 {
-    char ID_TMP[5];
-    char ID_grado[5];
-    char ID_AUX[4];
-    char Num_grado[4];
-    char Lettergrade;
+    char *ID_TMP;
+    char *ID_grado;
+    char *ID_AUX;
+    char *Num_grado;
+    char *Lettergrade;
 } GRADO;
+
+typedef struct
+{
+    int num_lineas;
+    int num_columnas;
+} ANALISIS_ARCHIVO;
 
 #endif

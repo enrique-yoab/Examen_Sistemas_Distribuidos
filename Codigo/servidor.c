@@ -40,25 +40,25 @@ int main(void){
     CONSULTA cliente;
     cliente.numero_tabla = 0;             // 0 = Estudiante
     cliente.cantidad_columnas = 10;        // Según tu estructura ESTUDIANTE
-    cliente.llave = "S1016";                // El snum que quieres buscar
-    cliente.parametros = "1110000001";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
+    cliente.llave = "S1015";                // El snum que quieres buscar
+    cliente.parametros = "1111111111";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
     cliente.cantidad_resultados = 0;
     cliente.resultado = NULL;              // Se llenará en la función
 
     printf("\n--- Iniciando consulta de prueba ---\n");
     solicitud_consulta(&cliente, &directorio);
 
-    // // 2. Revisión de resultados
-    // if (cliente.cantidad_resultados > 0) {
-    //     printf("Se encontraron %d registros:\n", cliente.cantidad_resultados);
-    //     for (int i = 0; i < cliente.cantidad_resultados; i++) {
-    //         printf("Resultado [%d]: %s\n", i, cliente.resultado[i]);
-    //         free(cliente.resultado[i]); // Importante liberar la memoria de cada string
-    //     }
-    //     free(cliente.resultado); // Liberar el arreglo de punteros
-    // } else {
-    //     printf("No se encontraron registros para la llave: %s\n", cliente.llave);
-    // }
+    // 2. Revisión de resultados
+    if (cliente.cantidad_resultados > 0) {
+        printf("Se encontró %d registros:\n", cliente.cantidad_resultados);
+        for (int i = 0; i < cliente.cantidad_resultados; i++) {
+            printf("Resultado [%d]: %s\n", i, cliente.resultado[i]);
+            free(cliente.resultado[i]); // Importante liberar la memoria de cada string
+        }
+        free(cliente.resultado); // Liberar el arreglo de punteros
+    } else {
+        printf("No se encontraron registros para la llave: %s\n", cliente.llave);
+    }
 }
 
 // Implementación de la función del hilo
