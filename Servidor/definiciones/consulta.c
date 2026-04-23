@@ -91,7 +91,7 @@ void consulta_tabla(CONSULTA *cliente, ARCHIVERO *dir, int num_columnas)
 
     FILE *tabla = fopen(dir->rutas[cliente->numero_tabla], "r");
 
-    char linea[analisis.num_lineas * analisis.num_columnas * 2];
+    char linea[200];
     int hallados = 0;
     cliente->resultado = malloc(sizeof(char*) * analisis.num_lineas);
 
