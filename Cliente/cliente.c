@@ -45,14 +45,14 @@ int main() {
         buffer[strcspn(buffer, "\n")] = 0;
 
         // 1. CONDICIÓN DE SALIDA
-        if (strcmp(buffer, "OFF") == 0) {
+        if (strstr(buffer, "OFF") != NULL) {
             printf("[!] Comando de apagado enviado. Cerrando cliente...\n");
             send(sock, buffer, strlen(buffer), 0); // Le avisamos al server que nos vamos
             break;
         }
 
         // 2. ENTRADA AL MÓDULO DE CONSULTAS
-        if (strcmp(buffer, "CONSULTA") == 0) {
+        if (strstr(buffer, "CONSULTA") != NULL) {
             realizar_consulta(sock);
             continue; // Evita que siga ejecutando lo de abajo y vuelve al inicio del while
         }   
