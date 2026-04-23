@@ -31,10 +31,10 @@ int main(void){
     pthread_join(hilo1, NULL);
 
     CONSULTA cliente;
-    cliente.numero_tabla = 5;             // 0 = Estudiante
+    cliente.numero_tabla = 10;             // 0 = Estudiante
     cliente.error = NULL;
     cliente.llave = "full";                // El snum que quieres buscar
-    cliente.parametros = "110000000";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
+    cliente.parametros = "11000";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
     cliente.cantidad_resultados = 0;
     cliente.resultado = NULL;              // Se llenará en la función
 
@@ -56,27 +56,26 @@ int main(void){
     }
 
     // Se inserta un año nuevo 
-    YEAR insert1;
-    insert1.ID_año = "1555";
-    insert1.Año = "2056";
-
+    SEMESTRE insert1;
+    insert1.ID_semestre = "1555";
+    insert1.nombre = "8vo semestre";
     // Se simula la insercion del cliente
     INSERCION cliente2;
-    cliente2.numero_tabla = 12;
+    cliente2.numero_tabla = 13;
     cliente2.error = NULL;
     cliente2.estructura = (void*)&insert1;
 
     printf("\n--- Iniciando insercion de prueba ---\n");
     solicitud_insercion(&cliente2, &directorio);
     printf("%s\n", cliente2.error);
-
-
-    cliente.numero_tabla = 12;             // 0 = Estudiante
+    
+    cliente.numero_tabla = 13;             // 0 = Estudiante
     cliente.error = NULL;
     cliente.llave = "full";                // El snum que quieres buscar
     cliente.parametros = "01";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
     cliente.cantidad_resultados = 0;
     cliente.resultado = NULL;  
+
     // Consultamos nuevamente
     printf("\n--- Iniciando consulta de prueba ---\n");
     solicitud_consulta(&cliente, &directorio);

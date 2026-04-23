@@ -7,7 +7,7 @@
 typedef struct
 {
     int cantidad;
-    char *rutas[13];
+    char *rutas[14];
 } ARCHIVERO;
 
 // EStructura del hilo para ejecutar la funcion de crear directorio
@@ -168,6 +168,7 @@ typedef struct
 
 void imprimir_rutas(ARCHIVERO *dir);
 void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, int cantidad_archivos);
+char *validar_llave(char *llave, int num_table, char *ruta);
 ANALISIS_ARCHIVO analizar_archivo(char *ruta);
 ESTUDIANTE *verificar_estudiante(INSERCION *cliente);
 DIRECCION *verificar_direccion(INSERCION *cliente);

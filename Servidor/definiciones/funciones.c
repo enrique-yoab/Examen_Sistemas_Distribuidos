@@ -3,6 +3,9 @@
 #include <string.h>
 #include "../extensiones/entidades.h"
 #include "../extensiones/consulta.h"
+#include "../extensiones/insercion.h"
+
+extern ARCHIVERO directorio;
 
 void imprimir_rutas(ARCHIVERO *dir)
 {
@@ -56,4 +59,50 @@ ANALISIS_ARCHIVO analizar_archivo(char *ruta)
     // Cerramos el archivo y regresamos el analisis
     fclose(archivo);
     return analisis;
+}
+
+char *validar_llave(char *llave, int num_table, char *ruta)
+{
+    // 1. Analizar el archivo para saber cuántas columnas reales tiene
+    ANALISIS_ARCHIVO analisis = analizar_archivo(ruta);
+    int columnas = analisis.num_columnas;
+
+    // 2. Construir la máscara dinámica (ej. "10000" para 5 columnas)
+    // Reservamos memoria para las columnas + el carácter nulo '\0'
+    char *mascara = malloc(columnas + 1);
+    if (mascara == NULL) return "ERROR: Memoria insuficiente";
+
+    mascara[0] = '1'; // Activamos solo la primera columna (la llave)
+    for (int i = 1; i < columnas; i++) {
+        mascara[i] = '0'; // Apagamos el resto de las columnas
+    }
+    mascara[columnas] = '\0'; // Cerramos la cadena de C
+
+    CONSULTA tmp;
+    tmp.numero_tabla = num_table;
+    tmp.error = NULL;
+    tmp.llave = llave;
+    tmp.cantidad_resultados = 0;
+    tmp.resultado = NULL;
+    tmp.parametros = mascara; // Asignamos nuestra cadena recién creada
+
+    // Lanzamos la consulta pasándole el número real de columnas
+    consulta_tabla(&tmp, &directorio, columnas);
+
+    // 3. LIMPIEZA: Ya usamos la máscara, debemos liberarla
+    free(mascara); 
+
+    // 4. Verificamos si la consulta encontró la llave
+    if (tmp.cantidad_resultados > 0)
+    {
+        // Liberamos la memoria de los resultados
+        for (int i = 0; i < tmp.cantidad_resultados; i++) {
+            free(tmp.resultado[i]);
+        }
+        free(tmp.resultado);
+
+        return "ERROR: La llave se repite en la tabla\n";
+    }
+
+    return "EXITO";
 }

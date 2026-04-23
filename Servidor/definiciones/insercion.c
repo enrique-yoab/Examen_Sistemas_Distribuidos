@@ -9,9 +9,9 @@ void solicitud_insercion(INSERCION *cliente, ARCHIVERO *dir)
 {
     switch (cliente->numero_tabla)
     {
+    // Convertimos la estructura vacia a estructura de estudiante 
+    // y revisamos que no tenga ningun dato vacio
     case 0:
-        // Convertimos la estructura vacia a estructura de estudiante 
-        // y revisamos que no tenga ningun dato vacio
         ESTUDIANTE *persona = verificar_estudiante(cliente);
         if (cliente->error != NULL) break;
         cliente->error = strdup(insert_estudiante(persona, dir->rutas[cliente->numero_tabla]));
@@ -89,185 +89,255 @@ void solicitud_insercion(INSERCION *cliente, ARCHIVERO *dir)
 
 char *insert_estudiante(ESTUDIANTE *persona, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a"); 
-    fprintf(archivo, "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-        persona->snum,
-        persona->DNI,
-        persona->nombre,
-        persona->apellido_m,
-        persona->apellido_p,
-        persona->fecha_na,
-        persona->sexo,
-        persona->domicilio_permanente,
-        persona->telefono_permanente,
-        persona->semestre
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente el estudiante";
+    char *men = validar_llave(persona->snum, 0, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+            persona->snum,
+            persona->DNI,
+            persona->nombre,
+            persona->apellido_m,
+            persona->apellido_p,
+            persona->fecha_na,
+            persona->sexo,
+            persona->domicilio_permanente,
+            persona->telefono_permanente,
+            persona->semestre
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente el estudiante";
+    }
+    return men;
 }
 
 char *insert_direccion(DIRECCION *dir, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s,%s,%s,%s,%s\n",
-        dir->id_dir,
-        dir->snum,
-        dir->domicilio,
-        dir->ciudad,
-        dir->estado,
-        dir->codigo_pst
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente la direccion";
-}
-
-char *insert_historial(HISTORIAL *historia, char *ruta)
-{
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s,%s,%s\n",
-        historia->snum,
-        historia->matricula,
-        historia->ID_carrera,
-        historia->tipo
-    );
-    fclose(archivo);
-    return "EXITO: se inserto correctamente el historial";
+    char *men = validar_llave(dir->id_dir, 10, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s,%s,%s,%s,%s\n",
+            dir->id_dir,
+            dir->snum,
+            dir->domicilio,
+            dir->ciudad,
+            dir->estado,
+            dir->codigo_pst
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente la direccion";
+    }
+    return men;
 }
 
 char *insert_carrera(CARRERA *carrera, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s,%s\n",
-        carrera->ID_carrera,
-        carrera->Major,
-        carrera->carrera
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente la carrera";
+    char *men = validar_llave(carrera->ID_carrera, 2, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s,%s\n",
+            carrera->ID_carrera,
+            carrera->Major,
+            carrera->carrera
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente la carrera";
+    }
+    return men;
+}
+
+char *insert_historial(HISTORIAL *historia, char *ruta)
+{
+    char *men = validar_llave(historia->matricula, 3, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s,%s,%s\n",
+            historia->snum,
+            historia->matricula,
+            historia->ID_carrera,
+            historia->tipo
+        );
+        fclose(archivo);
+        return "EXITO: se inserto correctamente el historial";
+    }
+    return men;
 }
 
 char *insert_inscripcion(INSCRIPCION *insc, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s,%s\n",
-        insc->id_folio,
-        insc->snum,
-        insc->ID_AUX
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente la inscripcion";
+    char *men = validar_llave(insc->id_folio, 4, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s,%s\n",
+            insc->id_folio,
+            insc->snum,
+            insc->ID_AUX
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente la inscripcion";
+    }
+    return men;
 }
 
 char *insert_seccion(SECCION *secc, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-        secc->ID_AUX,
-        secc->dpto,
-        secc->Num_curso,
-        secc->ID_seccion,
-        secc->Num_seccion,
-        secc->ID_año,
-        secc->ID_horas,
-        secc->ID_nivel,
-        secc->ID_profesor
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente la seccion";
+    char *men = validar_llave(secc->ID_AUX, 5, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+            secc->ID_AUX,
+            secc->dpto,
+            secc->Num_curso,
+            secc->ID_seccion,
+            secc->Num_seccion,
+            secc->ID_año,
+            secc->ID_horas,
+            secc->ID_nivel,
+            secc->ID_profesor
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente la seccion";
+    }
+    return men;
 }
 
 char *insert_profesor(PROFESOR *profe, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s,%s,%s\n",
-        profe->ID_profesor,
-        profe->profesor,
-        profe->Nombre_curso,
-        profe->Descripcion
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente al profesor";    
+    char *men = validar_llave(profe->ID_profesor, 6, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s,%s,%s\n",
+            profe->ID_profesor,
+            profe->profesor,
+            profe->Nombre_curso,
+            profe->Descripcion
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente al profesor";    
+    }
+    return men;
 }
 
 char *insert_departamento(DEPARTAMENTO *depa, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s,%s,%s,%s\n",
-        depa->depto,
-        depa->nombre,
-        depa->oficina,
-        depa->telefono,
-        depa->facultad
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente el departamento";    
-}
-
-char *insert_curso(CURSO *curso, char *ruta)
-{
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s\n",
-        curso->num_curso,
-        curso->semestre
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente al curso";  
-}
-
-char *insert_year(YEAR *año, char *ruta)
-{
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s\n",
-        año->ID_año,
-        año->Año
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente al Año";  
+    char *men = validar_llave(depa->depto, 7, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s,%s,%s,%s\n",
+            depa->depto,
+            depa->nombre,
+            depa->oficina,
+            depa->telefono,
+            depa->facultad
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente el departamento";    
+    }
+    return men;
 }
 
 char *insert_nivel(NIVELES *level, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s\n",
-        level->ID_nivel,
-        level->nivel
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente el nivel"; 
+    char *men = validar_llave(level->ID_nivel, 8, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s\n",
+            level->ID_nivel,
+            level->nivel
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente el nivel"; 
+    }
+    return men;
 }
 
 char *insert_horario(HORARIO *hor, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s\n",
-        hor->ID_horario,
-        hor->horas
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente el horario"; 
+    char *men = validar_llave(hor->ID_horario, 9, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s\n",
+            hor->ID_horario,
+            hor->horas
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente el horario"; 
+    }
+    return men;
 }
 
 char *insert_grado(GRADO *grado, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s,%s,%s,%s\n",
-        grado->ID_TMP,
-        grado->ID_AUX,
-        grado->ID_grado,
-        grado->Num_grado,
-        grado->Lettergrade
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente el grado"; 
+    char *men = validar_llave(grado->ID_TMP, 10, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s,%s,%s,%s\n",
+            grado->ID_TMP,
+            grado->ID_AUX,
+            grado->ID_grado,
+            grado->Num_grado,
+            grado->Lettergrade
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente el grado"; 
+    }
+    return men;
+}
+
+char *insert_curso(CURSO *curso, char *ruta)
+{
+    char *men = validar_llave(curso->num_curso, 11, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s\n",
+            curso->num_curso,
+            curso->semestre
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente al curso";  
+    }
+    return men;
+}
+
+char *insert_year(YEAR *año, char *ruta)
+{
+    char *men = validar_llave(año->ID_año, 12, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s\n",
+            año->ID_año,
+            año->Año
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente al Año";  
+    }
+    return men;
 }
 
 char *insert_semestre(SEMESTRE *sem, char *ruta)
 {
-    FILE *archivo = fopen(ruta, "a");
-    fprintf(archivo, "%s,%s\n",
-        sem->ID_semestre,
-        sem->nombre
-    );
-    fclose(archivo);
-    return "EXITO: Se inserto correctamente el semestre"; 
+    char *men = validar_llave(sem->ID_semestre, 13, ruta);
+    if(strcmp(men, "EXITO") == 0)
+    {
+        FILE *archivo = fopen(ruta, "a");
+        fprintf(archivo, "%s,%s\n",
+            sem->ID_semestre,
+            sem->nombre
+        );
+        fclose(archivo);
+        return "EXITO: Se inserto correctamente el semestre"; 
+    }
+    return men;
 }
