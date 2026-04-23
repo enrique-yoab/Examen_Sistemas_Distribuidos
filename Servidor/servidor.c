@@ -5,9 +5,11 @@
 #include "./extensiones/entidades.h"
 #include "./extensiones/consulta.h"
 #include "./extensiones/insercion.h"
+#include "./extensiones/update.h"
 
 // Variables globales (se mantienen igual)
 ARCHIVERO directorio;
+char *escritura = "./buffer/";
 char *carpeta = "./Datos/";
 char *extension = ".csv";
 char *archivos[] = {"Estudiante", "Direccion", "Carrera", "Historial", "Inscripcion", "Seccion", "Profesor", "Departamento", "Niveles", "Horario", "Grado", "Curso", "Años", "Semestre"};
@@ -24,6 +26,7 @@ int main(void){
     datos.carpeta = carpeta;
     datos.archivos = archivos;
     datos.extension = extension;
+    datos.update = escritura;
     datos.tamano = tamano;
 
     // 1. Creamos el hilo pasándole la dirección de 'datos'
@@ -62,7 +65,7 @@ int main(void){
 
     // Se simula la insercion del cliente
     INSERCION cliente2;
-    cliente2.numero_tabla = 12;
+    cliente2.numero_tabla = 12; // Tabla Años
     cliente2.error = NULL;
     cliente2.estructura = (void*)&insert1;
 
@@ -71,7 +74,7 @@ int main(void){
     printf("%s\n", cliente2.error);
 
 
-    cliente.numero_tabla = 12;             // 0 = Estudiante
+    cliente.numero_tabla = 12;             // 0 = Estudiante, 12 = Años
     cliente.error = NULL;
     cliente.llave = "full";                // El snum que quieres buscar
     cliente.parametros = "01";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
@@ -94,6 +97,22 @@ int main(void){
         }
         free(cliente.resultado); // Liberar el arreglo de punteros
     }
+
+    printf("\n--- Iniciando insercion de prueba ---\n");
+    // Realizamos una actualizacion
+    UPDATE cliente3;
+    cliente3.num_tabla = 12;
+    cliente3.error = NULL;
+    cliente3.primary_key = "1555";
+    cliente3.parametros = "01";
+    cliente3.estructura = NULL;
+
+    solicitud_update(&cliente3, &directorio);
+
+    if(cliente3.error != NULL)
+    {
+        printf("%s\n", cliente3.error);
+    }
     return 0;
 }
 
@@ -104,7 +123,7 @@ void* funcion_h1(void *arg)
     HILO_DIR *args = (HILO_DIR *)arg;
 
     // Usamos los datos para llamar a la función original
-    crear_directorio(args->dir, args->carpeta, args->archivos, args->extension, args->tamano);
+    crear_directorio(args->dir, args->carpeta, args->archivos, args->extension, args->update, args->tamano);
 
     return NULL;
 }

@@ -13,28 +13,59 @@ extern ARCHIVERO directorio;
 void imprimir_rutas(ARCHIVERO *dir)
 {
     int i = 0;
-    printf("---------> Mostrando rutas <---------\n");
+    printf("---------> Mostrando rutas de tablas <---------\n");
     while (i < dir->cantidad)
     {
         printf("Ruta[%d] : %s \n", i + 1, dir->rutas[i]);
         i++;
     }
-    printf("-------------------------------------\n");
+    printf("-----------------------------------------------\n");
+    i = 0;
+    printf("---------> Mostrando rutas de escritura <---------\n");
+    while (i < dir->cantidad)
+    {
+        printf("Ruta[%d] : %s \n", i + 1, dir->rutas_update[i]);
+        i++;
+    }
+    printf("--------------------------------------------------\n");
 }
 
-void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, int cantidad_archivos)
-{   // Obtenemos la cantidad de archivos a crear
-    printf("Se esta creando un diccionario con %d rutas de archivos %s\n", cantidad_archivos, tipo);
-    for(int i = 0; i < cantidad_archivos; i ++)
+void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, char *update, int cantidad_archivos)
+{   
+    printf("Se esta creando un directorio con %d rutas de archivos %s\n", cantidad_archivos, tipo);
+    
+    for(int i = 0; i < cantidad_archivos; i++)
     {
-        size_t len = strlen(carpeta) + strlen(archivos[i]) + strlen(tipo) + 1;
-        char *ruta_completa = (char *)malloc(len);
+        // 1. Calculamos la memoria exacta para cada cadena por separado
+        size_t len_carpeta = strlen(carpeta) + strlen(archivos[i]) + strlen(tipo) + 1;
+        size_t len_update  = strlen(update) + strlen(archivos[i]) + strlen(tipo) + 1;
+
+        // 2. Asignamos la memoria correcta a cada puntero
+        char *ruta_completa = (char *)malloc(len_carpeta);
+        char *ruta_updates  = (char *)malloc(len_update);
+
+        // Buena práctica: Verificar que malloc no falle
+        if (ruta_completa == NULL || ruta_updates == NULL) {
+            printf("ERROR: Memoria insuficiente para crear rutas.\n");
+            return;
+        }
+
+        // 3. Construimos la ruta principal (ej. "./Datos/Estudiante.csv")
         strcpy(ruta_completa, carpeta);
         strcat(ruta_completa, archivos[i]);
         strcat(ruta_completa, tipo);
+
+        // 4. Construimos la ruta temporal (ej. "./buffer/Estudiante.csv")
+        strcpy(ruta_updates, update);
+        strcat(ruta_updates, archivos[i]);
+        strcat(ruta_updates, tipo);
+
+        // 5. Guardamos en el archivero
         dir->rutas[i] = ruta_completa;
+        dir->rutas_update[i] = ruta_updates; // Asume que cambiaste a un arreglo en la estructura
         dir->cantidad = i + 1;
     }
+    imprimir_rutas(dir);
 }
 
 ANALISIS_ARCHIVO analizar_archivo(char *ruta)

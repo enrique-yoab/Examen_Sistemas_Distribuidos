@@ -8,12 +8,14 @@ typedef struct
 {
     int cantidad;
     char *rutas[14];
+    char *rutas_update[14];
 } ARCHIVERO;
 
 // EStructura del hilo para ejecutar la funcion de crear directorio
 typedef struct {
     ARCHIVERO *dir;
     char *carpeta;
+    char *update;
     char **archivos;
     char *extension;
     int tamano;
@@ -35,6 +37,15 @@ typedef struct
     char *error;
     void *estructura;
 } INSERCION;
+
+typedef struct
+{
+    int num_tabla;
+    char *error;
+    char *primary_key;
+    char *parametros;
+    void *estructura;
+} UPDATE;
 
 typedef struct
 {
@@ -167,7 +178,7 @@ typedef struct
 } SEMESTRE;
 
 void imprimir_rutas(ARCHIVERO *dir);
-void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, int cantidad_archivos);
+void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, char *update, int cantidad_archivos);
 int levantar_servicio(int puerto);
 char *validar_llave(char *llave, int num_table, char *ruta);
 ANALISIS_ARCHIVO analizar_archivo(char *ruta);
