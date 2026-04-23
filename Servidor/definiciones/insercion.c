@@ -14,58 +14,72 @@ void solicitud_insercion(INSERCION *cliente, ARCHIVERO *dir)
         // y revisamos que no tenga ningun dato vacio
         ESTUDIANTE *persona = verificar_estudiante(cliente);
         if (cliente->error != NULL) break;
-        
+        cliente->error = strdup(insert_estudiante(persona, dir->rutas[cliente->numero_tabla]));
         break;
     case 1:
         DIRECCION *direccion = verificar_direccion(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_direccion(direccion, dir->rutas[cliente->numero_tabla]));
         break;
     case 2:
         CARRERA *carrera = verificar_carrera(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_carrera(carrera, dir->rutas[cliente->numero_tabla]));
         break;
     case 3:
         HISTORIAL *historial = verificar_historial(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_historial(historial, dir->rutas[cliente->numero_tabla]));
         break;
     case 4:
         INSCRIPCION *inscripcion = verificar_inscripcion(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_inscripcion(inscripcion, dir->rutas[cliente->numero_tabla]));
         break;
     case 5:
         SECCION *seccion = verificar_seccion(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_seccion(seccion, dir->rutas[cliente->numero_tabla]));
         break;
     case 6:
         PROFESOR *profesor = verificar_profesor(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_profesor(profesor, dir->rutas[cliente->numero_tabla]));
         break;
     case 7:
         DEPARTAMENTO *departamento = verificar_departamento(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_departamento(departamento, dir->rutas[cliente->numero_tabla]));
         break;
     case 8:
         NIVELES *niveles = verificar_niveles(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_nivel(niveles, dir->rutas[cliente->numero_tabla]));
         break;
     case 9:
         HORARIO *horario = verificar_horario(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_horario(horario, dir->rutas[cliente->numero_tabla]));
         break;
     case 10:
         GRADO *grado = verificar_grado(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_grado(grado, dir->rutas[cliente->numero_tabla]));
         break;
     case 11:
         CURSO *curso = verificar_curso(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_curso(curso, dir->rutas[cliente->numero_tabla]));
         break;
     case 12:
-        AÑOS *años = verificar_años(cliente);
+        YEAR *años = verificar_year(cliente);
         if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_year(años, dir->rutas[cliente->numero_tabla]));
         break;
     case 13:
-        // Semestre no tiene estructura específica, asumir que es similar a otros
+        SEMESTRE *sem = verificar_semestre(cliente);
+        if (cliente->error != NULL) break;
+        cliente->error = strdup(insert_semestre(sem, dir->rutas[cliente->numero_tabla]));
         break;
     default:
         cliente->error = strdup("ERROR: Tabla no válida");
@@ -73,214 +87,187 @@ void solicitud_insercion(INSERCION *cliente, ARCHIVERO *dir)
     }
 }
 
-ESTUDIANTE *verificar_estudiante(INSERCION *cliente)
+char *insert_estudiante(ESTUDIANTE *persona, char *ruta)
 {
-    ESTUDIANTE *persona = (ESTUDIANTE *)cliente->estructura;
-    if (persona->snum == NULL || 
-        persona->DNI == NULL || 
-        persona->nombre == NULL || 
-        persona->apellido_m == NULL || 
-        persona->apellido_p == NULL || 
-        persona->fecha_na == NULL || 
-        persona->sexo == NULL || 
-        persona->semestre == NULL || 
-        persona->domicilio_permanente == NULL || 
-        persona->telefono_permanente == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de ESTUDIANTE son NULL");
-        return NULL;
-    }else
-    {
-        return persona;
-    }
+    FILE *archivo = fopen(ruta, "a"); 
+    fprintf(archivo, "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+        persona->snum,
+        persona->DNI,
+        persona->nombre,
+        persona->apellido_m,
+        persona->apellido_p,
+        persona->fecha_na,
+        persona->sexo,
+        persona->domicilio_permanente,
+        persona->telefono_permanente,
+        persona->semestre
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente el estudiante";
 }
 
-DIRECCION *verificar_direccion(INSERCION *cliente)
+char *insert_direccion(DIRECCION *dir, char *ruta)
 {
-    DIRECCION *dir = (DIRECCION *)cliente->estructura;
-    if (dir->id_dir == NULL || 
-        dir->snum == NULL || 
-        dir->domicilio == NULL || 
-        dir->ciudad == NULL || 
-        dir->estado == NULL || 
-        dir->codigo_pst == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de DIRECCION son NULL");
-        return NULL;
-    }else
-    {
-        return dir;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s,%s,%s,%s,%s\n",
+        dir->id_dir,
+        dir->snum,
+        dir->domicilio,
+        dir->ciudad,
+        dir->estado,
+        dir->codigo_pst
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente la direccion";
 }
 
-HISTORIAL *verificar_historial(INSERCION *cliente)
+char *insert_historial(HISTORIAL *historia, char *ruta)
 {
-    HISTORIAL *hist = (HISTORIAL *)cliente->estructura;
-    if (hist->snum == NULL || 
-        hist->matricula == NULL || 
-        hist->ID_carrera == NULL || 
-        hist->tipo == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de HISTORIAL son NULL");
-        return NULL;
-    }else
-    {
-        return hist;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s,%s,%s\n",
+        historia->snum,
+        historia->matricula,
+        historia->ID_carrera,
+        historia->tipo
+    );
+    fclose(archivo);
+    return "EXITO: se inserto correctamente el historial";
 }
 
-CARRERA *verificar_carrera(INSERCION *cliente)
+char *insert_carrera(CARRERA *carrera, char *ruta)
 {
-    CARRERA *carr = (CARRERA *)cliente->estructura;
-    if (carr->ID_carrera == NULL || 
-        carr->Major == NULL || 
-        carr->carrera == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de CARRERA son NULL");
-        return NULL;
-    }else
-    {
-        return carr;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s,%s\n",
+        carrera->ID_carrera,
+        carrera->Major,
+        carrera->carrera
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente la carrera";
 }
 
-INSCRIPCION *verificar_inscripcion(INSERCION *cliente)
+char *insert_inscripcion(INSCRIPCION *insc, char *ruta)
 {
-    INSCRIPCION *insc = (INSCRIPCION *)cliente->estructura;
-    if (insc->id_folio == NULL || 
-        insc->snum == NULL || 
-        insc->ID_AUX == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de INSCRIPCION son NULL");
-        return NULL;
-    }else
-    {
-        return insc;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s,%s\n",
+        insc->id_folio,
+        insc->snum,
+        insc->ID_AUX
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente la inscripcion";
 }
 
-SECCION *verificar_seccion(INSERCION *cliente)
+char *insert_seccion(SECCION *secc, char *ruta)
 {
-    SECCION *sec = (SECCION *)cliente->estructura;
-    if (sec->ID_AUX == NULL || 
-        sec->dpto == NULL || 
-        sec->Num_curso == NULL || 
-        sec->ID_seccion == NULL || 
-        sec->Num_seccion == NULL || 
-        sec->ID_año == NULL || 
-        sec->ID_horas == NULL || 
-        sec->ID_nivel == NULL || 
-        sec->ID_profesor == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de SECCION son NULL");
-        return NULL;
-    }else
-    {
-        return sec;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+        secc->ID_AUX,
+        secc->dpto,
+        secc->Num_curso,
+        secc->ID_seccion,
+        secc->Num_seccion,
+        secc->ID_año,
+        secc->ID_horas,
+        secc->ID_nivel,
+        secc->ID_profesor
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente la seccion";
 }
 
-PROFESOR *verificar_profesor(INSERCION *cliente)
+char *insert_profesor(PROFESOR *profe, char *ruta)
 {
-    PROFESOR *prof = (PROFESOR *)cliente->estructura;
-    if (prof->ID_profesor == NULL || 
-        prof->profesor == NULL || 
-        prof->Nombre_curso == NULL || 
-        prof->Descripcion == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de PROFESOR son NULL");
-        return NULL;
-    }else
-    {
-        return prof;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s,%s,%s\n",
+        profe->ID_profesor,
+        profe->profesor,
+        profe->Nombre_curso,
+        profe->Descripcion
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente al profesor";    
 }
 
-DEPARTAMENTO *verificar_departamento(INSERCION *cliente)
+char *insert_departamento(DEPARTAMENTO *depa, char *ruta)
 {
-    DEPARTAMENTO *dept = (DEPARTAMENTO *)cliente->estructura;
-    if (dept->depto == NULL || 
-        dept->nombre == NULL || 
-        dept->telefono == NULL || 
-        dept->facultad == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de DEPARTAMENTO son NULL");
-        return NULL;
-    }else
-    {
-        return dept;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s,%s,%s,%s\n",
+        depa->depto,
+        depa->nombre,
+        depa->oficina,
+        depa->telefono,
+        depa->facultad
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente el departamento";    
 }
 
-CURSO *verificar_curso(INSERCION *cliente)
+char *insert_curso(CURSO *curso, char *ruta)
 {
-    CURSO *cur = (CURSO *)cliente->estructura;
-    if (cur->num_curso == NULL || 
-        cur->semestre == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de CURSO son NULL");
-        return NULL;
-    }else
-    {
-        return cur;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s\n",
+        curso->num_curso,
+        curso->semestre
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente al curso";  
 }
 
-AÑOS *verificar_años(INSERCION *cliente)
+char *insert_year(YEAR *año, char *ruta)
 {
-    AÑOS *años = (AÑOS *)cliente->estructura;
-    if (años->ID_año == NULL || 
-        años->Año == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de AÑOS son NULL");
-        return NULL;
-    }else
-    {
-        return años;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s\n",
+        año->ID_año,
+        año->Año
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente al Año";  
 }
 
-NIVELES *verificar_niveles(INSERCION *cliente)
+char *insert_nivel(NIVELES *level, char *ruta)
 {
-    NIVELES *niv = (NIVELES *)cliente->estructura;
-    if (niv->ID_nivel == NULL || 
-        niv->nivel == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de NIVELES son NULL");
-        return NULL;
-    }else
-    {
-        return niv;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s\n",
+        level->ID_nivel,
+        level->nivel
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente el nivel"; 
 }
 
-HORARIO *verificar_horario(INSERCION *cliente)
+char *insert_horario(HORARIO *hor, char *ruta)
 {
-    HORARIO *hor = (HORARIO *)cliente->estructura;
-    if (hor->ID_horario == NULL || 
-        hor->horas == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de HORARIO son NULL");
-        return NULL;
-    }else
-    {
-        return hor;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s\n",
+        hor->ID_horario,
+        hor->horas
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente el horario"; 
 }
 
-GRADO *verificar_grado(INSERCION *cliente)
+char *insert_grado(GRADO *grado, char *ruta)
 {
-    GRADO *grad = (GRADO *)cliente->estructura;
-    if (grad->ID_TMP == NULL || 
-        grad->ID_grado == NULL || 
-        grad->ID_AUX == NULL || 
-        grad->Num_grado == NULL || 
-        grad->Lettergrade == NULL) 
-    {
-        cliente->error = strdup("ERROR: Uno o más campos de GRADO son NULL");
-        return NULL;
-    }else
-    {
-        return grad;
-    }
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s,%s,%s,%s\n",
+        grado->ID_TMP,
+        grado->ID_AUX,
+        grado->ID_grado,
+        grado->Num_grado,
+        grado->Lettergrade
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente el grado"; 
+}
+
+char *insert_semestre(SEMESTRE *sem, char *ruta)
+{
+    FILE *archivo = fopen(ruta, "a");
+    fprintf(archivo, "%s,%s\n",
+        sem->ID_semestre,
+        sem->nombre
+    );
+    fclose(archivo);
+    return "EXITO: Se inserto correctamente el semestre"; 
 }

@@ -2,16 +2,9 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
-#include "./extensiones/consulta.h"
 #include "./extensiones/entidades.h"
-
-typedef struct {
-    ARCHIVERO *dir;
-    char *carpeta;
-    char **archivos;
-    char *extension;
-    int tamano;
-} HILO_DIR;
+#include "./extensiones/consulta.h"
+#include "./extensiones/insercion.h"
 
 // Variables globales (se mantienen igual)
 ARCHIVERO directorio;
@@ -38,10 +31,10 @@ int main(void){
     pthread_join(hilo1, NULL);
 
     CONSULTA cliente;
-    cliente.numero_tabla = 0;             // 0 = Estudiante
+    cliente.numero_tabla = 5;             // 0 = Estudiante
     cliente.error = NULL;
     cliente.llave = "full";                // El snum que quieres buscar
-    cliente.parametros = "1111111111";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
+    cliente.parametros = "110000000";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
     cliente.cantidad_resultados = 0;
     cliente.resultado = NULL;              // Se llenará en la función
 
@@ -52,13 +45,56 @@ int main(void){
     {
         printf("%s", cliente.error);
     }else if (cliente.cantidad_resultados > 0) {
+        
         printf("Se encontró %d registros:\n", cliente.cantidad_resultados);
+
         for (int i = 0; i < cliente.cantidad_resultados; i++) {
             printf("Resultado [%d]: %s\n", i, cliente.resultado[i]);
             free(cliente.resultado[i]); // Importante liberar la memoria de cada string
         }
         free(cliente.resultado); // Liberar el arreglo de punteros
     }
+
+    // Se inserta un año nuevo 
+    YEAR insert1;
+    insert1.ID_año = "1555";
+    insert1.Año = "2056";
+
+    // Se simula la insercion del cliente
+    INSERCION cliente2;
+    cliente2.numero_tabla = 12;
+    cliente2.error = NULL;
+    cliente2.estructura = (void*)&insert1;
+
+    printf("\n--- Iniciando insercion de prueba ---\n");
+    solicitud_insercion(&cliente2, &directorio);
+    printf("%s\n", cliente2.error);
+
+
+    cliente.numero_tabla = 12;             // 0 = Estudiante
+    cliente.error = NULL;
+    cliente.llave = "full";                // El snum que quieres buscar
+    cliente.parametros = "01";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
+    cliente.cantidad_resultados = 0;
+    cliente.resultado = NULL;  
+    // Consultamos nuevamente
+    printf("\n--- Iniciando consulta de prueba ---\n");
+    solicitud_consulta(&cliente, &directorio);
+
+    if (cliente.error != NULL)
+    {
+        printf("%s", cliente.error);
+    }else if (cliente.cantidad_resultados > 0) {
+        
+        printf("Se encontró %d registros:\n", cliente.cantidad_resultados - 1);
+
+        for (int i = 0; i < cliente.cantidad_resultados; i++) {
+            printf("Resultado [%d]: %s\n", i, cliente.resultado[i]);
+            free(cliente.resultado[i]); // Importante liberar la memoria de cada string
+        }
+        free(cliente.resultado); // Liberar el arreglo de punteros
+    }
+    return 0;
 }
 
 // Implementación de la función del hilo

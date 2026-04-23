@@ -3,18 +3,19 @@
 #include "entidades.h"
 
 void solicitud_insercion(INSERCION *cliente, ARCHIVERO *dir);
-ESTUDIANTE *verificar_estudiante(INSERCION *cliente);
-DIRECCION *verificar_direccion(INSERCION *cliente);
-HISTORIAL *verificar_historial(INSERCION *cliente);
-CARRERA *verificar_carrera(INSERCION *cliente);
-INSCRIPCION *verificar_inscripcion(INSERCION *cliente);
-SECCION *verificar_seccion(INSERCION *cliente);
-PROFESOR *verificar_profesor(INSERCION *cliente);
-DEPARTAMENTO *verificar_departamento(INSERCION *cliente);
-CURSO *verificar_curso(INSERCION *cliente);
-AÑOS *verificar_años(INSERCION *cliente);
-NIVELES *verificar_niveles(INSERCION *cliente);
-HORARIO *verificar_horario(INSERCION *cliente);
-GRADO *verificar_grado(INSERCION *cliente);
+char *insert_estudiante(ESTUDIANTE *persona, char *ruta);
+char *insert_direccion(DIRECCION *dir, char *ruta);
+char *insert_historial(HISTORIAL *historia, char *ruta);
+char *insert_carrera(CARRERA *carrera, char *ruta);
+char *insert_inscripcion(INSCRIPCION *insc, char *ruta);
+char *insert_seccion(SECCION *secc, char *ruta);
+char *insert_profesor(PROFESOR *profe, char *ruta);
+char *insert_departamento(DEPARTAMENTO *depa, char *ruta);
+char *insert_curso(CURSO *curso, char *ruta);
+char *insert_year(YEAR *año, char *ruta);
+char *insert_nivel(NIVELES *level, char *ruta);
+char *insert_horario(HORARIO *hor, char *ruta);
+char *insert_grado(GRADO *grado, char *ruta);
+char *insert_semestre(SEMESTRE *sem, char *ruta);
 
 #endif

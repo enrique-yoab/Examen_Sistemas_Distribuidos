@@ -10,6 +10,14 @@ typedef struct
     char *rutas[13];
 } ARCHIVERO;
 
+// EStructura del hilo para ejecutar la funcion de crear directorio
+typedef struct {
+    ARCHIVERO *dir;
+    char *carpeta;
+    char **archivos;
+    char *extension;
+    int tamano;
+} HILO_DIR;
 
 typedef struct 
 {
@@ -114,6 +122,7 @@ typedef struct
 {
     char *depto;
     char *nombre;
+    char *oficina;
     char *telefono;
     char *facultad;
 } DEPARTAMENTO;
@@ -128,7 +137,7 @@ typedef struct
 {
     char *ID_año;
     char *Año;
-} AÑOS;
+} YEAR;
 
 typedef struct
 {
@@ -151,8 +160,28 @@ typedef struct
     char *Lettergrade;
 } GRADO;
 
+typedef struct
+{
+    char *ID_semestre;
+    char *nombre;
+} SEMESTRE;
+
 void imprimir_rutas(ARCHIVERO *dir);
 void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, int cantidad_archivos);
 ANALISIS_ARCHIVO analizar_archivo(char *ruta);
+ESTUDIANTE *verificar_estudiante(INSERCION *cliente);
+DIRECCION *verificar_direccion(INSERCION *cliente);
+HISTORIAL *verificar_historial(INSERCION *cliente);
+CARRERA *verificar_carrera(INSERCION *cliente);
+INSCRIPCION *verificar_inscripcion(INSERCION *cliente);
+SECCION *verificar_seccion(INSERCION *cliente);
+PROFESOR *verificar_profesor(INSERCION *cliente);
+DEPARTAMENTO *verificar_departamento(INSERCION *cliente);
+CURSO *verificar_curso(INSERCION *cliente);
+YEAR *verificar_year(INSERCION *cliente);
+NIVELES *verificar_niveles(INSERCION *cliente);
+HORARIO *verificar_horario(INSERCION *cliente);
+GRADO *verificar_grado(INSERCION *cliente);
+SEMESTRE *verificar_semestre(INSERCION *cliente);
 
 #endif

@@ -71,7 +71,7 @@ void solicitud_consulta(CONSULTA *cliente, ARCHIVERO *dir)
         break;
     case 12:
         printf("-----||| Se realiza consulta en la tabla Años |||-----\n");
-        if(strlen(cliente->parametros) != 2) cliente->error = strdup("ERROR: TABLA AÑOS OCUPA 2 PARAMETROS\n");
+        if(strlen(cliente->parametros) != 2) cliente->error = strdup("ERROR: TABLA ANOS OCUPA 2 PARAMETROS\n");
         else consulta_tabla(cliente, dir, 2);
         break;
     case 13:
@@ -91,12 +91,13 @@ void consulta_tabla(CONSULTA *cliente, ARCHIVERO *dir, int num_columnas)
 
     FILE *tabla = fopen(dir->rutas[cliente->numero_tabla], "r");
 
-    char linea[200];
+    char linea[300];
     int hallados = 0;
+    // int ren = 0;
     cliente->resultado = malloc(sizeof(char*) * analisis.num_lineas);
-
     while (fgets(linea, sizeof(linea), tabla) != NULL) {
         linea[strcspn(linea, "\n")] = '\0';
+        // if (ren == 0) {ren++; continue;}
 
         char *tokens[32];
         int col = 0;
