@@ -168,6 +168,7 @@ typedef struct
 
 void imprimir_rutas(ARCHIVERO *dir);
 void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, int cantidad_archivos);
+int levantar_servicio(int puerto);
 char *validar_llave(char *llave, int num_table, char *ruta);
 ANALISIS_ARCHIVO analizar_archivo(char *ruta);
 ESTUDIANTE *verificar_estudiante(INSERCION *cliente);
@@ -184,5 +185,6 @@ NIVELES *verificar_niveles(INSERCION *cliente);
 HORARIO *verificar_horario(INSERCION *cliente);
 GRADO *verificar_grado(INSERCION *cliente);
 SEMESTRE *verificar_semestre(INSERCION *cliente);
+
 
 #endif
