@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include "../extensiones/entidades.h"
 #include "../extensiones/consulta.h"
 #include "../extensiones/insercion.h"
@@ -105,4 +108,45 @@ char *validar_llave(char *llave, int num_table, char *ruta)
     }
 
     return "EXITO";
+}
+
+int levantar_servicio(int puerto)
+{
+    int servidor_fd;
+    struct sockaddr_in direct;
+    int opt = 1;
+
+    // 1. Crear el socket: AF_INET (IPv4), SOCK_STREAM (TCP)
+    if ((servidor_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+        perror("ERROR: Fallo al crear el socket TCP");
+        exit(EXIT_FAILURE);
+    }
+
+    // Opcional pero recomendado: Permite reutilizar el puerto inmediatamente 
+    // si reinicias el servidor rápido durante tus pruebas
+    setsockopt(servidor_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+    // 2. Configurar la estructura de la dirección
+    bzero(&direct, sizeof(direct));
+    direct.sin_family = AF_INET;
+    direct.sin_addr.s_addr = INADDR_ANY; // Escucha en cualquier interfaz de red
+    direct.sin_port = htons(puerto);
+
+    // 3. Vincular el socket al puerto (bind)
+    if (bind(servidor_fd, (struct sockaddr *)&direct, sizeof(direct)) < 0) {
+        perror("ERROR: Fallo en bind (¿Puerto en uso?)");
+        exit(EXIT_FAILURE);
+    }
+
+    // 4. Poner el socket en modo escucha (listen) - ¡Exclusivo de TCP!
+    // El '5' indica cuántas conexiones pueden esperar en la cola antes de ser rechazadas
+    if (listen(servidor_fd, 5) < 0) {
+        perror("ERROR: Fallo en listen");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("\n[+] Servicio TCP levantado. Escuchando en el puerto %d...\n", puerto);
+    
+    // Retornamos el descriptor para que el main pueda aceptar a los clientes
+    return servidor_fd;
 }

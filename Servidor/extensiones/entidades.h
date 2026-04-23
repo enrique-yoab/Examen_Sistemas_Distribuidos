@@ -21,6 +21,17 @@ typedef struct {
 
 typedef struct 
 {
+    int numero_tabla;            // 4 bytes
+    char parametros[11];         // 16 bytes (suficiente para 14 cols + \0)
+    char llave[20];              // 64 bytes (suficiente para cualquier ID)
+    char error[200];             // 128 bytes para mensajes de error
+    int cantidad_resultados;     // 4 bytes
+    // Nota: El char **resultado no se envía del cliente al servidor, 
+    // ya que es el servidor quien lo llena para responder.
+} CONSULTA_CLIENTE;
+
+typedef struct 
+{
     int numero_tabla;            // indice de tablas estudiante = 0, direcciones[1] ...
     char *error;                 // Buffer de mensajes de error
     char *parametros;            // Máscara: "1" captura, "0" ignora
@@ -184,5 +195,7 @@ NIVELES *verificar_niveles(INSERCION *cliente);
 HORARIO *verificar_horario(INSERCION *cliente);
 GRADO *verificar_grado(INSERCION *cliente);
 SEMESTRE *verificar_semestre(INSERCION *cliente);
+int levantar_servicio(int puerto);
+
 
 #endif
