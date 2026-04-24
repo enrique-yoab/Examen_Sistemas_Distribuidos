@@ -2,12 +2,16 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #include "./extensiones/entidades.h"
 #include "./extensiones/consulta.h"
-#include "./extensiones/insercion.h"
-#include "./extensiones/update.h"
 
-// Variables globales (se mantienen igual)
+#define PUERTO 3000
+#define TAM_MAX 1024
+
+// Variáveis globais do archivero
 ARCHIVERO directorio;
 char *escritura = "./buffer/";
 char *carpeta = "./Datos/";
@@ -15,186 +19,102 @@ char *extension = ".csv";
 char *archivos[] = {"Estudiante", "Direccion", "Carrera", "Historial", "Inscripcion", "Seccion", "Profesor", "Departamento", "Niveles", "Horario", "Grado", "Curso", "Años", "Semestre"};
 int tamano = sizeof(archivos) / sizeof(archivos[0]);
 
-// Prototipo corregido (debe retornar void* y recibir void*)
 void* funcion_h1(void *arg);
 
 int main(void){
-    // Variables para el hilo
-    pthread_t hilo1; HILO_DIR datos;
-    // Llenamos la estructura con los datos
-    datos.dir = &directorio;
-    datos.carpeta = carpeta;
-    datos.archivos = archivos;
-    datos.extension = extension;
-    datos.update = escritura;
-    datos.tamano = tamano;
-
-    // 1. Creamos el hilo pasándole la dirección de 'datos'
+    // 1. INICIALIZACION DEL DIRECTORIO (Hilo)
+    pthread_t hilo1; 
+    HILO_DIR datos = {&directorio, carpeta, escritura, archivos, extension, tamano};
     pthread_create(&hilo1, NULL, funcion_h1, (void *)&datos);
     pthread_join(hilo1, NULL);
 
-    CONSULTA cliente;
-    cliente.numero_tabla = 12;             // 0 = Estudiante
-    cliente.error = NULL;
-    cliente.llave = "full";                // El snum que quieres buscar
-    cliente.parametros = "11";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
-    cliente.cantidad_resultados = 0;
-    cliente.resultado = NULL;              // Se llenará en la función
+    // 2.LEVANTAR SERVICIO TCP
+    int server_fd = levantar_servicio(PUERTO);
+    struct sockaddr_in address;
+    int addrlen = sizeof(address);
+    int nuevo_socket;
+    char buffer[TAM_MAX];
+    char respuesta_buffer[4096];
 
-    printf("\n--- Iniciando consulta de prueba ---\n");
-    solicitud_consulta(&cliente, &directorio);
+    printf("\n[+] Servidor iniciado. Aguardando uma única conexão...\n");
 
-    if (cliente.error != NULL)
-    {
-        printf("%s", cliente.error);
+    nuevo_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen);
+    if (nuevo_socket < 0) {
+        perror("ERROR: Falha ao aceitar conexão");
+        close(server_fd);
+        return -1;
     }
 
-    if (cliente.cantidad_resultados > 0) {
+    printf("[+] Cliente conectado. Iniciando sesion única.\n");
+    send(nuevo_socket, "Conexion establecida, el servidor finalizara despues de la session.\n", 33, 0);
+
+    // 3. LOOP DE INTERACCION CON EL CLIENTE
+    while(1) {
+        bzero(buffer, TAM_MAX);
+        int bytes_leidos = recv(nuevo_socket, buffer, TAM_MAX, 0);
         
-        printf("Se encontró %d registros:\n", cliente.cantidad_resultados);
-
-        for (int i = 0; i < cliente.cantidad_resultados; i++) {
-            printf("Resultado [%d]: %s\n", i, cliente.resultado[i]);
-            free(cliente.resultado[i]); // Importante liberar la memoria de cada string
+        // Si el cliente se desconecta o envia OFF
+        if (bytes_leidos <= 0 || strcasecmp(buffer, "OFF") == 0) {
+            printf("[-] Cliente desconectado con comando OFF recibido. Finalizando...\n");
+            break;
         }
-        free(cliente.resultado); // Liberar el arreglo de punteros
-    }
 
-    // Se simula la insercion del cliente
-    INSERCION cliente2;
-    cliente2.numero_tabla = 12; // Tabla Años
-    cliente2.error = NULL;
-    cliente2.datos = "1555,2056";
+        printf("\n[Peticion Recibida]: %s\n", buffer);
+        bzero(respuesta_buffer, sizeof(respuesta_buffer));
 
-    printf("\n--- Iniciando insercion de prueba ---\n");
-    solicitud_insercion(&cliente2, &directorio);
-    printf("%s\n", cliente2.error);
+        // Desempaquetamos la peticion del cliente
+        char *op_str = strtok(buffer, "|");
+        if (op_str == NULL) continue;
+        int operacion = atoi(op_str);
 
+        char *tabla_str = strtok(NULL, "|");
+        if (tabla_str == NULL) continue;
+        int tabla = atoi(tabla_str);
 
-    cliente.numero_tabla = 12;             // 0 = Estudiante, 12 = Años
-    cliente.error = NULL;
-    cliente.llave = "full";                // El snum que quieres buscar
-    cliente.parametros = "01";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
-    cliente.cantidad_resultados = 0;
-    cliente.resultado = NULL;  
-    // Consultamos nuevamente
-    printf("\n--- Iniciando consulta de prueba ---\n");
-    solicitud_consulta(&cliente, &directorio);
+        // PETICION: CONSULTA
+        if (operacion == 1) {
+            char *llave = strtok(NULL, "|");
+            char *mascara = strtok(NULL, ""); 
 
-    if (cliente.error != NULL)
-    {
-        printf("%s", cliente.error);
-    }
-     
-    if (cliente.cantidad_resultados > 0) {
-        
-        printf("Se encontró %d registros:\n", cliente.cantidad_resultados);
+            if (llave != NULL && mascara != NULL) {
+                CONSULTA c = {tabla, NULL, mascara, llave, 0, NULL};
+                solicitud_consulta(&c, &directorio);
 
-        for (int i = 0; i < cliente.cantidad_resultados; i++) {
-            printf("Resultado [%d]: %s\n", i, cliente.resultado[i]);
-            free(cliente.resultado[i]); // Importante liberar la memoria de cada string
+                if (c.error != NULL) {
+                    strcpy(respuesta_buffer, c.error);
+                    free(c.error);
+                } else if (c.cantidad_resultados == 0) {
+                    strcpy(respuesta_buffer, "No hay registro encontrado.\n");
+                }
+                
+                if (c.cantidad_resultados > 0) {
+                    strcat(respuesta_buffer, "Registros Encontrados:\n");
+                    for (int i = 0; i < c.cantidad_resultados; i++) {
+                        strcat(respuesta_buffer, c.resultado[i]);
+                        strcat(respuesta_buffer, "\n");
+                        free(c.resultado[i]);
+                    }
+                    free(c.resultado);
+                }
+            }
+        } else {
+            strcpy(respuesta_buffer, "El servidor, no reconoce esta indicacion\n");
         }
-        free(cliente.resultado); // Liberar el arreglo de punteros
+
+        // ENVIAR RESPUESTA
+        send(nuevo_socket, respuesta_buffer, strlen(respuesta_buffer), 0);
     }
 
-    printf("\n--- Iniciando actualizacion de prueba ---\n");
-    // Realizamos una actualizacion
-    UPDATE cliente3;
-    cliente3.num_tabla = 12;
-    cliente3.error = NULL;
-    cliente3.primary_key = "1555";
-    cliente3.parametros = "1555,2030";
-    cliente3.estructura = NULL;
-
-    solicitud_update(&cliente3, &directorio);
-
-    if(cliente3.error != NULL)
-    {
-        printf("%s\n", cliente3.error);
-    }
-
-    cliente.numero_tabla = 12;             // 0 = Estudiante, 12 = Años
-    cliente.error = NULL;
-    cliente.llave = "full";                // El snum que quieres buscar
-    cliente.parametros = "00";     // Máscara: queremos columnas 0, 1 y 2 (Snum, DNI, Nombre)
-    cliente.cantidad_resultados = 0;
-    cliente.resultado = NULL;  
-    // Consultamos nuevamente
-    printf("\n--- Iniciando consulta de prueba ---\n");
-    solicitud_consulta(&cliente, &directorio);
-
-    if (cliente.error != NULL)
-    {
-        printf("%s", cliente.error);
-    }
-     
-    if (cliente.cantidad_resultados > 0) {
-        
-        printf("Se encontró %d registros:\n", cliente.cantidad_resultados);
-
-        for (int i = 0; i < cliente.cantidad_resultados; i++) {
-            printf("Resultado [%d]: %s\n", i, cliente.resultado[i]);
-            free(cliente.resultado[i]); // Importante liberar la memoria de cada string
-        }
-        free(cliente.resultado); // Liberar el arreglo de punteros
-    }
-
-// ... (Tu código anterior termina en el for que imprime la consulta del Update) ...
-
-    printf("\n--- Iniciando eliminacion de prueba ---\n");
-    
-    // 1. Preparamos la estructura de eliminación
-    ELIMINACION cliente4;
-    cliente4.num_tabla = 12;          // Tabla Años
-    cliente4.error = NULL;
-    cliente4.primary_key = "1555";    // El registro que creamos y actualizamos
-
-    // 2. Ejecutamos el DELETE
-    solicitud_eliminacion(&cliente4, &directorio);
-
-    if(cliente4.error != NULL)
-    {
-        printf("%s\n", cliente4.error);
-        free(cliente4.error); // Buena práctica: liberar la memoria del strdup
-    }
-
-    // 3. CONSULTA FINAL: Verificamos que el registro ya no exista
-    cliente.numero_tabla = 12;             
-    cliente.error = NULL;
-    cliente.llave = "full";                
-    cliente.parametros = "11";     // Queremos ver todo para comprobar
-    cliente.cantidad_resultados = 0;
-    cliente.resultado = NULL;  
-    
-    printf("\n--- Iniciando consulta final (El registro 1555 debe haber desaparecido) ---\n");
-    solicitud_consulta(&cliente, &directorio);
-
-    if (cliente.error != NULL)
-    {
-        printf("%s", cliente.error);
-        free(cliente.error);
-    }
-     
-    if (cliente.cantidad_resultados > 0) {
-        printf("Se encontró %d registros:\n", cliente.cantidad_resultados);
-
-        for (int i = 0; i < cliente.cantidad_resultados; i++) {
-            printf("Resultado [%d]: %s\n", i, cliente.resultado[i]);
-            free(cliente.resultado[i]); 
-        }
-        free(cliente.resultado); 
-    }
+    // FINALIZACION DE SERVIDOR
+    close(nuevo_socket);
+    close(server_fd);
+    printf("[*] Servidor apagado...\n");
 
     return 0;
 }
-// Implementación de la función del hilo
-void* funcion_h1(void *arg)
-{
-    // Convertimos el puntero genérico de vuelta a nuestro tipo de estructura
+
+void* funcion_h1(void *arg) {
     HILO_DIR *args = (HILO_DIR *)arg;
-
-    // Usamos los datos para llamar a la función original
     crear_directorio(args->dir, args->carpeta, args->archivos, args->extension, args->update, args->tamano);
-
     return NULL;
 }
