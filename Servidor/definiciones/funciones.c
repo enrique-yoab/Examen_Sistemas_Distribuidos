@@ -65,7 +65,7 @@ void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tip
         dir->rutas_update[i] = ruta_updates; // Asume que cambiaste a un arreglo en la estructura
         dir->cantidad = i + 1;
     }
-    imprimir_rutas(dir);
+    // imprimir_rutas(dir);
 }
 
 ANALISIS_ARCHIVO analizar_archivo(char *ruta)

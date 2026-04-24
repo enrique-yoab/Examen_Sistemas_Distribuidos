@@ -7,16 +7,34 @@
 
 void solicitud_update(UPDATE *cliente, ARCHIVERO *dir)
 {
-    // 1. Validamos la existencia de la llave
-    // Reciclamos la lógica: Si retorna "EXITO" es que la llave NO existe (Error para Update)
-    char *estado = validar_llave(cliente->primary_key, cliente->num_tabla, dir->rutas[cliente->num_tabla]);
-    if(strcmp(estado, "EXITO") == 0) 
+    // 1. Validamos que el registro ORIGINAL exista
+    char *estado_origen = validar_llave(cliente->primary_key, cliente->num_tabla, dir->rutas[cliente->num_tabla]);
+    if(strcmp(estado_origen, "EXITO") == 0) 
     {
-        cliente->error = strdup("ERROR: La llave primaria no existe en los registros.\n");
+        cliente->error = strdup("ERROR: El registro que intentas actualizar no existe.\n");
         return;
     }
 
-    // 2. Si llegamos aquí, la llave existe y procedemos a la actualización física
+    // 2. Extraemos la NUEVA llave de forma segura (sin destruir cliente->parametros)
+    char parametros_copia[500];
+    strcpy(parametros_copia, cliente->parametros);
+    char *nueva_llave = strtok(parametros_copia, ",");
+
+    // 3. Verificamos si el usuario está intentando CAMBIAR la llave primaria
+    if (nueva_llave != NULL && strcmp(cliente->primary_key, nueva_llave) != 0)
+    {
+        // Como son diferentes, validamos que la nueva llave NO esté ocupada
+        char *estado_destino = validar_llave(nueva_llave, cliente->num_tabla, dir->rutas[cliente->num_tabla]);
+        
+        // Si NO retorna "EXITO", significa que la llave ya la tiene otro registro (Duplicado)
+        if (strcmp(estado_destino, "EXITO") != 0) 
+        {
+            cliente->error = strdup("ERROR: La nueva llave primaria ya esta en uso por otro registro.\n");
+            return;
+        }
+    }
+
+    // 4. Si llegamos aquí, todo es válido (la llave es la misma o la nueva está libre)
     cliente->error = NULL;
     update_archivo(cliente, dir);
 }
@@ -64,9 +82,9 @@ void update_archivo(UPDATE *cliente, ARCHIVERO *dir)
 
     // [MOMENTO 4: REENCARNACIÓN]
     // Movemos el archivo temporal de ./buffer/ hacia ./Datos/ y le cambiamos el nombre
-    if (rename(ruta_temporal, ruta_original) == 0) {
-        cliente->error = strdup("EXITO: Registro actualizado en el almacenamiento fisico.\n");
-    } else {
+    if (rename(ruta_temporal, ruta_original) != 0){
         cliente->error = strdup("ERROR: No se pudo mover el archivo temporal.\n");
+        return;
     }
+    printf("EXITO: Se actualizo el registro %s\n", cliente->primary_key);
 }

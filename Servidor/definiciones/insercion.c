@@ -1,343 +1,117 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include "../extensiones/entidades.h"
 #include "../extensiones/insercion.h"
 
 void solicitud_insercion(INSERCION *cliente, ARCHIVERO *dir)
 {
-    switch (cliente->numero_tabla)
-    {
-    // Convertimos la estructura vacia a estructura de estudiante 
-    // y revisamos que no tenga ningun dato vacio
-    case 0:
-        ESTUDIANTE *persona = verificar_estudiante(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_estudiante(persona, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 1:
-        DIRECCION *direccion = verificar_direccion(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_direccion(direccion, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 2:
-        CARRERA *carrera = verificar_carrera(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_carrera(carrera, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 3:
-        HISTORIAL *historial = verificar_historial(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_historial(historial, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 4:
-        INSCRIPCION *inscripcion = verificar_inscripcion(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_inscripcion(inscripcion, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 5:
-        SECCION *seccion = verificar_seccion(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_seccion(seccion, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 6:
-        PROFESOR *profesor = verificar_profesor(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_profesor(profesor, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 7:
-        DEPARTAMENTO *departamento = verificar_departamento(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_departamento(departamento, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 8:
-        NIVELES *niveles = verificar_niveles(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_nivel(niveles, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 9:
-        HORARIO *horario = verificar_horario(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_horario(horario, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 10:
-        GRADO *grado = verificar_grado(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_grado(grado, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 11:
-        CURSO *curso = verificar_curso(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_curso(curso, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 12:
-        YEAR *años = verificar_year(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_year(años, dir->rutas[cliente->numero_tabla]));
-        break;
-    case 13:
-        SEMESTRE *sem = verificar_semestre(cliente);
-        if (cliente->error != NULL) break;
-        cliente->error = strdup(insert_semestre(sem, dir->rutas[cliente->numero_tabla]));
-        break;
-    default:
-        cliente->error = strdup("ERROR: Tabla no válida");
-        break;
+    // 1. Verificamos que la tabla sea válida
+    if (cliente->numero_tabla < 0 || cliente->numero_tabla > 13) {
+        cliente->error = strdup("ERROR: Tabla no valida para insercion");
+        return;
     }
+
+    // 2. Validar campos vacíos rápidamente
+    // Buscamos si hay dos comas juntas (,,) o si empieza/termina con coma
+    if (strstr(cliente->datos, ",,") != NULL || 
+        cliente->datos[0] == ',' || 
+        cliente->datos[strlen(cliente->datos) - 1] == ',') 
+    {
+        cliente->error = strdup("ERROR: Los datos contienen campos vacios.");
+        return;
+    }
+
+    // 3. Extraer la llave primaria de los datos para validarla
+    char datos_copia[1024];
+    strcpy(datos_copia, cliente->datos);
+    char *llave_nueva = strtok(datos_copia, ",");
+
+    if (llave_nueva == NULL) {
+        cliente->error = strdup("ERROR: Formato de datos invalido.");
+        return;
+    }
+
+    char *ruta_archivo = dir->rutas[cliente->numero_tabla];
+
+    // 4. Validamos que la llave NO exista (Para INSERT, "EXITO" significa que la llave está libre)
+    char *estado = validar_llave(llave_nueva, cliente->numero_tabla, ruta_archivo);
+    
+    if (strcmp(estado, "EXITO") != 0) {
+        // Si no es EXITO, es porque validar_llave encontró duplicados o hubo un error
+        cliente->error = strdup("ERROR: La llave primaria ya existe en la base de datos.");
+        return;
+    }
+
+    // 5. Procedemos a insertar al final del archivo (Modo "a" - Append)
+    FILE *archivo = fopen(ruta_archivo, "a");
+    if (archivo == NULL) {
+        cliente->error = strdup("ERROR: No se pudo abrir el archivo para insertar.");
+        return;
+    }
+
+    // Escribimos la línea completa directamente
+    fprintf(archivo, "%s\n", cliente->datos);
+    fclose(archivo);
+
+    cliente->error = strdup("EXITO: Registro insertado correctamente.");
 }
 
-char *insert_estudiante(ESTUDIANTE *persona, char *ruta)
+void solicitud_eliminacion(ELIMINACION *cliente, ARCHIVERO *dir)
 {
-    char *men = validar_llave(persona->snum, 0, ruta);
-    if(strcmp(men, "EXITO") == 0)
+    // 1. Validamos que el registro SÍ EXISTA
+    // Recordamos que si validar_llave retorna "EXITO", significa que la llave está libre (No existe)
+    char *estado = validar_llave(cliente->primary_key, cliente->num_tabla, dir->rutas[cliente->num_tabla]);
+    if(strcmp(estado, "EXITO") == 0) 
     {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-            persona->snum,
-            persona->DNI,
-            persona->nombre,
-            persona->apellido_m,
-            persona->apellido_p,
-            persona->fecha_na,
-            persona->sexo,
-            persona->domicilio_permanente,
-            persona->telefono_permanente,
-            persona->semestre
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente el estudiante";
+        cliente->error = strdup("ERROR: La llave no existe. No se puede eliminar un registro fantasma.");
+        return;
     }
-    return men;
-}
 
-char *insert_direccion(DIRECCION *dir, char *ruta)
-{
-    char *men = validar_llave(dir->id_dir, 10, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s,%s,%s,%s,%s\n",
-            dir->id_dir,
-            dir->snum,
-            dir->domicilio,
-            dir->ciudad,
-            dir->estado,
-            dir->codigo_pst
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente la direccion";
-    }
-    return men;
-}
+    // 2. Rutas
+    char *ruta_original = dir->rutas[cliente->num_tabla];
+    char *ruta_temporal = dir->rutas_update[cliente->num_tabla]; // Usamos la misma carpeta ./buffer/
 
-char *insert_carrera(CARRERA *carrera, char *ruta)
-{
-    char *men = validar_llave(carrera->ID_carrera, 2, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s,%s\n",
-            carrera->ID_carrera,
-            carrera->Major,
-            carrera->carrera
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente la carrera";
-    }
-    return men;
-}
+    FILE *archivo_lectura = fopen(ruta_original, "r");
+    FILE *archivo_escritura = fopen(ruta_temporal, "w");
 
-char *insert_historial(HISTORIAL *historia, char *ruta)
-{
-    char *men = validar_llave(historia->matricula, 3, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s,%s,%s\n",
-            historia->snum,
-            historia->matricula,
-            historia->ID_carrera,
-            historia->tipo
-        );
-        fclose(archivo);
-        return "EXITO: se inserto correctamente el historial";
+    if (!archivo_lectura || !archivo_escritura) {
+        cliente->error = strdup("ERROR: Fallo critico al abrir los archivos para eliminacion.");
+        if(archivo_lectura) fclose(archivo_lectura);
+        if(archivo_escritura) fclose(archivo_escritura);
+        return;
     }
-    return men;
-}
 
-char *insert_inscripcion(INSCRIPCION *insc, char *ruta)
-{
-    char *men = validar_llave(insc->id_folio, 4, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s,%s\n",
-            insc->id_folio,
-            insc->snum,
-            insc->ID_AUX
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente la inscripcion";
-    }
-    return men;
-}
+    char linea[1024];
 
-char *insert_seccion(SECCION *secc, char *ruta)
-{
-    char *men = validar_llave(secc->ID_AUX, 5, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-            secc->ID_AUX,
-            secc->dpto,
-            secc->Num_curso,
-            secc->ID_seccion,
-            secc->Num_seccion,
-            secc->ID_año,
-            secc->ID_horas,
-            secc->ID_nivel,
-            secc->ID_profesor
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente la seccion";
-    }
-    return men;
-}
+    // 3. Procesamiento de líneas
+    while (fgets(linea, sizeof(linea), archivo_lectura)) {
+        
+        char linea_copia[1024];
+        strcpy(linea_copia, linea);
+        char *llave_actual = strtok(linea_copia, ",");
 
-char *insert_profesor(PROFESOR *profe, char *ruta)
-{
-    char *men = validar_llave(profe->ID_profesor, 6, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s,%s,%s\n",
-            profe->ID_profesor,
-            profe->profesor,
-            profe->Nombre_curso,
-            profe->Descripcion
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente al profesor";    
+        // 4. Si encuentra la llave hace un salto de linea y la "elimina"
+        if (llave_actual != NULL && strcmp(llave_actual, cliente->primary_key) == 0) {
+            // ¡ENCONTRAMOS EL REGISTRO!
+            // Para eliminarlo, simplemente usamos 'continue' para saltarnos la escritura
+            // y pasar a la siguiente línea del while.
+            continue; 
+        } else {
+            // Si no es la llave que buscamos, lo copiamos al archivo temporal
+            fputs(linea, archivo_escritura);
+        }
     }
-    return men;
-}
 
-char *insert_departamento(DEPARTAMENTO *depa, char *ruta)
-{
-    char *men = validar_llave(depa->depto, 7, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s,%s,%s,%s\n",
-            depa->depto,
-            depa->nombre,
-            depa->oficina,
-            depa->telefono,
-            depa->facultad
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente el departamento";    
-    }
-    return men;
-}
+    // 5. Limpieza y reemplazo
+    fclose(archivo_lectura);
+    fclose(archivo_escritura);
 
-char *insert_nivel(NIVELES *level, char *ruta)
-{
-    char *men = validar_llave(level->ID_nivel, 8, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s\n",
-            level->ID_nivel,
-            level->nivel
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente el nivel"; 
+    remove(ruta_original);
+    
+    if (rename(ruta_temporal, ruta_original) == 0) {
+        cliente->error = strdup("EXITO: Registro eliminado permanentemente.");
+    } else {
+        cliente->error = strdup("ERROR: No se pudo completar la eliminacion fisica.");
     }
-    return men;
-}
-
-char *insert_horario(HORARIO *hor, char *ruta)
-{
-    char *men = validar_llave(hor->ID_horario, 9, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s\n",
-            hor->ID_horario,
-            hor->horas
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente el horario"; 
-    }
-    return men;
-}
-
-char *insert_grado(GRADO *grado, char *ruta)
-{
-    char *men = validar_llave(grado->ID_TMP, 10, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s,%s,%s,%s\n",
-            grado->ID_TMP,
-            grado->ID_AUX,
-            grado->ID_grado,
-            grado->Num_grado,
-            grado->Lettergrade
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente el grado"; 
-    }
-    return men;
-}
-
-char *insert_curso(CURSO *curso, char *ruta)
-{
-    char *men = validar_llave(curso->num_curso, 11, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s\n",
-            curso->num_curso,
-            curso->semestre
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente al curso";  
-    }
-    return men;
-}
-
-char *insert_year(YEAR *año, char *ruta)
-{
-    char *men = validar_llave(año->ID_año, 12, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s\n",
-            año->ID_año,
-            año->Año
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente al Año";  
-    }
-    return men;
-}
-
-char *insert_semestre(SEMESTRE *sem, char *ruta)
-{
-    char *men = validar_llave(sem->ID_semestre, 13, ruta);
-    if(strcmp(men, "EXITO") == 0)
-    {
-        FILE *archivo = fopen(ruta, "a");
-        fprintf(archivo, "%s,%s\n",
-            sem->ID_semestre,
-            sem->nombre
-        );
-        fclose(archivo);
-        return "EXITO: Se inserto correctamente el semestre"; 
-    }
-    return men;
 }

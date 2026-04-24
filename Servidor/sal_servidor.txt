@@ -1,67 +1,21 @@
 Se esta creando un directorio con 14 rutas de archivos .csv
----------> Mostrando rutas de tablas <---------
-Ruta[1] : ./Datos/Estudiante.csv 
-Ruta[2] : ./Datos/Direccion.csv 
-Ruta[3] : ./Datos/Carrera.csv 
-Ruta[4] : ./Datos/Historial.csv 
-Ruta[5] : ./Datos/Inscripcion.csv 
-Ruta[6] : ./Datos/Seccion.csv 
-Ruta[7] : ./Datos/Profesor.csv 
-Ruta[8] : ./Datos/Departamento.csv 
-Ruta[9] : ./Datos/Niveles.csv 
-Ruta[10] : ./Datos/Horario.csv 
-Ruta[11] : ./Datos/Grado.csv 
-Ruta[12] : ./Datos/Curso.csv 
-Ruta[13] : ./Datos/Años.csv 
-Ruta[14] : ./Datos/Semestre.csv 
------------------------------------------------
----------> Mostrando rutas de escritura <---------
-Ruta[1] : ./buffer/Estudiante.csv 
-Ruta[2] : ./buffer/Direccion.csv 
-Ruta[3] : ./buffer/Carrera.csv 
-Ruta[4] : ./buffer/Historial.csv 
-Ruta[5] : ./buffer/Inscripcion.csv 
-Ruta[6] : ./buffer/Seccion.csv 
-Ruta[7] : ./buffer/Profesor.csv 
-Ruta[8] : ./buffer/Departamento.csv 
-Ruta[9] : ./buffer/Niveles.csv 
-Ruta[10] : ./buffer/Horario.csv 
-Ruta[11] : ./buffer/Grado.csv 
-Ruta[12] : ./buffer/Curso.csv 
-Ruta[13] : ./buffer/Años.csv 
-Ruta[14] : ./buffer/Semestre.csv 
---------------------------------------------------
-
---- Iniciando consulta de prueba ---
------||| Se realiza consulta en la tabla Seccion |||-----
-Se encontró 20 registros:
-Resultado [0]: ID_AUX,Dpto,Numero Curso,ID_seccion,Numero de Seccion,ID_año,ID_horas,ID_nivel,ID_profesor
-Resultado [1]: 501,EDU,EDU-201,SEC21,1,1500,3000,2000,4000
-Resultado [2]: 502,INF,ING-301,SEC4,2,1501,3000,2001,4001
-Resultado [3]: 503,MAT,MAT-101,SEC23,2,1500,3001,2002,4002
-Resultado [4]: 504,INF,ING-401,SEC5,1,1501,3001,2002,4003
-Resultado [5]: 505,EDU,EDU-101,SEC20,1,1501,3000,2000,4004
-Resultado [6]: 506,SAL,SAL-101,SEC14,1,1500,3000,2001,4005
-Resultado [7]: 507,EDU,EDU-201,SEC21,1,1500,3000,2002,4000
-Resultado [8]: 508,ADM,ADM-101,SEC6,3,1500,3000,2001,4006
-Resultado [9]: 509,SAL,SAL-101,SEC14,1,1500,3000,2002,4005
-Resultado [10]: 510,COM,COM-201,SEC26,3,1502,3001,2000,4007
-Resultado [11]: 511,EDU,EDU-201,SEC21,1,1500,3000,2001,4000
-Resultado [12]: 512,SAL,SAL-101,SEC14,1,1500,3000,2000,4005
-Resultado [13]: 513,ADM,ADM-301,SEC10,3,1501,3000,2002,4008
-Resultado [14]: 514,SAL,SAL-101,SEC14,1,1500,3000,2000,4005
-Resultado [15]: 515,ART,ART-201,SEC18,1,1500,3000,2000,4009
-Resultado [16]: 516,EDU,EDU-201,SEC21,1,1500,3000,2001,4000
-Resultado [17]: 517,ADM,ADM-101,SEC6,3,1500,3000,2002,4006
-Resultado [18]: 518,ADM,ADM-101,SEC7,2,1501,3000,2001,4010
-Resultado [19]: 519,ADM,ADM-101,SEC7,2,1501,3000,2000,4010
-
---- Iniciando insercion de prueba ---
-EXITO: Se inserto correctamente al Año
 
 --- Iniciando consulta de prueba ---
 -----||| Se realiza consulta en la tabla Años |||-----
+EXITO: Se encontro al menos 1 registro en la tabla
 Se encontró 4 registros:
+Resultado [0]: ID_año,Año
+Resultado [1]: 1500,2023
+Resultado [2]: 1501,2024
+Resultado [3]: 1502,2025
+
+--- Iniciando insercion de prueba ---
+EXITO: Registro insertado correctamente.
+
+--- Iniciando consulta de prueba ---
+-----||| Se realiza consulta en la tabla Años |||-----
+EXITO: Se encontro al menos 1 registro en la tabla
+Se encontró 5 registros:
 Resultado [0]: ID_año,Año
 Resultado [1]: 1500,2023
 Resultado [2]: 1501,2024
@@ -69,12 +23,26 @@ Resultado [3]: 1502,2025
 Resultado [4]: 1555,2056
 
 --- Iniciando actualizacion de prueba ---
+EXITO: Se actualizo el registro 1555
 
 --- Iniciando consulta de prueba ---
 -----||| Se realiza consulta en la tabla Años |||-----
+EXITO: Se encontro al menos 1 registro en la tabla
+Se encontró 5 registros:
+Resultado [0]: ID_año,Año
+Resultado [1]: 1500,2023
+Resultado [2]: 1501,2024
+Resultado [3]: 1502,2025
+Resultado [4]: 1555,2030
+
+--- Iniciando eliminacion de prueba ---
+EXITO: Registro eliminado permanentemente.
+
+--- Iniciando consulta final (El registro 1555 debe haber desaparecido) ---
+-----||| Se realiza consulta en la tabla Años |||-----
+EXITO: Se encontro al menos 1 registro en la tabla
 Se encontró 4 registros:
 Resultado [0]: ID_año,Año
 Resultado [1]: 1500,2023
 Resultado [2]: 1501,2024
 Resultado [3]: 1502,2025
-Resultado [4]: 1555,2027

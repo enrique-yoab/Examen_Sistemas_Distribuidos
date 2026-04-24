@@ -71,7 +71,7 @@ void solicitud_consulta(CONSULTA *cliente, ARCHIVERO *dir)
         break;
     case 12:
         printf("-----||| Se realiza consulta en la tabla Años |||-----\n");
-        if(strlen(cliente->parametros) != 2) cliente->error = strdup("ERROR: TABLA ANOS OCUPA 2 PARAMETROS\n");
+        if(strlen(cliente->parametros) != 2) cliente->error = strdup("ERROR: TABLA AÑOS OCUPA 2 PARAMETROS\n");
         else consulta_tabla(cliente, dir, 2);
         break;
     case 13:
@@ -93,13 +93,11 @@ void consulta_tabla(CONSULTA *cliente, ARCHIVERO *dir, int num_columnas)
 
     char linea[300];
     int hallados = 0;
-    // int ren = 0;
     cliente->resultado = malloc(sizeof(char*) * analisis.num_lineas);
     while (fgets(linea, sizeof(linea), tabla) != NULL) {
         linea[strcspn(linea, "\n")] = '\0';
-        // if (ren == 0) {ren++; continue;}
 
-        char *tokens[32];
+        char *tokens[15];
         int col = 0;
         char *token = strtok(linea, ",");
         while (token != NULL && col < num_columnas) {
@@ -154,9 +152,13 @@ void consulta_tabla(CONSULTA *cliente, ARCHIVERO *dir, int num_columnas)
     // Liberamos la memoria no ocupada
     if (hallados > 0 && hallados < analisis.num_lineas) {
         cliente->resultado = realloc(cliente->resultado, sizeof(char*) * hallados);
-    } else if (hallados == 0) {
+    }
+    if (hallados == 0) {
         free(cliente->resultado);
         cliente->resultado = NULL;
+        cliente->error = strdup("ERROR: No se encontro ningun registro en la tabla consultada\n");
+    }else{
+        cliente->error = strdup("EXITO: Se encontro al menos 1 registro en la tabla\n");
     }
 
     fclose(tabla);
