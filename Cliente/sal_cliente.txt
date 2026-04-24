@@ -1,0 +1,80 @@
+enrique@pc-bda-ycr:Cliente$ ./cliente 
+[1] Creando socket TCP...
+[2] Conectando al servidor...
+
+[Mensaje Inicial del Servidor]: Conexion establecida, el servidor finalizara despues de la sesion.
+
+===========================================
+ COMANDOS ACTIVOS: CONSULTA | INSERCION | OFF
+=============================================
+Tu mensaje (Comando): CONSULTA   
+
+--- MODO CONSULTA ---
+Ingresa el numero de tabla (0-13): 13
+Ingresa la llave a buscar ('full', 'low' o ID): full
+Ingresa la mascara de parametros (Bits 1/0): 00
+
+--- RESULTADOS DE LA BD (5 registros) ---
+[0]: ID_semestre,Nombre
+[1]: 7000,1er semestre
+[2]: 7002,3er semestre
+[3]: 7003,5to smestre
+[4]: 7004,7mo semestre
+----------------------------------------
+
+===========================================
+ COMANDOS ACTIVOS: CONSULTA | INSERCION | OFF
+=============================================
+Tu mensaje (Comando): INSERCION
+
+--- MODO INSERCION ---
+Ingresa el numero de tabla (0-13): 13
+[*] El servidor verifico la tabla. Se requieren 2 columnas.
+--------------------------------------------------
+Ingrese el dato para la columna 1 (LLAVE PRIMARIA): 7100
+Ingrese el dato para la columna 2: 10mo semestre
+
+[Enviando paquete]: DATOS|7100,10mo semestre
+[Respuesta del Servidor]: EXITO: Registro insertado correctamente.
+
+===========================================
+ COMANDOS ACTIVOS: CONSULTA | INSERCION | OFF
+=============================================
+Tu mensaje (Comando): CONSULTA
+
+--- MODO CONSULTA ---
+Ingresa el numero de tabla (0-13): 13
+Ingresa la llave a buscar ('full', 'low' o ID): 7100
+Ingresa la mascara de parametros (Bits 1/0): 11
+
+--- RESULTADOS DE LA BD (1 registros) ---
+[0]: 7100,10mo semestre
+----------------------------------------
+
+===========================================
+ COMANDOS ACTIVOS: CONSULTA | INSERCION | OFF
+=============================================
+Tu mensaje (Comando): CONSULTA
+
+--- MODO CONSULTA ---
+Ingresa el numero de tabla (0-13): 13
+Ingresa la llave a buscar ('full', 'low' o ID): full
+Ingresa la mascara de parametros (Bits 1/0): 00
+
+--- RESULTADOS DE LA BD (6 registros) ---
+[0]: ID_semestre,Nombre
+[1]: 7000,1er semestre
+[2]: 7002,3er semestre
+[3]: 7003,5to smestre
+[4]: 7004,7mo semestre
+[5]: 7100,10mo semestre
+----------------------------------------
+
+===========================================
+ COMANDOS ACTIVOS: CONSULTA | INSERCION | OFF
+=============================================
+Tu mensaje (Comando): OFF
+[!] Cerrando cliente...
+
+Desconectado exitosamente.
+enrique@pc-bda-ycr:Cliente$ 

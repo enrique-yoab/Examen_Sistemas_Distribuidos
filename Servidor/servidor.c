@@ -7,6 +7,8 @@
 #include <arpa/inet.h>
 #include "./extensiones/entidades.h"
 #include "./extensiones/consulta.h"
+#include "./extensiones/insercion.h"
+#include "./extensiones/update.h"
 
 #define PUERTO 3000
 
@@ -61,7 +63,7 @@ int main(void){
         int bytes_leidos = recv(nuevo_socket, buffer, TAM_MAX, 0);
         
         if (bytes_leidos <= 0 || strcasecmp(buffer, "OFF") == 0) {
-            printf("[-] Cliente desconectado con comando OFF recibido. Finalizando...\n");
+            printf("[-] Cliente desconectado o se recibio comando OFF. Finalizando...\n");
             break;
         }
 
@@ -76,21 +78,141 @@ int main(void){
         if (tabla_str == NULL) continue;
         int tabla = atoi(tabla_str);
 
-        // 3. ENRUTADOR DE OPERACIONES (Mini-Switch)
+        // ==========================================
+        // OPERACION 1: CONSULTA
+        // ==========================================
         if (operacion == 1) {
             char *llave = strtok(NULL, "|");
             char *mascara = strtok(NULL, ""); 
             
-            // Delegamos todo el trabajo a la función experta
+            // Delegamos todo el trabajo a la función
             procesar_consulta(nuevo_socket, tabla, llave, mascara, &directorio);
         }
-        // Aquí se agregara los 'else if' para UPDATE (2), DELETE (3) e INSERT (4) en el futuro.
-        else {
-            char *msj_error = "ERROR: Operacion no reconocida por el servidor.\n";
-            send(nuevo_socket, msj_error, strlen(msj_error), 0);
+        // ==========================================
+        // OPERACION 2: INSERCION
+        // ==========================================
+        else if(operacion == 2) 
+        {
+            // FASE 1: Descubrimiento de esquema (Columnas)
+            char *ruta_archivo = directorio.rutas[tabla];
+            ANALISIS_ARCHIVO analisis = analizar_archivo(ruta_archivo);
+            
+            char msj_columnas[50];
+            // Le enviamos al cliente la etiqueta COLUMNAS| seguida del número
+            sprintf(msj_columnas, "COLUMNAS|%d", analisis.num_columnas);
+            send(nuevo_socket, msj_columnas, strlen(msj_columnas), 0);
+
+            // FASE 2: Esperamos recibir los datos empaquetados por el cliente
+            bzero(buffer, TAM_MAX);
+            int bytes_datos = recv(nuevo_socket, buffer, TAM_MAX, 0);
+
+            if (bytes_datos > 0 && strncmp(buffer, "DATOS|", 6) == 0) {
+                // Brincamos los primeros 6 caracteres ("DATOS|") para obtener solo el CSV
+                char *datos_csv = buffer + 6; 
+
+                // Preparamos la estructura
+                INSERCION peticion_ins;
+                peticion_ins.numero_tabla = tabla;
+                peticion_ins.datos = datos_csv;
+                peticion_ins.error = NULL;
+
+                // Delegamos al motor físico (el que programamos en insercion.c)
+                solicitud_insercion(&peticion_ins, &directorio);
+
+                // FASE 3: Respondemos el resultado final (EXITO o ERROR de llave duplicada)
+                if (peticion_ins.error != NULL) {
+                    send(nuevo_socket, peticion_ins.error, strlen(peticion_ins.error), 0);
+                    free(peticion_ins.error); // IMPORTANTE: Liberar el strdup
+                } else {
+                    char *err_desconocido = "ERROR: Fallo desconocido en insercion.\n";
+                    send(nuevo_socket, err_desconocido, strlen(err_desconocido), 0);
+                }
+            } else {
+                // Si el cliente mandó basura en lugar de "DATOS|..."
+                char *err_proto = "ERROR: Se rompio el protocolo de insercion.\n";
+                send(nuevo_socket, err_proto, strlen(err_proto), 0);
+            }
+        }
+        // ==========================================
+        // OPERACION 3: ELIMINACION
+        // ==========================================
+        else if (operacion == 3) {
+            char *llave_eliminar = strtok(NULL, ""); // Extraemos la llave
+            
+            if (llave_eliminar != NULL) {
+                ELIMINACION peticion_del;
+                peticion_del.num_tabla = tabla;
+                peticion_del.primary_key = llave_eliminar;
+                peticion_del.error = NULL;
+
+                solicitud_eliminacion(&peticion_del, &directorio);
+
+                if (peticion_del.error != NULL) {
+                    send(nuevo_socket, peticion_del.error, strlen(peticion_del.error), 0);
+                    free(peticion_del.error);
+                } else {
+                    char *err = "ERROR: Fallo desconocido en eliminacion.\n";
+                    send(nuevo_socket, err, strlen(err), 0);
+                }
+            }
+        }
+        // ==========================================
+        // OPERACION 4: ACTUALIZACION
+        // ==========================================
+        else if (operacion == 4) {
+            char *llave_vieja = strtok(NULL, ""); 
+            
+            // FASE 1: Verificamos que la llave original EXISTA en la tabla
+            char *ruta_archivo = directorio.rutas[tabla];
+            char *estado = validar_llave(llave_vieja, tabla, ruta_archivo);
+            
+            if (strcmp(estado, "EXITO") == 0) {
+                // EXITO en validar_llave significa que la llave NO existe.
+                char *msj = "ERROR: El registro que intentas actualizar no existe.\n";
+                send(nuevo_socket, msj, strlen(msj), 0);
+                continue; // Cancelamos la operación
+            }
+
+            // *** LA CURA AL BUG: RESPALDAR LA LLAVE ***
+            // Hacemos una copia profunda de la llave para que no se destruya al limpiar el buffer
+            char llave_respaldo[50];
+            strcpy(llave_respaldo, llave_vieja);
+
+            // FASE 2: Si existe, le decimos al cliente cuántas columnas necesitamos
+            ANALISIS_ARCHIVO analisis = analizar_archivo(ruta_archivo);
+            char msj_columnas[50];
+            sprintf(msj_columnas, "COLUMNAS|%d", analisis.num_columnas);
+            send(nuevo_socket, msj_columnas, strlen(msj_columnas), 0);
+
+            // FASE 3: Esperamos los datos nuevos
+            bzero(buffer, TAM_MAX); // Aquí se destruye el contenido original
+            int bytes_datos = recv(nuevo_socket, buffer, TAM_MAX, 0);
+
+            if (bytes_datos > 0 && strncmp(buffer, "DATOS|", 6) == 0) {
+                char *datos_csv = buffer + 6;
+                
+                UPDATE peticion_upd;
+                peticion_upd.num_tabla = tabla;
+                peticion_upd.primary_key = llave_respaldo; // <-- USAMOS EL RESPALDO SEGURO
+                peticion_upd.parametros = datos_csv;    
+                peticion_upd.error = NULL;
+
+                solicitud_update(&peticion_upd, &directorio);
+                
+                if (peticion_upd.error != NULL) {
+                    send(nuevo_socket, peticion_upd.error, strlen(peticion_upd.error), 0);
+                    free(peticion_upd.error);
+                }else {
+                    // Si es NULL, significa que pasó todas las validaciones y se actualizó
+                    char *msj_exito = "EXITO: El registro fue actualizado correctamente en el servidor.\n";
+                    send(nuevo_socket, msj_exito, strlen(msj_exito), 0);
+                }
+            } else {
+                 char *err = "ERROR: Se rompio el protocolo de actualizacion.\n";
+                 send(nuevo_socket, err, strlen(err), 0);
+            }
         }
     }
-
     // FINALIZACION DE SERVIDOR
     close(nuevo_socket);
     close(server_fd);
