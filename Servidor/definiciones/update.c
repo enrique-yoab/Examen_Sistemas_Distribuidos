@@ -10,9 +10,9 @@ void solicitud_update(UPDATE *cliente, ARCHIVERO *dir)
     // 1. Validamos la existencia de la llave
     // Reciclamos la lógica: Si retorna "EXITO" es que la llave NO existe (Error para Update)
     char *estado = validar_llave(cliente->primary_key, cliente->num_tabla, dir->rutas[cliente->num_tabla]);
-    
-    if(strcmp(estado, "EXITO") == 0) {
-        cliente->error = "ERROR: La llave primaria no existe en los registros.\n";
+    if(strcmp(estado, "EXITO") == 0) 
+    {
+        cliente->error = strdup("ERROR: La llave primaria no existe en los registros.\n");
         return;
     }
 

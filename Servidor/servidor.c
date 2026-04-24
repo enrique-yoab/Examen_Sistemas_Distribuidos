@@ -103,13 +103,13 @@ int main(void){
     UPDATE cliente3;
     cliente3.num_tabla = 12;
     cliente3.error = NULL;
-    cliente3.primary_key = "1555";
+    cliente3.primary_key = "1556";
     cliente3.parametros = "1555,2027";
     cliente3.estructura = NULL;
 
     solicitud_update(&cliente3, &directorio);
 
-    if(cliente3.error == NULL)
+    if(cliente3.error != NULL)
     {
         printf("%s\n", cliente3.error);
         return 0;
