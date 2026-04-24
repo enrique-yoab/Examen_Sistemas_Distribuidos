@@ -9,7 +9,10 @@
 #define PUERTO 3000
 #define TAM_MAX 1024
 
+char *tablas[] = {"Estudiante", "Direccion", "Carrera", "Historial", "Inscripcion", "Seccion", "Profesor", "Departamento", "Niveles", "Horario", "Grado", "Curso", "Años", "Semestre"};
+
 void realizar_consulta(int sock);
+void realizar_insercion(int sock);
 
 int main() {
     int sock = 0;
@@ -60,7 +63,7 @@ int main() {
 }
 
 void realizar_consulta(int sock) {
-    char tabla[10], llave[50], mascara[50], paquete_envio[TAM_MAX], respuesta_servidor[4096];
+    char tabla[10], llave[50], mascara[50], paquete_envio[TAM_MAX], respuesta_servidor[TAM_MAX];
 
     printf("\n--- MODO CONSULTA ---\n");
     printf("Ingresa el numero de tabla (0-13): ");
@@ -72,15 +75,39 @@ void realizar_consulta(int sock) {
     printf("Ingresa la mascara de parametros (Bits 1/0): ");
     fgets(mascara, sizeof(mascara), stdin); mascara[strcspn(mascara, "\n")] = 0;
 
-    // Empaquetado estricto
     sprintf(paquete_envio, "1|%s|%s|%s", tabla, llave, mascara);
-    
-    // Enviamos al servidor
     send(sock, paquete_envio, strlen(paquete_envio), 0);
 
-    // Esperamos resultados
+    // --- NUEVA LÓGICA DE RECEPCIÓN ---
     bzero(respuesta_servidor, sizeof(respuesta_servidor));
     recv(sock, respuesta_servidor, sizeof(respuesta_servidor), 0);
     
-    printf("\n--- RESULTADOS DE LA BD ---\n%s\n---------------------------\n", respuesta_servidor);
+    // Verificamos si el servidor activó el modo de envío por renglones
+    if (strncmp(respuesta_servidor, "CANTIDAD|", 9) == 0) {
+        
+        // Extraemos el número que viene después de "CANTIDAD|"
+        int total_filas = atoi(respuesta_servidor + 9);
+        printf("\n--- RESULTADOS DE LA BD (%d registros) ---\n", total_filas);
+        // Abrimos el archivo en donde se guardara la consulta
+        FILE *archivo = fopen("./consulta.csv", "w");
+        // Le decimos al servidor: "Estoy listo, manda el primero" (ACK)
+        send(sock, "ACK", 3, 0);
+
+        // Bucle para recibir uno por uno
+        for(int i = 0; i < total_filas; i++) {
+            bzero(respuesta_servidor, sizeof(respuesta_servidor));
+            recv(sock, respuesta_servidor, sizeof(respuesta_servidor), 0);
+            
+            // Imprimimos el renglón recibido
+            printf("[%d]: %s\n", i, respuesta_servidor);
+            fprintf(archivo,"%s\n",respuesta_servidor);
+            // Confirmamos recepción (ACK) para que el servidor mande el siguiente
+            send(sock, "ACK", 3, 0); 
+        }
+        printf("----------------------------------------\n");
+        fclose(archivo);
+    } else {
+        // Si no era "CANTIDAD|", significa que es un Error o un "No se encontraron registros"
+        printf("\n[Servidor]: %s\n", respuesta_servidor);
+    }
 }

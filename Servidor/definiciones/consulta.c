@@ -1,9 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 #include <string.h>
-#include <strings.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #include "../extensiones/entidades.h"
 #include "../extensiones/consulta.h"
+
+extern int TAM_MAX;
+
+void procesar_consulta(int socket_cliente, int tabla, char *llave, char *mascara, ARCHIVERO *dir) {
+    if (llave == NULL || mascara == NULL) {
+        char *msj = "ERROR: Faltan parametros en la consulta.\n";
+        send(socket_cliente, msj, strlen(msj), 0);
+        return;
+    }
+
+    CONSULTA c = {tabla, NULL, mascara, llave, 0, NULL};
+    solicitud_consulta(&c, dir);
+
+    // 1. Filtro de Errores vs Éxito
+    if (c.error != NULL) {
+        if (strncmp(c.error, "ERROR", 5) == 0) {
+            send(socket_cliente, c.error, strlen(c.error), 0);
+            free(c.error);
+            return; // Terminamos aquí si hubo error
+        }
+        free(c.error); 
+    } 
+    
+    // 2. Respuesta Vacía
+    if (c.cantidad_resultados == 0) {
+        char *msj_vacio = "No se encontraron registros coincidentes.\n";
+        send(socket_cliente, msj_vacio, strlen(msj_vacio), 0);
+        return;
+    } 
+    
+    // 3. Protocolo Ping-Pong
+    if (c.cantidad_resultados > 0) {
+        char metadatos[50];
+        char buffer_ack[TAM_MAX]; // Buffer local solo para los ACKs
+
+        sprintf(metadatos, "CANTIDAD|%d", c.cantidad_resultados);
+        send(socket_cliente, metadatos, strlen(metadatos), 0);
+
+        bzero(buffer_ack, TAM_MAX);
+        recv(socket_cliente, buffer_ack, TAM_MAX, 0); // Esperamos 1er ACK
+
+        for (int i = 0; i < c.cantidad_resultados; i++) {
+            send(socket_cliente, c.resultado[i], strlen(c.resultado[i]), 0);
+            
+            bzero(buffer_ack, TAM_MAX);
+            recv(socket_cliente, buffer_ack, TAM_MAX, 0); // Esperamos siguiente ACK
+            
+            free(c.resultado[i]); 
+        }
+        free(c.resultado); 
+    }
+}
 
 void solicitud_consulta(CONSULTA *cliente, ARCHIVERO *dir)
 {

@@ -1,12 +1,13 @@
 File Tree: Examen Practico
-Generated on: 4/23/2026, 11:48:18 PM
+Generated on: 4/24/2026, 1:17:56 AM
 Root path: /home/enrique/Documents/Sistemas Distribuidos/Examen Practico
 
 ────────────────────────────────────────────────────────────────────────────────
 
 ├── 📁 Cliente/
 │   ├── 📄 cliente
-│   └── 📄 cliente.c
+│   ├── 📄 cliente.c
+│   └── 📄 consulta.csv
 ├── 📁 Documentacion/
 │   ├── 📁 Diagrama Drawio/
 │   │   ├── ⚙️ .$Diagrama-Relacional.drawio.bkp
@@ -46,6 +47,7 @@ Root path: /home/enrique/Documents/Sistemas Distribuidos/Examen Practico
 │   ├── 📄 sal_servidor.txt
 │   ├── 📄 servidor
 │   └── 📄 servidor.c
+├── 📄 File Tree: Examen Practico
 └── 📄 Tablas.xlsx
 
 ────────────────────────────────────────────────────────────────────────────────

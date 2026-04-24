@@ -11,16 +11,6 @@ typedef struct
     char *rutas_update[14];
 } ARCHIVERO;
 
-// EStructura del hilo para ejecutar la funcion de crear directorio
-typedef struct {
-    ARCHIVERO *dir;
-    char *carpeta;
-    char *update;
-    char **archivos;
-    char *extension;
-    int tamano;
-} HILO_DIR;
-
 typedef struct 
 {
     int numero_tabla;            // indice de tablas estudiante = 0, direcciones[1] ...
@@ -73,5 +63,21 @@ int levantar_servicio(int puerto);
 char *validar_llave(char *llave, int num_table, char *ruta);
 ANALISIS_ARCHIVO analizar_archivo(char *ruta);
 
+
+// Estructura del hilo 1 para ejecutar la funcion de crear directorio
+typedef struct {
+    ARCHIVERO *dir;
+    char *carpeta;
+    char *update;
+    char **archivos;
+    char *extension;
+    int tamano;
+} HILO_DIR;
+
+// Estructura del hilo 2 para ejecuta la funcion de levantar servicio
+typedef struct {
+    int puerto;
+    int socket_fd_resultado;
+} HILO_RED;
 
 #endif
