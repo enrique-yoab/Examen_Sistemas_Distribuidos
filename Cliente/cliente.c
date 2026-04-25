@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#define IP_SERVIDOR "127.0.0.1" // Cambiar a la IP de tu red para la prueba real
+#define IP_SERVIDOR "192.168.1.20" // Esta es la ip del servidor 
 #define PUERTO 3000
 #define TAM_MAX 1024
 
@@ -76,7 +76,9 @@ int main() {
 void realizar_consulta(int sock) {
     char tabla[10], llave[50], mascara[50], paquete_envio[TAM_MAX], respuesta_servidor[TAM_MAX];
 
-    printf("\n--- MODO CONSULTA ---\n");
+    printf("\n\t--- MODO CONSULTA ---\n");
+    printf("[ESTUDIANTE,0]\t\t[DIRECCION,1]\n[CARRERA,2]\t\t[HISTORIAL,3]\n[INSCRIPCION,4]\t\t[SECCION,5]\n[PROFESOR,6]\t\t[DEPARTAMENTO,7]\n");
+    printf("[NIVELES,8]\t\t[HORARIO,9]\n[GRADO,10]\t\t[CURSO,11]\n[AÑOS,12]\t\t[SEMESTRE,13]\n");
     printf("Ingresa el numero de tabla (0-13): ");
     fgets(tabla, sizeof(tabla), stdin); tabla[strcspn(tabla, "\n")] = 0;
 
@@ -95,9 +97,9 @@ void realizar_consulta(int sock) {
     
     // Verificamos si el servidor activó el modo de envío por renglones
     if (strncmp(respuesta_servidor, "CANTIDAD|", 9) == 0) {
-        
         // Extraemos el número que viene después de "CANTIDAD|"
         int total_filas = atoi(respuesta_servidor + 9);
+        if(strstr(llave, "full") != NULL || strstr(llave, "FULL") != NULL || strstr(llave, "low") != NULL || strstr(llave, "LOW") != NULL ) total_filas--;
         printf("\n--- RESULTADOS DE LA BD (%d registros) ---\n", total_filas);
         // Abrimos el archivo en donde se guardara la consulta
         FILE *archivo = fopen("./consulta.csv", "w");
