@@ -10,26 +10,6 @@
 
 extern ARCHIVERO directorio;
 
-void imprimir_rutas(ARCHIVERO *dir)
-{
-    int i = 0;
-    printf("---------> Mostrando rutas de tablas <---------\n");
-    while (i < dir->cantidad)
-    {
-        printf("Ruta[%d] : %s \n", i + 1, dir->rutas[i]);
-        i++;
-    }
-    printf("-----------------------------------------------\n");
-    i = 0;
-    printf("---------> Mostrando rutas de escritura <---------\n");
-    while (i < dir->cantidad)
-    {
-        printf("Ruta[%d] : %s \n", i + 1, dir->rutas_update[i]);
-        i++;
-    }
-    printf("--------------------------------------------------\n");
-}
-
 void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, char *update, int cantidad_archivos)
 {   
     printf("Se esta creando un directorio con %d rutas de archivos %s\n", cantidad_archivos, tipo);

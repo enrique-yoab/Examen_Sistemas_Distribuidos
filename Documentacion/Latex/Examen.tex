@@ -976,8 +976,474 @@ void* funcion_h2(void *arg) {
 }
 \end{lstlisting}
 
-El primer archivo que primero se generó es el de entidades.h, el cual tiene declarado todas las estructuras utilizadas dentro de nuestro servidor.
+\begin{itemize}
+    \item \textbf{Archivos de Cabecera (.h)}
+\end{itemize}
 
+El primer archivo que se generó es el de entidades.h, el cual tiene declarado todas las estructuras utilizadas dentro de nuestro servidor, En total son 8 esructuras principales,
+1 para el directorio que almacena las rutas de todos las tablas, 4 para las operaciones principales de la base de datos, 2 para los hilos generados en el servidor y 1 para el analis de archivos de texto.
+Junto con la declaracion de 4 funciones, el que crea el directorio, el que levanta el servicio, la que valida la llave dentro de una tabla, y el analisis breve de la tabla que lee.
 
+\begin{lstlisting}[style=estiloC ,title={Código 1. Servidor TCP (entidades.h)}]
+#ifndef ENTIDADES_H
+#define ENTIDADES_H
+#include <stdio.h>
+
+// Estructuras complejas para la resolucion de las consultas, modificacion, insercion y eliminacion
+// de los datos sobre las tablas
+typedef struct
+{
+    int cantidad;
+    char *rutas[14];
+    char *rutas_update[14];
+} ARCHIVERO;
+
+typedef struct 
+{
+    int numero_tabla;            // indice de tablas estudiante = 0, direcciones[1] ...
+    char *error;                 // Buffer de mensajes de error
+    char *parametros;            // Máscara: "1" captura, "0" ignora
+    char *llave;                 // Identificador único (llave primaria)
+    int cantidad_resultados;     // Cuántos resultados se encontraron
+    char **resultado;            // Array dinámico de strings con resultados
+} CONSULTA;
+    
+typedef struct 
+{
+    int numero_tabla;
+    char *error;
+    char *datos;
+} INSERCION;
+
+typedef struct
+{
+    int num_tabla;
+    char *error;
+    char *primary_key;
+    char *parametros;
+    void *estructura;
+} UPDATE;
+
+typedef struct {
+    int num_tabla;
+    char *error;
+    char *primary_key;
+} ELIMINACION;
+
+typedef struct
+{
+    int num_lineas;
+    int num_columnas;
+} ANALISIS_ARCHIVO;
+
+void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, char *update, int cantidad_archivos);
+int levantar_servicio(int puerto);
+char *validar_llave(char *llave, int num_table, char *ruta);
+ANALISIS_ARCHIVO analizar_archivo(char *ruta);
+
+// Estructura del hilo 1 para ejecutar la funcion de crear directorio
+typedef struct {
+    ARCHIVERO *dir;
+    char *carpeta;
+    char *update;
+    char **archivos;
+    char *extension;
+    int tamano;
+} HILO_DIR;
+
+// Estructura del hilo 2 para ejecuta la funcion de levantar servicio
+typedef struct {
+    int puerto;
+    int socket_fd_resultado;
+} HILO_RED;
+
+#endif
+\end{lstlisting}
+
+Los ultimos 3 archivos de cabecera solo declaran las funciones que utiliza cada operación consulta, inserción, actualización y eliminación.
+
+\begin{lstlisting}[style=estiloC ,title={Código 2. Servidor TCP (consulta.h)}]
+#ifndef CONSULTA_H 
+#define CONSULTA_H
+#include "entidades.h"
+
+void solicitud_consulta(CONSULTA *cliente, ARCHIVERO *dir);
+void consulta_tabla(CONSULTA *cliente, ARCHIVERO *dir, int num_columnas);
+
+#endif
+\end{lstlisting}
+
+\begin{lstlisting}[style=estiloC ,title={Código 3. Servidor TCP (insercion.h)}]
+#ifndef INSERCION_H 
+#define INSERCION_H
+#include "entidades.h"
+
+void solicitud_insercion(INSERCION *cliente, ARCHIVERO *dir);
+void solicitud_eliminacion(ELIMINACION *cliente, ARCHIVERO *dir);
+
+#endif
+\end{lstlisting}
+
+\begin{lstlisting}[style=estiloC ,title={Código 4. Servidor TCP (update.h)}]
+#ifndef UPDATE_H 
+#define UPDATE_H
+#include "entidades.h"
+
+void solicitud_update(UPDATE *cliente, ARCHIVERO *dir);
+void update_archivo(UPDATE *cliente, ARCHIVERO *dir);
+
+#endif
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{Archivos fuente (.c)}
+\end{itemize}
+
+Estos archivos son los que contienen la logica de cada uno de los archivos de cabecera, que resultan en 4 archivos fuente. \\
+El primer archivo es el que crea el directorio, el cual solo consta de las rutas principales en donde se encuentra las tablas principales y otro donde se almacenaran temporalmente los registros que no son actualizados y posteriormente copiarlos al original.
+Además "analizar archivo" se encarga de leer cuantas columnas y filas hay en cada archivo lo que permite que otras funciones mantengan sus limites lo que permite a validar llave saber en que tabla se encuentra, cuantos parametros ocupa y finalmente lanzar una consulta a la primera columna de la tabla, si esto no se hace simplemente no podra reutilizar la funcion que hace una consulta.
+El que valida la llave se encarga de revisar que la llave proporcionada no se repita, de lo contrario no existe o esta libre. Por ultimo el que levanta el servicio solo se encarga de eso para poder realizar exitosamente la conexion entre el servidor y el cliente.
+
+\begin{lstlisting}[style=estiloC ,title={Código 1. Servidor TCP (funciones.h)}]
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include "../extensiones/entidades.h"
+#include "../extensiones/consulta.h"
+#include "../extensiones/insercion.h"
+
+extern ARCHIVERO directorio;
+
+void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, char *update, int cantidad_archivos)
+{   
+    printf("Se esta creando un directorio con %d rutas de archivos %s\n", cantidad_archivos, tipo);
+    
+    for(int i = 0; i < cantidad_archivos; i++)
+    {
+        // 1. Calculamos la memoria exacta para cada cadena por separado
+        size_t len_carpeta = strlen(carpeta) + strlen(archivos[i]) + strlen(tipo) + 1;
+        size_t len_update  = strlen(update) + strlen(archivos[i]) + strlen(tipo) + 1;
+
+        // 2. Asignamos la memoria correcta a cada puntero
+        char *ruta_completa = (char *)malloc(len_carpeta);
+        char *ruta_updates  = (char *)malloc(len_update);
+
+        // Buena práctica: Verificar que malloc no falle
+        if (ruta_completa == NULL || ruta_updates == NULL) {
+            printf("ERROR: Memoria insuficiente para crear rutas.\n");
+            return;
+        }
+
+        // 3. Construimos la ruta principal (ej. "./Datos/Estudiante.csv")
+        strcpy(ruta_completa, carpeta);
+        strcat(ruta_completa, archivos[i]);
+        strcat(ruta_completa, tipo);
+
+        // 4. Construimos la ruta temporal (ej. "./buffer/Estudiante.csv")
+        strcpy(ruta_updates, update);
+        strcat(ruta_updates, archivos[i]);
+        strcat(ruta_updates, tipo);
+
+        // 5. Guardamos en el archivero
+        dir->rutas[i] = ruta_completa;
+        dir->rutas_update[i] = ruta_updates; 
+        dir->cantidad = i + 1;
+    }
+}
+
+ANALISIS_ARCHIVO analizar_archivo(char *ruta)
+{
+    ANALISIS_ARCHIVO analisis = {0, 0};
+    FILE *archivo = fopen(ruta, "r");
+
+    char linea[512];
+    int primera_linea = 1;
+    while (fgets(linea, sizeof(linea), archivo) != NULL) {
+        analisis.num_lineas++;
+        if (primera_linea) {
+            // Contar columnas: número de comas + 1
+            char *ptr = linea;
+            while (*ptr) {
+                if (*ptr == ',') {
+                    analisis.num_columnas++;
+                }
+                ptr++;
+            }
+            analisis.num_columnas++; // Contar ultimo renglon por sintaxis .csv
+            primera_linea = 0;
+        }
+    }
+    // Cerramos el archivo y regresamos el analisis
+    fclose(archivo);
+    return analisis;
+}
+
+char *validar_llave(char *llave, int num_table, char *ruta)
+{
+    // 1. Analizar el archivo para saber cuántas columnas reales tiene
+    ANALISIS_ARCHIVO analisis = analizar_archivo(ruta);
+    int columnas = analisis.num_columnas;
+
+    // 2. Construir la máscara dinámica (ej. "10000" para 5 columnas)
+    // Reservamos memoria para las columnas + el carácter nulo '\0'
+    char *mascara = malloc(columnas + 1);
+    if (mascara == NULL) return "ERROR: Memoria insuficiente";
+
+    mascara[0] = '1'; // Activamos solo la primera columna (la llave)
+    for (int i = 1; i < columnas; i++) {
+        mascara[i] = '0'; // Apagamos el resto de las columnas
+    }
+    mascara[columnas] = '\0'; // Cerramos la cadena de C
+
+    CONSULTA tmp;
+    tmp.numero_tabla = num_table;
+    tmp.error = NULL;
+    tmp.llave = llave;
+    tmp.cantidad_resultados = 0;
+    tmp.resultado = NULL;
+    tmp.parametros = mascara; // Asignamos nuestra cadena recién creada
+
+    // Lanzamos la consulta pasándole el número real de columnas
+    consulta_tabla(&tmp, &directorio, columnas);
+
+    // 3. LIMPIEZA: Ya usamos la máscara, debemos liberarla
+    free(mascara); 
+
+    // 4. Verificamos si la consulta encontró la llave
+    if (tmp.cantidad_resultados > 0)
+    {
+        // Liberamos la memoria de los resultados
+        for (int i = 0; i < tmp.cantidad_resultados; i++) {
+            free(tmp.resultado[i]);
+        }
+        free(tmp.resultado);
+
+        return "ERROR: La llave se repite en la tabla\n";
+    }
+
+    return "EXITO";
+}
+
+int levantar_servicio(int puerto)
+{
+    int servidor_fd;
+    struct sockaddr_in direct;
+    int opt = 1;
+
+    // 1. Crear el socket: AF_INET (IPv4), SOCK_STREAM (TCP)
+    if ((servidor_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+        perror("ERROR: Fallo al crear el socket TCP");
+        exit(EXIT_FAILURE);
+    }
+
+    // Opcional pero recomendado: Permite reutilizar el puerto inmediatamente 
+    // si reinicias el servidor rápido durante tus pruebas
+    setsockopt(servidor_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+    // 2. Configurar la estructura de la dirección
+    bzero(&direct, sizeof(direct));
+    direct.sin_family = AF_INET;
+    direct.sin_addr.s_addr = INADDR_ANY; // Escucha en cualquier interfaz de red
+    direct.sin_port = htons(puerto);
+
+    // 3. Vincular el socket al puerto (bind)
+    if (bind(servidor_fd, (struct sockaddr *)&direct, sizeof(direct)) < 0) {
+        perror("ERROR: Fallo en bind (Puerto en uso)");
+        exit(EXIT_FAILURE);
+    }
+
+    // 4. Poner el socket en modo escucha (listen) - Exclusivo de TCP
+    // El '5' indica cuántas conexiones pueden esperar en la cola antes de ser rechazadas
+    if (listen(servidor_fd, 5) < 0) {
+        perror("ERROR: Fallo en listen");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("\n[+] Servicio TCP levantado. Escuchando en el puerto %d...\n", puerto);
+    
+    // Retornamos el descriptor para que el main pueda aceptar a los clientes
+    return servidor_fd;
+}
+\end{lstlisting}
+
+Este archivo (consulta.c / consulta.h) es el módulo encargado de gestionar las operaciones de lectura sobre la base de datos. Como primer paso de seguridad, valida que los parámetros enviados por el cliente coincidan con la estructura física del archivo. De detectar alguna anomalía, intercepta la petición y retorna un mensaje de error descriptivo, lo que permite al usuario corregir su formato sin poner en riesgo la integridad del sistema.
+
+Adicionalmente, el motor cuenta con la lógica necesaria para procesar tres niveles de consulta:
+
+\begin{itemize}
+    \item \textbf{Completa:} Extrae y retorna todos los registros de la tabla con la totalidad de sus columnas.
+    \item \textbf{Parcial:} Recorre todos los registros del archivo, pero filtra y devuelve unicamente las columnas que el cliente seleccionó mediante la mascara de bits.
+    \item \textbf{Unica:} Localiza un registro en especifico mediante su llave primaria y extra exclusivamente las columnas que el usuario desea observar de dicho registro.
+\end{itemize}
+
+\begin{lstlisting}[style=estiloC ,title={Código 2. Servidor TCP (consulta.h)}]
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include "../extensiones/entidades.h"
+#include "../extensiones/consulta.h"
+
+extern int TAM_MAX;
+
+void procesar_consulta(int socket_cliente, int tabla, char *llave, char *mascara, ARCHIVERO *dir) {
+    if (llave == NULL || mascara == NULL) {
+        char *msj = "ERROR: Faltan parametros en la consulta.\n";
+        send(socket_cliente, msj, strlen(msj), 0);
+        return;
+    }
+
+    CONSULTA c = {tabla, NULL, mascara, llave, 0, NULL};
+    solicitud_consulta(&c, dir);
+
+    // 1. Filtro de Errores vs Exito
+    if (c.error != NULL) {
+        if (strncmp(c.error, "ERROR", 5) == 0) {
+            send(socket_cliente, c.error, strlen(c.error), 0);
+            free(c.error);
+            return; // Terminamos aquí si hubo error
+        }
+        free(c.error); 
+    } 
+    
+    // 2. Respuesta Vacía
+    if (c.cantidad_resultados == 0) {
+        char *msj_vacio = "No se encontraron registros coincidentes.\n";
+        send(socket_cliente, msj_vacio, strlen(msj_vacio), 0);
+        return;
+    } 
+    
+    // 3. Protocolo Ping-Pong
+    if (c.cantidad_resultados > 0) {
+        char metadatos[50];
+        char buffer_ack[TAM_MAX]; // Buffer local solo para los ACKs
+
+        sprintf(metadatos, "CANTIDAD|%d", c.cantidad_resultados);
+        send(socket_cliente, metadatos, strlen(metadatos), 0);
+
+        bzero(buffer_ack, TAM_MAX);
+        recv(socket_cliente, buffer_ack, TAM_MAX, 0); // Esperamos 1er ACK
+
+        for (int i = 0; i < c.cantidad_resultados; i++) {
+            send(socket_cliente, c.resultado[i], strlen(c.resultado[i]), 0);
+            
+            bzero(buffer_ack, TAM_MAX);
+            recv(socket_cliente, buffer_ack, TAM_MAX, 0); // Esperamos siguiente ACK
+            
+            free(c.resultado[i]); 
+        }
+        free(c.resultado); 
+    }
+}
+
+void solicitud_consulta(CONSULTA *cliente, ARCHIVERO *dir)
+{
+    // 1. Validar que el número de tabla esté dentro de los límites
+    if (cliente->numero_tabla < 0 || cliente->numero_tabla >= dir->cantidad) {
+        cliente->error = strdup("ERROR: LA TABLA SOLICITADA NO EXISTE\n");
+        return;
+    }
+
+    // 2. Descubrimiento de Esquema
+    char *ruta_archivo = dir->rutas[cliente->numero_tabla];
+    ANALISIS_ARCHIVO analisis = analizar_archivo(ruta_archivo);
+    int columnas_reales = analisis.num_columnas;
+
+    printf("--------||| Se realiza consulta en la tabla %d |||--------\n", cliente->numero_tabla);
+
+    // 3. Verificamos que la máscara de bits coincida con las columnas reales
+    if (strlen(cliente->parametros) != columnas_reales) {
+        char buffer_error[256];
+        sprintf(buffer_error, "ERROR: La mascara ingresada no coincide. Esta tabla requiere exactamente %d parametros (Bits 1/0).\n", columnas_reales);
+        cliente->error = strdup(buffer_error);
+    } 
+    // 4. Si todo está perfecto, lanzamos la consulta física
+    else {
+        consulta_tabla(cliente, dir, columnas_reales);
+    }
+}
+
+void consulta_tabla(CONSULTA *cliente, ARCHIVERO *dir, int num_columnas)
+{
+    ANALISIS_ARCHIVO analisis = analizar_archivo(dir->rutas[cliente->numero_tabla]);
+
+    FILE *tabla = fopen(dir->rutas[cliente->numero_tabla], "r");
+
+    char linea[300];
+    int hallados = 0;
+    cliente->resultado = malloc(sizeof(char*) * analisis.num_lineas);
+    while (fgets(linea, sizeof(linea), tabla) != NULL) {
+        linea[strcspn(linea, "\n")] = '\0';
+
+        char *tokens[15];
+        int col = 0;
+        char *token = strtok(linea, ",");
+        while (token != NULL && col < num_columnas) {
+            tokens[col++] = token;
+            token = strtok(NULL, ",");
+        }
+
+        if (col == 0) {
+            continue;
+        }
+
+        int es_full = (cliente->llave != NULL && strcasecmp(cliente->llave, "full") == 0);
+        int es_low = (cliente->llave != NULL && strcasecmp(cliente->llave, "low") == 0);
+        int match = 0;
+
+        if (es_full || es_low) {
+            match = 1;
+        } else if (cliente->llave == NULL) {
+            match = 1;
+        } else if (tokens[0] != NULL && strcmp(tokens[0], cliente->llave) == 0) {
+            match = 1;
+        }
+
+        if (!match) {
+            continue;
+        }
+
+        char buffer[1024] = "";
+        int primero = 1;
+
+        if (es_full) {
+            for (int i = 0; i < col; i++) {
+                if (!primero) strcat(buffer, ",");
+                strcat(buffer, tokens[i]);
+                primero = 0;
+            }
+        } else {
+            for (int i = 0; i < num_columnas && i < col; i++) {
+                if (cliente->parametros[i] == '1') {
+                    if (!primero) strcat(buffer, ",");
+                    strcat(buffer, tokens[i]);
+                    primero = 0;
+                }
+            }
+        }
+        cliente->resultado[hallados++] = strdup(buffer);
+    }
+    cliente->cantidad_resultados = hallados;
+    // Liberamos la memoria no ocupada
+    if (hallados > 0 && hallados < analisis.num_lineas) {
+        cliente->resultado = realloc(cliente->resultado, sizeof(char*) * hallados);
+    }
+    if (hallados == 0) {
+        free(cliente->resultado);
+        cliente->resultado = NULL;
+        cliente->error = strdup("ERROR: No se encontro ningun registro en la tabla consultada\n");
+    }else{
+        cliente->error = strdup("EXITO: Se encontro al menos 1 registro en la tabla\n");
+    }
+
+    fclose(tabla);
+}
+\end{lstlisting}
 
 \end{document}

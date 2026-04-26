@@ -62,81 +62,28 @@ void procesar_consulta(int socket_cliente, int tabla, char *llave, char *mascara
 
 void solicitud_consulta(CONSULTA *cliente, ARCHIVERO *dir)
 {
-    switch (cliente->numero_tabla)
-    {
-    case 0:
-        printf("--------||| Se realiza consulta en la tabla Estudiantes |||--------\n");
-        if(strlen(cliente->parametros) != 10) cliente->error = strdup("ERROR: TABLA ESTUDIANTES OCUPA 10 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 10);
-        break;
-    case 1:
-        printf("--------||| Se realiza consulta en la tabla Direccion |||--------\n");
-        if(strlen(cliente->parametros) != 6) cliente->error = strdup("ERROR: TABLA DIRECCION OCUPA 6 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 6);
-        break;
-    case 2:
-        printf("-----||| Se realiza consulta en la tabla Carrera |||-----\n");
-        if(strlen(cliente->parametros) != 3) cliente->error = strdup("ERROR: TABLA CARRERA OCUPA 3 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 3);
-        break;
-    case 3:
-        printf("-----||| Se realiza consulta en la tabla Historial |||-----\n");
-        if(strlen(cliente->parametros) != 4) cliente->error = strdup("ERROR: TABLA HISTORIAL OCUPA 4 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 4);
-        break;
-    case 4:
-        printf("-----||| Se realiza consulta en la tabla Inscripcion |||-----\n");
-        if(strlen(cliente->parametros) != 3) cliente->error = strdup("ERROR: TABLA INSCRIPCION OCUPA 3 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 3);
-        break;
-    case 5:
-        printf("-----||| Se realiza consulta en la tabla Seccion |||-----\n");
-        if(strlen(cliente->parametros) != 9) cliente->error = strdup("ERROR: TABLA SECCION OCUPA 9 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 9);
-        break;
-    case 6:
-        printf("-----||| Se realiza consulta en la tabla Profesor |||-----\n");
-        if(strlen(cliente->parametros) != 4) cliente->error = strdup("ERROR: TABLA PROFESORES OCUPA 4 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 4);
-        break;
-    case 7:
-        printf("-----||| Se realiza consulta en la tabla Departamento |||-----\n");
-        if(strlen(cliente->parametros) != 5) cliente->error = strdup("ERROR: TABLA DEPARTAMENTO OCUPA 5 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 5);
-        break;
-    case 8:
-        printf("-----||| Se realiza consulta en la tabla Niveles |||-----\n");
-        if(strlen(cliente->parametros) != 2) cliente->error = strdup("ERROR: TABLA NIVELES OCUPA 2 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 2);
-        break;
-    case 9:
-        printf("-----||| Se realiza consulta en la tabla Horario |||-----\n");
-        if(strlen(cliente->parametros) != 2) cliente->error = strdup("ERROR: TABLA HORARIO OCUPA 2 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 2);
-        break;
-    case 10:
-        printf("-----||| Se realiza consulta en la tabla Grado |||-----\n");
-        if(strlen(cliente->parametros) != 5) cliente->error = strdup("ERROR: TABLA GRADO OCUPA 5 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 5);
-        break;
-    case 11:
-        printf("-----||| Se realiza consulta en la tabla Curso |||-----\n");
-        if(strlen(cliente->parametros) != 2) cliente->error = strdup("ERROR: TABLA CURSO OCUPA 2 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 2);
-        break;
-    case 12:
-        printf("-----||| Se realiza consulta en la tabla Años |||-----\n");
-        if(strlen(cliente->parametros) != 2) cliente->error = strdup("ERROR: TABLA AÑOS OCUPA 2 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 2);
-        break;
-    case 13:
-        printf("-----||| Se realiza consulta en la tabla Semestre |||-----\n");
-        if(strlen(cliente->parametros) != 2) cliente->error = strdup("ERROR: TABLA SEMESTRE OCUPA 2 PARAMETROS\n");
-        else consulta_tabla(cliente, dir, 2);
-        break;
-    default:
-        printf("ERROR: NO EXISTE ESA TABLA\n");
-        break;
+    // 1. Validar que el número de tabla esté dentro de los límites
+    if (cliente->numero_tabla < 0 || cliente->numero_tabla >= dir->cantidad) {
+        cliente->error = strdup("ERROR: LA TABLA SOLICITADA NO EXISTE\n");
+        return;
+    }
+
+    // 2. Descubrimiento de Esquema (Magia dinámica)
+    char *ruta_archivo = dir->rutas[cliente->numero_tabla];
+    ANALISIS_ARCHIVO analisis = analizar_archivo(ruta_archivo);
+    int columnas_reales = analisis.num_columnas;
+
+    printf("--------||| Se realiza consulta en la tabla %d |||--------\n", cliente->numero_tabla);
+
+    // 3. Verificamos que la máscara de bits coincida con las columnas reales
+    if (strlen(cliente->parametros) != columnas_reales) {
+        char buffer_error[256];
+        sprintf(buffer_error, "ERROR: La mascara ingresada no coincide. Esta tabla requiere exactamente %d parametros (Bits 1/0).\n", columnas_reales);
+        cliente->error = strdup(buffer_error);
+    } 
+    // 4. Si todo está perfecto, lanzamos la consulta física
+    else {
+        consulta_tabla(cliente, dir, columnas_reales);
     }
 }
 

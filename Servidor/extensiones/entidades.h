@@ -49,15 +49,6 @@ typedef struct
     int num_columnas;
 } ANALISIS_ARCHIVO;
 
-// ESTRUCTURA FINAL PARA LA PETICION DEL USUARIO POR EL MOMENTO NO ES RELEVANTE
-typedef struct 
-{
-    int operacion; // 1=Consulta, 2=Modificar, 3=Eliminar, 4=Actualizar
-    int tabla;     // El índice de tu ARCHIVERO (0=Estudiante, 1=Direccion, etc.)
-    char snum[4];  // La llave primaria para buscar
-} PETICION;
-
-void imprimir_rutas(ARCHIVERO *dir);
 void crear_directorio(ARCHIVERO *dir, char *carpeta, char *archivos[], char *tipo, char *update, int cantidad_archivos);
 int levantar_servicio(int puerto);
 char *validar_llave(char *llave, int num_table, char *ruta);

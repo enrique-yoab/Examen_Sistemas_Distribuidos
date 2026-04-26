@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1777242918.40739 "/home/enrique/Documents/Sistemas Distribuidos/Examen Practico/Documentacion/Latex/Examen.tex" "Examen.pdf" "Examen" 1777242920.63696 0
+["pdflatex"] 1777247776.18964 "/home/enrique/Documents/Sistemas Distribuidos/Examen Practico/Documentacion/Latex/Examen.tex" "Examen.pdf" "Examen" 1777247778.57624 0
   "/etc/texmf/web2c/texmf.cnf" 1771219098.53345 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/enrique/Documents/Sistemas Distribuidos/Examen Practico/Documentacion/Latex/Examen.tex" 1777242918.1378 43399 03d4b9c4c1b2f9b37ed71e3563d4c26e ""
+  "/home/enrique/Documents/Sistemas Distribuidos/Examen Practico/Documentacion/Latex/Examen.tex" 1777247775.99599 60114 e8baf86f5d8a295584b92f033840b7d5 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm" 1246382020 928 2dc8d444221b7a635bb58038579b861a ""
@@ -195,8 +195,8 @@
   "Diagrama Entidad-Relacion.jpeg" 1777232030.34737 264034 e043835ad862364b16f70287bd9e2f70 ""
   "Direccion.png" 1777172490.63048 299490 b2acef579cae06f5b5c79b8bd1d41377 ""
   "Estudiantes.png" 1777170278.91748 423279 0efb2d57f7786e84e1753557ff9de173 ""
-  "Examen.aux" 1777242920.54594 6574 1ad6da77e232cfae3e29b6e79dcbcc7c "pdflatex"
-  "Examen.tex" 1777242918.1378 43399 03d4b9c4c1b2f9b37ed71e3563d4c26e ""
+  "Examen.aux" 1777247778.48287 6574 4d4876499ac99d5444b3e2e29f30e1fa "pdflatex"
+  "Examen.tex" 1777247775.99599 60114 e8baf86f5d8a295584b92f033840b7d5 ""
   "Grado.png" 1777183456.97958 93784 13781a90185a2ee048da8500291b09e8 ""
   "Historial.png" 1777176050.27367 54600 c15a2c1253a9fee138657191305bc462 ""
   "Horario.png" 1777183039.75892 5240 37c8cfd5eebdc7a6648d1eb704fcdee3 ""
