@@ -1,0 +1,297 @@
+\documentclass[12pt]{article}
+\usepackage{bookmark}
+% --- Paquetes para el diseño ---
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[spanish,provide=*]{babel}
+\usepackage[margin=1.5cm,top=2cm, bottom=3cm,headheight=0pt, headsep=0.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{tcolorbox} % Para los cuadros grises redondeados
+\tcbuselibrary{breakable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{fancyhdr}   % Para el encabezado de las páginas siguientes
+\usepackage{titlesec}   % Para personalizar los títulos
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{amssymb} % Necesario para los símbolos N y Z
+\usepackage{amsmath} % Recomendado para texto dentro de fórmulas
+
+% Configuración para quitar "Listing #:"
+\DeclareCaptionFormat{listing}{\textbf{#3}}
+
+% --- ESTILO PARA C (Multihilos) ---
+\lstdefinestyle{estiloC}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{orange},
+    numbers=left,
+    numberstyle=\tiny\color{green!50!black},
+    stepnumber=1,
+    numbersep=8pt,
+    frame=single,
+    rulecolor=\color{black},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    keepspaces=true,
+    columns=flexible,
+    xleftmargin=20pt,
+    morekeywords={NULL, sendto, recvfrom, bzero, printf, close, exit, perror, strlen, memset, bind},
+    extendedchars=true,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+}
+
+% --- Configuración de los cuadros (Estilo idéntico al documento) ---
+\tcbset{
+    estilo_practica/.style={
+        colback=gray!20,      % Color de fondo gris claro
+        colframe=gray!20,     % Color del borde (igual al fondo)
+        arc=12pt,             % Redondeo de las esquinas
+        boxrule=0pt,
+        left=15pt, right=15pt, top=8pt, bottom=8pt,
+        halign=center,        % Alineación del texto dentro
+        fonttitle=\bfseries\large,
+        coltitle=black,
+        before skip=10pt,
+        after skip=10pt
+    }
+}
+
+% --- Configuración de Colores ---
+\definecolor{azul_unam}{RGB}{31, 78, 121} % Azul similar al de la imagen
+
+% --- Estilo de los Títulos (Azul y Negrita) ---
+\titleformat{\section}
+  {\color{azul_unam}\normalfont\bfseries\centering}{}{0pt}{}
+  
+\titleformat{\subsection}
+  {\color{azul_unam}\normalfont\bfseries}{}{0pt}{\thesubsection\ }
+
+\titleformat{\subsubsection}
+  {\color{azul_unam}\normalfont\bfseries}{}{0pt}{\thesubsubsection\ }
+
+% --- Configuración del Encabezado (Páginas Siguientes) ---
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{azul_unam}\leaders\hrule height \headrulewidth\hfill}}
+
+\fancyhead[L]{
+    \small \includegraphics[height=1.25cm]{logo_fi.png} % Ajusta el nombre de tu archivo
+    \quad Facultad de Ingeniería UNAM
+}
+\fancyhead[R]{\small \textit{Sistemas Distribuidos}}
+\fancyfoot[C]{\thepage}
+
+\setlength{\headheight}{50.95274pt}
+\addtolength{\topmargin}{-22.95274pt}
+\setlength{\parindent}{0pt}
+
+% --- CUERPO DEL DOCUMENTO ---
+\begin{document}
+\pagestyle{empty} % Quitar números de página en la portada
+
+\vspace*{-2.5cm}
+% --- Encabezado con Logos ---
+\begin{table}[h]
+\centering
+\begin{tabular}{m{3cm} m{11cm} m{3cm}}
+    \includegraphics[width=3cm]{logo_unam.png} & 
+    \centering
+    \textcolor[rgb]{0.2, 0.4, 0.6}{\textbf{\Large Primer Parcial}} \\[0.2cm]
+    \textbf{\LARGE Examen Práctico} \\[0.2cm]
+    \large Prof Carmen Lucia Bustillo Hernández \\
+    \texttt{Universidad Nacional Autónoma de México} \\[0.1cm]
+    Fecha de Entrega: 9 de Abril de 2026 &
+    \centering
+    \includegraphics[width=2.85cm]{logo_fi.png} \\ 
+\end{tabular}
+\end{table}
+
+\vspace{-0.5cm}
+% --- Títulos Centrales ---
+\begin{flushleft}
+    \textbf{Nombre:} Cortez Rios Enrique Yoab \\[0.25cm]
+    \textbf{No. cuenta:} 317302992 \\[0.25cm]
+    \textbf{Firma:} \\[0.25cm]
+    \textbf{Nombre:} Mendoza Gonzáles Mario\\[0.25cm]
+    \textbf{No. cuenta:} \\[0.25cm]
+    \textbf{Firma:}
+\end{flushleft}
+\vspace{0.5cm}
+
+% --- Cuadro: Instrucciones ---
+\begin{tcolorbox}[estilo_practica]
+    \begin{center}
+        \textbf{Instrucciones}
+    \end{center}
+    \begin{enumerate}
+        \item Lea su examen cuidadosamente. Ponga cuidado a los detalles
+        \item Para la realizacion su examen se requiere equipo de dos personas.
+        \item La evaluacion consiste en la demostracion en presencial con dos computadoras meidante cable de red del problema planteado.
+        \item Presentar pseudocódigo, diagrama de flujo y código respecivamente.
+        \item Presentar la documentación correspondiente a la base de datos.
+        \item Contenido que este fuera de contexto de tema del examen sera ANULADO.
+    \end{enumerate}
+\end{tcolorbox}
+
+% --- Cuadro: Objetivos Específicos ---
+\begin{tcolorbox}[estilo_practica]
+    \begin{center}
+        \textbf{Critrios de Evaluación}
+    \end{center}
+    \begin{enumerate}
+        \item Modelo Entidad-Relaciony Normalizacion de la Base de Datos = 12.5pts.
+        \item Pseudocódigo y diagrama de flujo = 12.5pts. 
+        \item Codigo de la aplicación = 25pts.
+    \end{enumerate}
+\end{tcolorbox}
+
+\newpage % --- Segunda Paginas
+\pagestyle{fancy}
+
+\section{\large 1. Problemas}
+\subsection{Problema 1}
+Crear una aplicación (Utlizando sockets tipo de flujo como datagrama y TCP) que desde la máquina cliente solicite a un servidor consultas sobre la base de datos (Universidad.xsl). Normalice a la 4F respectivamente  la base de datos proporcionada. La aplicación debe consultar,
+modficar, eliminar o actualizar los registros de la base de datos respectivamente desde el cliente. Para el desarrolo de este problema, puede utilizar: \textbf{50 pts.}
+
+\begin{itemize}
+    \item Un gestor de base de datos (My SQL, Postgress, entre otros.)
+    \item Gestión de la base de datos mediante archivos de texto.
+\end{itemize}
+
+\textbf{Nota:} Insertar todos los registros que vienen en el archivo Universidad.xls para realizar las consultas.
+
+\subsection{Solucion}
+
+Para poder alzar la base de datos por medio de archivos de texto, lo principal es normalizar la base de datos del archivo "Universidad.xsl", posterior a esto debemos 
+registrar los datos que contiene originalmente nuestra base, a la nueva base de datos normalizada que se muestra a continuación:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Diagrama-Relaciona.png} 
+    \caption{Diagrama Entidad-Relacion}
+\end{figure}
+
+Con esto podemos identificar varios datos importantes, son 14 tablas, las cuales debemos crear como archivos y llenarlos con sus datos.
+
+\subsubsection{Tabla Estudiantes}
+Esta tabla almacena los 20 registros de los estudiantes, su semestre y el domicilio permanente, lo que evita agregar registros vacios dentro de la tabla direccion, además de ser unos atributos muy cercanos al estduiante.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Estudiantes.png} 
+    \caption*{Tabla 1. Estudiante}
+\end{figure}
+
+\subsubsection{Tabla Dirección}
+Esta tabla almacena la direccion actual el estudiante la cual es mas propensa a ser cambia y por eso no se agrega directamente a la tabla de estudiantes como lo es su domicilio permanente.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Direccion.png} 
+    \caption*{Tabla 2. Dirección}
+\end{figure}
+
+\subsubsection{Tabla carrera}
+La tabla carrera almacena los nombres de cada carrera, la cual un estudiante puede tener 1 o mas carreras, por lo que su relacion es de muchos a muchos, lo que obliga a generarse una tabla intermedia entre el estudiante y las carreras, que se llamara historial.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.40\textwidth]{Carrera.png} 
+    \caption*{Tabla 3. Carrera}
+\end{figure}
+
+\subsubsection{Tabla Historial}
+Esta es la tabla intermedia que se genera entre el estudiante y el catalogo de carreras, si tiene mas de una llave significa que tiene mas de 1 carrera.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.32\textwidth]{Historial.png} 
+    \caption*{Tabla 4. Historial}
+\end{figure}
+
+\subsubsection{Tabla Inscripcion}
+Esta tabla es el producto de la relacion estudiante y la seccion que tiene inscrita, ya que es una relacion de muchos a muchos, la cual llamamos inscripcion pues un estudiante puede inscribir 1 o varias secciones.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.28\textwidth]{Inscripcion.png} 
+    \caption*{Tabla 5. Inscripcion}
+\end{figure}
+
+\subsubsection{Tabla Seccion}
+Esta tabla es la que almacena el registro de la seccion que inscribe, junto con el profesor y el departamento que lo imparte, ademas de su calificación definida.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Seccion.png} 
+    \caption*{Tabla 6. Seccion}
+\end{figure}
+
+\subsubsection{Tabla Profesor}
+La tabla profesor almacena el nombre, el curso y una breve descripcion del curso que imparte el profesor en una o varias secciones.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Profesor.png} 
+    \caption*{Tabla 7. Profesor}
+\end{figure}
+
+\subsubsection{Tabla Departamento}
+El departamento contiene los nombres de cada uno, su abreviatura, un telefono de oficina y la facultad que imparte la seccion.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Departamento.png} 
+    \caption*{Tabla 8. Departamento}
+\end{figure}
+
+\subsubsection{Tabla Niveles}
+Esta tabla solo almacena el nivel en el que se impartió la seccion.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Niveles.png} 
+    \caption*{Tabla 9. Niveles}
+\end{figure}
+
+\newpage
+\subsubsection{Tabla Horario}
+La tabla guarda el numero de horas en el que se imparte una seccion.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.25\textwidth]{Horario.png} 
+    \caption*{Tabla 10. Horario}
+\end{figure}
+
+\subsubsection{Tabla Grado}
+La tabla grado almacena, la calificación obtenida en una sección.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.40\textwidth]{Grado.png} 
+    \caption*{Tabla 11. Grado}
+\end{figure}
+
+\subsubsection{Tabla Curso}
+La tabla curso almacena, la estación en la que se imparte la sección y el salon en el que se impartio.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.30\textwidth]{Curso.png} 
+    \caption*{Tabla 12. Curso}
+\end{figure}
+
+\subsubsection{Tabla Años}
+La tabla años solo almacena el año en el que se impartio la seccion.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.25\textwidth]{Años.png} 
+    \caption*{Tabla 13. Años}
+\end{figure}
+
+\subsubsection{Tabla Semestre}
+Esta tabla solo almacena el semestre en el que se encuentra el estudiante.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Semestre.png} 
+    \caption*{Tabla 14. Semestre}
+\end{figure}
+
+\end{document}
