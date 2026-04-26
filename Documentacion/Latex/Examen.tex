@@ -294,4 +294,211 @@ Esta tabla solo almacena el semestre en el que se encuentra el estudiante.
     \caption*{Tabla 14. Semestre}
 \end{figure}
 
+\subsubsection{Código Cliente}
+
+\begin{tcolorbox}[colback=white, colframe=azul_unam, title=Pseudocódigo: Cliente de Base de Datos Distribuida (Completo), breakable]
+\begin{small}
+\begin{tabbing}
+\hspace{0.6cm} \= \hspace{0.6cm} \= \hspace{0.6cm} \= \hspace{0.6cm} \= \hspace{0.6cm} \kill
+\textbf{Algoritmo} cliente\_bd \\
+\> \textbf{Definir} $sock, total\_filas, num\_columnas \in \mathbb{Z}$ \\
+\> \textbf{Definir} $serv\_addr \in sockaddr\_in$ \\
+\> \textbf{Definir} $\{ c \in \text{Alfabeto} \}, buffer, respuesta, paquete, datos\_csv, |buffer| = 1024$ \\
+\> \textbf{Definir} $ip\_serv \in \text{Alfabeto}, ip\_serv =$ "192.168.1.20" \\
+\> \textbf{Definir} $puerto \in \mathbb{N}, puerto = 3000$ \\
+\\
+\> /* 1. Conexión Inicial TCP */ \\
+\> $sock = \text{Crear\_Socket}(\text{AF\_INET}, \text{SOCK\_STREAM})$ \\
+\> $\text{Configurar\_Direccion}(serv\_addr, ip\_serv, puerto)$ \\
+\> \textbf{SI} $\text{Conectar}(sock, serv\_addr) < 0$ \textbf{ENTONCES} \textbf{SALIR} \\
+\> $\text{Recibir}(sock, respuesta)$ \quad // Mensaje de bienvenida \\
+\\
+\> /* 2. Bucle de Interacción Principal */ \\
+\> \textbf{MIENTRAS} (Verdadero) \textbf{HACER} \\
+\> \> \textbf{ESCRIBIR} "Comando (CONSULTA, INSERCION, ELIMINACION, ACTUALIZACION, OFF): " \\
+\> \> \textbf{LEER} $buffer$ \\
+\\
+\> \> \textbf{CASO} $buffer$ \textbf{SEA}: \\
+\> \> \> "OFF": \\
+\> \> \> \> $\text{Enviar}(sock, \text{"OFF"})$ \\
+\> \> \> \> \textbf{ROMPER\_CICLO} \\
+\\
+\> \> \> "CONSULTA": \textbf{LLAMAR} realizar\_consulta($sock$) \\
+\> \> \> "INSERCION": \textbf{LLAMAR} realizar\_insercion($sock$) \\
+\> \> \> "ELIMINACION": \textbf{LLAMAR} realizar\_eliminacion($sock$) \\
+\> \> \> "ACTUALIZACION": \textbf{LLAMAR} realizar\_actualizacion($sock$) \\
+\> \> \> \textbf{OTRO}: \textbf{ESCRIBIR} "Comando no reconocido" \\
+\> \> \textbf{FINCASO} \\
+\> \textbf{FINMIENTRAS} \\
+\> $\text{Cerrar\_Socket}(sock)$ \\
+\textbf{FinAlgoritmo} \\
+\\
+\textbf{Procedimiento} realizar\_consulta($sock$) \\
+\> \textbf{LEER} $tabla, llave, mascara$ \\
+\> $paquete = \text{Concatenar}(\text{"1|"}, tabla, \text{"|"}, llave, \text{"|"}, mascara)$ \\
+\> $\text{Enviar}(sock, paquete)$ \\
+\> $\text{Recibir}(sock, respuesta)$ \\
+\> \textbf{SI} $\text{Subcadena}(respuesta, 0, 9) == \text{"CANTIDAD|"}$ \textbf{ENTONCES} \\
+\> \> $total\_filas = \text{Convertir\_Entero}(respuesta + 9)$ \\
+\> \> $\text{Enviar}(sock, \text{"ACK"})$ \\
+\> \> \textbf{PARA} $i=0$ \textbf{HASTA} $total\_filas - 1$ \textbf{HACER} \\
+\> \> \> $\text{Recibir}(sock, respuesta)$ \\
+\> \> \> \textbf{ESCRIBIR} $respuesta$ \quad // Mostrar fila recibida \\
+\> \> \> $\text{Enviar}(sock, \text{"ACK"})$ \\
+\> \> \textbf{FINPARA} \\
+\> \textbf{SINO} \textbf{ESCRIBIR} $respuesta$ \\
+\textbf{FinProcedimiento} \\
+\\
+\textbf{Procedimiento} realizar\_insercion($sock$) \\
+\> \textbf{LEER} $tabla$ \\
+\> $\text{Enviar}(sock, \text{"2|"} + tabla)$ \\
+\> $\text{Recibir}(sock, respuesta)$ \\
+\> \textbf{SI} $\text{Subcadena}(respuesta, 0, 9) == \text{"COLUMNAS|"}$ \textbf{ENTONCES} \\
+\> \> $num\_columnas = \text{Convertir\_Entero}(respuesta + 9)$ \\
+\> \> $datos\_csv = \text{"DATOS|"}$ \\
+\> \> \textbf{PARA} $i=1$ \textbf{HASTA} $num\_columnas$ \textbf{HACER} \\
+\> \> \> \textbf{LEER} $dato\_temporal$ \\
+\> \> \> $datos\_csv = datos\_csv + dato\_temporal$ \\
+\> \> \> \textbf{SI} $i < num\_columnas$ \textbf{ENTONCES} $datos\_csv = datos\_csv + \text{","}$ \\
+\> \> \textbf{FINPARA} \\
+\> \> $\text{Enviar}(sock, datos\_csv)$ \\
+\> \> $\text{Recibir}(sock, respuesta\_final)$ \\
+\> \> \textbf{ESCRIBIR} $respuesta\_final$ \\
+\> \textbf{SINO} \textbf{ESCRIBIR} $respuesta$ \\
+\textbf{FINSI} \\
+\textbf{FinProcedimiento} \\
+\\
+\textbf{Procedimiento} realizar\_eliminacion($sock$) \\
+\> \textbf{LEER} $tabla, llave$ \\
+\> $paquete = \text{Concatenar}(\text{"3|"}, tabla, \text{"|"}, llave)$ \\
+\> $\text{Enviar}(sock, paquete)$ \\
+\> $\text{Recibir}(sock, respuesta)$ \\
+\> \textbf{ESCRIBIR} $respuesta$ \\
+\textbf{FinProcedimiento} \\
+\\
+\textbf{Procedimiento} realizar\_actualizacion($sock$) \\
+\> \textbf{LEER} $tabla, llave\_vieja$ \\
+\> $paquete = \text{Concatenar}(\text{"4|"}, tabla, \text{"|"}, llave\_vieja)$ \\
+\> $\text{Enviar}(sock, paquete)$ \\
+\> $\text{Recibir}(sock, respuesta)$ \\
+\> \textbf{SI} $\text{Subcadena}(respuesta, 0, 9) == \text{"COLUMNAS|"}$ \textbf{ENTONCES} \\
+\> \> $num\_columnas = \text{Convertir\_Entero}(respuesta + 9)$ \\
+\> \> $datos\_csv = \text{"DATOS|"}$ \\
+\> \> \textbf{PARA} $i=1$ \textbf{HASTA} $num\_columnas$ \textbf{HACER} \\
+\> \> \> \textbf{LEER} $dato\_temporal$ \\
+\> \> \> $datos\_csv = datos\_csv + dato\_temporal$ \\
+\> \> \> \textbf{SI} $i < num\_columnas$ \textbf{ENTONCES} $datos\_csv = datos\_csv + \text{","}$ \\
+\> \> \textbf{FINPARA} \\
+\> \> $\text{Enviar}(sock, datos\_csv)$ \\
+\> \> $\text{Recibir}(sock, respuesta\_final)$ \\
+\> \> \textbf{ESCRIBIR} $respuesta\_final$ \\
+\> \textbf{SINO} \textbf{ESCRIBIR} $respuesta$ \\
+\textbf{FINSI} \\
+\textbf{FinProcedimiento}
+\end{tabbing}
+\end{small}
+\end{tcolorbox}\begin{tcolorbox}[colback=white, colframe=azul_unam, title=Pseudocódigo: Cliente de Base de Datos Distribuida (Completo), breakable]
+\begin{small}
+\begin{tabbing}
+\hspace{0.6cm} \= \hspace{0.6cm} \= \hspace{0.6cm} \= \hspace{0.6cm} \= \hspace{0.6cm} \kill
+\textbf{Algoritmo} cliente\_bd \\
+\> \textbf{Definir} $sock, total\_filas, num\_columnas \in \mathbb{Z}$ \\
+\> \textbf{Definir} $serv\_addr \in sockaddr\_in$ \\
+\> \textbf{Definir} $\{ c \in \text{Alfabeto} \}, buffer, respuesta, paquete, datos\_csv, |buffer| = 1024$ \\
+\> \textbf{Definir} $ip\_serv \in \text{Alfabeto}, ip\_serv =$ "192.168.1.20" \\
+\> \textbf{Definir} $puerto \in \mathbb{N}, puerto = 3000$ \\
+\\
+\> /* 1. Conexión Inicial TCP */ \\
+\> $sock = \text{Crear\_Socket}(\text{AF\_INET}, \text{SOCK\_STREAM})$ \\
+\> $\text{Configurar\_Direccion}(serv\_addr, ip\_serv, puerto)$ \\
+\> \textbf{SI} $\text{Conectar}(sock, serv\_addr) < 0$ \textbf{ENTONCES} \textbf{SALIR} \\
+\> $\text{Recibir}(sock, respuesta)$ \quad // Mensaje de bienvenida \\
+\\
+\> /* 2. Bucle de Interacción Principal */ \\
+\> \textbf{MIENTRAS} (Verdadero) \textbf{HACER} \\
+\> \> \textbf{ESCRIBIR} "Comando (CONSULTA, INSERCION, ELIMINACION, ACTUALIZACION, OFF): " \\
+\> \> \textbf{LEER} $buffer$ \\
+\\
+\> \> \textbf{CASO} $buffer$ \textbf{SEA}: \\
+\> \> \> "OFF": \\
+\> \> \> \> $\text{Enviar}(sock, \text{"OFF"})$ \\
+\> \> \> \> \textbf{ROMPER\_CICLO} \\
+\\
+\> \> \> "CONSULTA": \textbf{LLAMAR} realizar\_consulta($sock$) \\
+\> \> \> "INSERCION": \textbf{LLAMAR} realizar\_insercion($sock$) \\
+\> \> \> "ELIMINACION": \textbf{LLAMAR} realizar\_eliminacion($sock$) \\
+\> \> \> "ACTUALIZACION": \textbf{LLAMAR} realizar\_actualizacion($sock$) \\
+\> \> \> \textbf{OTRO}: \textbf{ESCRIBIR} "Comando no reconocido" \\
+\> \> \textbf{FINCASO} \\
+\> \textbf{FINMIENTRAS} \\
+\> $\text{Cerrar\_Socket}(sock)$ \\
+\> \textbf{ESRIBIR} "Desconectado exitosamente" \\
+\textbf{FinAlgoritmo} \\
+\\
+\textbf{Procedimiento} realizar\_consulta($sock$) \\
+\> \textbf{LEER} $tabla, llave, mascara$ \\
+\> $paquete = \text{Concatenar}(\text{"1|"}, tabla, \text{"|"}, llave, \text{"|"}, mascara)$ \\
+\> $\text{Enviar}(sock, paquete)$ \\
+\> $\text{Recibir}(sock, respuesta)$ \\
+\> \textbf{SI} $\text{Subcadena}(respuesta, 0, 9) == \text{"CANTIDAD|"}$ \textbf{ENTONCES} \\
+\> \> $total\_filas = \text{Convertir\_Entero}(respuesta + 9)$ \\
+\> \> $\text{Enviar}(sock, \text{"ACK"})$ \\
+\> \> \textbf{PARA} $i=0$ \textbf{HASTA} $total\_filas - 1$ \textbf{HACER} \\
+\> \> \> $\text{Recibir}(sock, respuesta)$ \\
+\> \> \> \textbf{ESCRIBIR} $respuesta$ \quad // Mostrar fila recibida \\
+\> \> \> $\text{Enviar}(sock, \text{"ACK"})$ \\
+\> \> \textbf{FINPARA} \\
+\> \textbf{SINO} \textbf{ESCRIBIR} $respuesta$ \\
+\textbf{FinProcedimiento} \\
+\\
+\textbf{Procedimiento} realizar\_insercion($sock$) \\
+\> \textbf{LEER} $tabla$ \\
+\> $\text{Enviar}(sock, \text{"2|"} + tabla)$ \\
+\> $\text{Recibir}(sock, respuesta)$ \\
+\> \textbf{SI} $\text{Subcadena}(respuesta, 0, 9) == \text{"COLUMNAS|"}$ \textbf{ENTONCES} \\
+\> \> $num\_columnas = \text{Convertir\_Entero}(respuesta + 9)$ \\
+\> \> $datos\_csv = \text{"DATOS|"}$ \\
+\> \> \textbf{PARA} $i=1$ \textbf{HASTA} $num\_columnas$ \textbf{HACER} \\
+\> \> \> \textbf{LEER} $dato\_temporal$ \\
+\> \> \> $datos\_csv = datos\_csv + dato\_temporal$ \\
+\> \> \> \textbf{SI} $i < num\_columnas$ \textbf{ENTONCES} $datos\_csv = datos\_csv + \text{","}$ \\
+\> \> \textbf{FINPARA} \\
+\> \> $\text{Enviar}(sock, datos\_csv)$ \\
+\> \> $\text{Recibir}(sock, respuesta\_final)$ \\
+\> \> \textbf{ESCRIBIR} $respuesta\_final$ \\
+\> \textbf{SINO} \textbf{ESCRIBIR} $respuesta$ \\
+\textbf{FINSI} \\
+\textbf{FinProcedimiento} \\
+\\
+\textbf{Procedimiento} realizar\_eliminacion($sock$) \\
+\> \textbf{LEER} $tabla, llave$ \\
+\> $paquete = \text{Concatenar}(\text{"3|"}, tabla, \text{"|"}, llave)$ \\
+\> $\text{Enviar}(sock, paquete)$ \\
+\> $\text{Recibir}(sock, respuesta)$ \\
+\> \textbf{ESCRIBIR} $respuesta$ \\
+\textbf{FinProcedimiento} \\
+\\
+\textbf{Procedimiento} realizar\_actualizacion($sock$) \\
+\> \textbf{LEER} $tabla, llave\_vieja$ \\
+\> $paquete = \text{Concatenar}(\text{"4|"}, tabla, \text{"|"}, llave\_vieja)$ \\
+\> $\text{Enviar}(sock, paquete)$ \\
+\> $\text{Recibir}(sock, respuesta)$ \\
+\> \textbf{SI} $\text{Subcadena}(respuesta, 0, 9) == \text{"COLUMNAS|"}$ \textbf{ENTONCES} \\
+\> \> $num\_columnas = \text{Convertir\_Entero}(respuesta + 9)$ \\
+\> \> $datos\_csv = \text{"DATOS|"}$ \\
+\> \> \textbf{PARA} $i=1$ \textbf{HASTA} $num\_columnas$ \textbf{HACER} \\
+\> \> \> \textbf{LEER} $dato\_temporal$ \\
+\> \> \> $datos\_csv = datos\_csv + dato\_temporal$ \\
+\> \> \> \textbf{SI} $i < num\_columnas$ \textbf{ENTONCES} $datos\_csv = datos\_csv + \text{","}$ \\
+\> \> \textbf{FINPARA} \\
+\> \> $\text{Enviar}(sock, datos\_csv)$ \\
+\> \> $\text{Recibir}(sock, respuesta\_final)$ \\
+\> \> \textbf{ESCRIBIR} $respuesta\_final$ \\
+\> \textbf{SINO} \textbf{ESCRIBIR} $respuesta$ \\
+\textbf{FINSI} \\
+\textbf{FinProcedimiento}
+\end{tabbing}
+\end{small}
+\end{tcolorbox}
+
 \end{document}
