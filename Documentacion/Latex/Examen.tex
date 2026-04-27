@@ -467,7 +467,7 @@ void realizar_consulta(int sock) {
 }
 \end{lstlisting}
 
-La función de inserción solicita solo 1 parámetro inicial para enviar al servidor, el cual retornará la cantidad de columnas o registros que se deben llenar para poder ser insertados en la tabla. El mismo servidor verifica que todos los campos estén completos (de lo contrario no podrá insertarlo), además de validar que la llave primaria ingresada no se repita en la tabla. Si el servidor retorna un valor válido, empieza el proceso de captura de los datos solicitados.
+La operación de inserción opera mediante un protocolo de enlace de múltiples fases (\textit{Handshake}). Inicialmente, el cliente envía únicamente el identificador de la tabla objetivo. El servidor, mediante su descubrimiento dinámico de esquema, retorna la cantidad exacta de columnas requeridas y verifica que la tabla sea válida. Con este metadato, el cliente adapta su interfaz para iterar y solicitar al usuario cada campo individualmente, construyendo una cadena delimitada por comas que finalmente se transmite al servidor para su validación de unicidad y escritura física.
 
 \begin{lstlisting}[style=estiloC ,title={Código 3. Cliente TCP (INSERCION)}]
 void realizar_insercion(int sock)
@@ -534,11 +534,7 @@ void realizar_insercion(int sock)
 }
 \end{lstlisting}
 
-Para la función de eliminación, el cliente solo necesita capturar 2 datos:
-\begin{enumerate}
-    \item \textbf{Número de Tabla:} El identificador de la tabla donde se eliminará el registro.
-    \item \textbf{ID único:} La llave primaria del registro en la base de datos.
-\end{enumerate}
+La función de eliminación requiere una carga útil (\textit{payload}) mínima: el identificador numérico de la tabla y la llave primaria del registro objetivo. Estos dos datos se empaquetan y transmiten directamente al servidor, el cual ejecuta la búsqueda y eliminación física (mediante archivos temporales), retornando un mensaje de estado para confirmar la transacción al usuario.
 
 \begin{lstlisting}[style=estiloC ,title={Código 4. Cliente TCP (ELIMINACION)}]
 void realizar_eliminacion(int sock) 
@@ -559,12 +555,7 @@ void realizar_eliminacion(int sock)
 }
 \end{lstlisting}
 
-La función de actualización debe capturar nuevamente lo siguiente:
-\begin{enumerate}
-    \item \textbf{Número de Tabla:} La tabla en la que se actualizará un registro.
-    \item \textbf{ID:} El identificador único del registro que se va a modificar.
-\end{enumerate}
-Al obtener esto del usuario, se envía la llave para revisar si existe en esa tabla antes de intentar actualizarlo. La respuesta del servidor indicará el número de columnas que contiene esa tabla; de lo contrario, si la llave no existe, no se podrá actualizar el registro.
+Al igual que la inserción, la modificación de registros emplea una arquitectura interactiva basada en el esquema dinámico de la base de datos. El proceso requiere que el cliente envíe primero el número de tabla y la llave original del registro. El servidor valida su existencia y responde informando la cantidad de columnas de dicha tabla. Si el registro es localizado, el cliente genera dinámicamente un cuestionario en consola para capturar la nueva información. Finalmente, la nueva trama de datos se envía al servidor para completar la sobreescritura segura; de lo contrario, la transacción se aborta desde el inicio.
 
 \begin{lstlisting}[style=estiloC ,title={Código 5. Cliente TCP (ACTUALIZACION)}]
 void realizar_actualizacion(int sock) {
