@@ -437,6 +437,7 @@ INPUT ./logo_fi.png
 INPUT ./logo_fi.png
 INPUT ./logo_fi.png
 INPUT ./logo_fi.png
+INPUT /usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc
 INPUT ./logo_fi.png
 INPUT ./logo_fi.png
 INPUT ./logo_fi.png
@@ -560,6 +561,7 @@ INPUT ./logo_fi.png
 INPUT ./logo_fi.png
 INPUT Examen.aux
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb
+INPUT /usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmr10.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmr12.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmr6.pfb

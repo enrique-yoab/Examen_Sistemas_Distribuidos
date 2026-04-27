@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.26)  26 APR 2026 23:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.26)  26 APR 2026 23:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -859,7 +859,7 @@ File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
 Package pdftex.def Info: logo_fi.png  used on input line 425.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
- [10]
+ [10{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
 Package pdftex.def Info: logo_fi.png  used on input line 467.
@@ -1018,18 +1018,18 @@ L3 programming layer <2024-01-22>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 28273 strings out of 476106
- 508291 string characters out of 5793933
+ 28274 strings out of 476106
+ 508304 string characters out of 5793933
  2629975 words of memory out of 5000000
  48648 multiletter control sequences out of 15000+600000
  598664 words of font info for 67 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
  89i,16n,93p,746b,2181s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
-Output written on Examen.pdf (40 pages, 1935011 bytes).
+</usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
+Output written on Examen.pdf (40 pages, 1938131 bytes).
 PDF statistics:
- 1765 PDF objects out of 2073 (max. 8388607)
- 1668 compressed objects within 17 object streams
+ 1771 PDF objects out of 2073 (max. 8388607)
+ 1672 compressed objects within 17 object streams
  1229 named destinations out of 1440 (max. 500000)
  250 words of extra memory for PDF output out of 10000 (max. 10000000)
 

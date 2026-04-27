@@ -416,7 +416,7 @@ Se desarrolla la función consulta, que es una de las operaciones más usadas de
     \item \textbf{Parámetros:} Es una cadena de bits que indica qué atributos de la tabla consultada se desean observar ('1' es para visualizarlo y '0' es para ignorarlo). Por lo tanto, esta cadena de texto es diferente para cada tabla que se encuentra dentro de la base de datos.
 \end{itemize}
 
-Al obtener estos datos por medio del teclado, debemos concatenar las respuestas con una barra vertical "|" (o el separador definido) para que el servidor pueda descomponerlo después y verificar si la petición es correcta. En caso de que falle algún dato o parámetro, el mismo servidor regresará el error producido; de lo contrario, se entra en un bucle de comunicación para poder transferir los datos del servidor al cliente. El cliente tendrá un archivo llamado \texttt{consulta.csv} en el que guardará la información obtenida (el contenido se sobrescribirá cada vez que se haga una nueva consulta).
+Al obtener estos datos por medio del teclado, debemos concatenar las respuestas con una una coma "$,$" para que el servidor pueda descomponerlo después y verificar si la petición es correcta. En caso de que falle algún dato o parámetro, el mismo servidor regresará el error producido; de lo contrario, se entra en un bucle de comunicación para poder transferir los datos del servidor al cliente. El cliente tendrá un archivo llamado \texttt{consulta.csv} en el que guardará la información obtenida (el contenido se sobrescribirá cada vez que se haga una nueva consulta).
 
 \begin{lstlisting}[style=estiloC ,title={Código 2. Cliente TCP (CONSULTA)}]
 void realizar_consulta(int sock) {
