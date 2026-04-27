@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.26)  26 APR 2026 23:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.26)  27 APR 2026 11:29
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1002,34 +1002,115 @@ File: logo_fi.png Graphic file (type png)
 Package pdftex.def Info: logo_fi.png  used on input line 1613.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [38]
+LaTeX Font Info:    Trying to load font information for OMS+lmr on input line 1699.
+ (/usr/share/texmf/tex/latex/lm/omslmr.fd
+File: omslmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <12> not available
+(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 1699.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1657.
+Package pdftex.def Info: logo_fi.png  used on input line 1972.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
- [39]
+ [39{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rmsc.enc}]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1659.
+Package pdftex.def Info: logo_fi.png  used on input line 1972.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
- [40] (./Examen.aux)
+ [40]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 1972.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [41]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 1972.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [42]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 1972.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [43]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2199.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [44]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2199.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [45]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2199.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [46]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2370.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [47]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2370.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [48]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2540.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [49]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2540.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [50]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2540.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [51]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2657.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [52]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2657.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [53]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2751.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [54]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 2763.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [55] (./Examen.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 28274 strings out of 476106
- 508304 string characters out of 5793933
+ 28421 strings out of 476106
+ 510718 string characters out of 5793933
  2629975 words of memory out of 5000000
- 48648 multiletter control sequences out of 15000+600000
- 598664 words of font info for 67 fonts, out of 8000000 for 9000
+ 48774 multiletter control sequences out of 15000+600000
+ 604355 words of font info for 69 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
  89i,16n,93p,746b,2181s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
-Output written on Examen.pdf (40 pages, 1938131 bytes).
+</usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
+Output written on Examen.pdf (55 pages, 2034059 bytes).
 PDF statistics:
- 1771 PDF objects out of 2073 (max. 8388607)
- 1672 compressed objects within 17 object streams
- 1229 named destinations out of 1440 (max. 500000)
+ 1855 PDF objects out of 2073 (max. 8388607)
+ 1734 compressed objects within 18 object streams
+ 1244 named destinations out of 1440 (max. 500000)
  250 words of extra memory for PDF output out of 10000 (max. 10000000)
 

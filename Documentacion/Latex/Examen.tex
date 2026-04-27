@@ -1644,6 +1644,1111 @@ void update_archivo(UPDATE *cliente, ARCHIVERO *dir)
     printf("EXITO: Se actualizo el registro %s\n", cliente->primary_key);
 }
 \end{lstlisting}
+% ------------------ INICIO DE LOS PSEUDOCODIGOS -------------------
+\begin{itemize}
+    \item \textbf{Pseudocódigos}
+\end{itemize}
+
+\begin{tcolorbox}[colback=white, colframe=azul_unam, 
+title=Pseudocódigo: cliente.c, breakable]
+
+\textbf{Algoritmo} Cliente
+
+% ===================== DEFINICIONES =====================
+
+\textbf{Constantes y Variables Globales}
+
+\begin{algorithmic}[1]
+
+\State \textbf{Definir} $IP\_SERVIDOR \gets$ "127.0.0.1"
+\State \textbf{Definir} $PUERTO \gets 3000$
+\State \textbf{Definir} $TAM\_MAX \gets 1024$
+
+\vspace{0.3cm}
+
+% ===================== MAIN =====================
+
+\Procedure{main}{}
+
+\State $sock \gets 0$
+\State Definir $serv\_addr$
+\State Definir $buffer[TAM\_MAX]$
+
+\State Escribir("[1] Creando socket TCP...")
+
+\If{$(sock \gets socket(AF\_INET, SOCK\_STREAM, 0)) < 0$}
+    \State \Return -1
+\EndIf
+
+\State $serv\_addr.sin\_family \gets AF\_INET$
+\State $serv\_addr.sin\_port \gets htons(PUERTO)$
+
+\If{$inet\_pton(AF\_INET, IP\_SERVIDOR, serv\_addr.sin\_addr) \leq 0$}
+    \State \Return -1
+\EndIf
+
+\State Escribir("[2] Conectando al servidor...")
+
+\If{$connect(sock, serv\_addr) < 0$}
+    \State \Return -1
+\EndIf
+
+\State Limpiar(buffer)
+\State Recibir$(sock, buffer)$
+
+\State Escribir("\textbackslash n[Mensaje Inicial del Servidor]: ", buffer)
+
+\vspace{0.2cm}
+
+% ===================== BUCLE =====================
+
+\While{Verdadero}
+
+    \State Escribir("========================================")
+    \State Escribir(" COMANDOS ACTIVOS:")
+    \State Escribir(" CONSULTA | INSERCION | ELIMINACION |")
+    \State Escribir(" ACTUALIZACION | OFF ")
+    \State Escribir("========================================")
+    \State Escribir("Tu mensaje (Comando): ")
+
+    \State Limpiar(buffer)
+    \State LeerEntrada(buffer)
+    \State EliminarSalto(buffer)
+
+    \If{Buscar(buffer, "OFF") $\neq NULL$}
+        \State Escribir("[!] Cerrando cliente...")
+        \State Enviar$(sock, "OFF")$
+        \State Romper
+
+    \ElsIf{Buscar(buffer, "CONSULTA") $\neq NULL$}
+        \State realizar\_consulta$(sock)$
+
+    \ElsIf{Buscar(buffer, "INSERCION") $\neq NULL$}
+        \State realizar\_insercion$(sock)$
+
+    \ElsIf{Buscar(buffer, "ELIMINACION") $\neq NULL$}
+        \State realizar\_eliminacion$(sock)$
+
+    \ElsIf{Buscar(buffer, "ACTUALIZACION") $\neq NULL$}
+        \State realizar\_actualizacion$(sock)$
+
+    \Else
+        \State Escribir("[-] Comando no reconocido. Escribe: CONSULTA, INSERCION, ACTUALIZACION, ELIMINACION o OFF.")
+    \EndIf
+
+\EndWhile
+
+\State Cerrar$(sock)$
+\State Escribir("\textbackslash nDesconectado exitosamente.")
+
+\State \Return 0
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== CONSULTA =====================
+
+\Procedure{realizar\_consulta}{sock}
+
+\State Definir $tabla, llave, mascara, paquete\_envio, respuesta\_servidor$
+
+\State Escribir("\textbackslash n\textbackslash t--- MODO CONSULTA ---")
+\State Escribir("[ESTUDIANTE,0]\textbackslash t\textbackslash t[DIRECCION,1]")
+\State Escribir("[CARRERA,2]\textbackslash t\textbackslash t[HISTORIAL,3]")
+\State Escribir("[INSCRIPCION,4]\textbackslash t\textbackslash t[SECCION,5]")
+\State Escribir("[PROFESOR,6]\textbackslash t\textbackslash t[DEPARTAMENTO,7]")
+\State Escribir("[NIVELES,8]\textbackslash t\textbackslash t[HORARIO,9]")
+\State Escribir("[GRADO,10]\textbackslash t\textbackslash t[CURSO,11]")
+\State Escribir("[AÑOS,12]\textbackslash t\textbackslash t[SEMESTRE,13]")
+
+\State Escribir("Ingresa el numero de tabla (0-13): ")
+\State LeerEntrada(tabla)
+
+\State Escribir("Ingresa la llave a buscar ('full', 'low' o ID): ")
+\State LeerEntrada(llave)
+
+\State Escribir("Ingresa la mascara de parametros (Bits 1/0): ")
+\State LeerEntrada(mascara)
+
+\State $paquete\_envio \gets "1|" + tabla + "|" + llave + "|" + mascara$
+\State Enviar$(sock, paquete\_envio)$
+
+\State Limpiar(respuesta\_servidor)
+\State Recibir$(sock, respuesta\_servidor)$
+
+\If{EmpiezaCon(respuesta\_servidor, "CANTIDAD|")}
+
+    \State $total\_filas \gets$ ConvertirEntero$(respuesta\_servidor + 9)$
+
+    \If{Buscar(llave,"full") $\neq NULL$ \textbf{o} Buscar(llave,"low") $\neq NULL$}
+        \State $total\_filas \gets total\_filas - 1$
+    \EndIf
+
+    \State Escribir("\textbackslash n--- RESULTADOS DE LA BD (", total\_filas, " registros) ---")
+
+    \State $archivo \gets$ Abrir("./consulta.csv","w")
+
+    \State Enviar$(sock,"ACK")$
+
+    \For{$i \gets 0$ to $total\_filas - 1$}
+
+        \State Limpiar(respuesta\_servidor)
+        \State Recibir$(sock, respuesta\_servidor)$
+
+        \State Escribir("[", i, "]: ", respuesta\_servidor)
+        \State EscribirArchivo$(archivo, respuesta\_servidor)$
+
+        \State Enviar$(sock,"ACK")$
+
+    \EndFor
+
+    \State Escribir("----------------------------------------")
+    \State Cerrar$(archivo)$
+
+\Else
+
+    \State Escribir("\textbackslash n[Servidor]: ", respuesta\_servidor)
+
+\EndIf
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== INSERCION =====================
+
+\Procedure{realizar\_insercion}{sock}
+
+\State Definir $tabla, paquete\_envio, respuesta\_servidor$
+\State Definir $datos\_csv \gets ""$
+\State Definir $entrada\_temporal$
+
+\State Escribir("\textbackslash n--- MODO INSERCION ---")
+\State Escribir("Ingresa el numero de tabla (0-13): ")
+\State LeerEntrada(tabla)
+
+\State $paquete\_envio \gets "2|" + tabla$
+\State Enviar$(sock, paquete\_envio)$
+
+\State Limpiar(respuesta\_servidor)
+\State Recibir$(sock, respuesta\_servidor)$
+
+\If{EmpiezaCon(respuesta\_servidor,"COLUMNAS|")}
+
+    \State $num\_columnas \gets$ ConvertirEntero$(respuesta\_servidor + 9)$
+
+    \State Escribir("[*] El servidor verifico la tabla. Se requieren ", num\_columnas, " columnas.")
+    \State Escribir("--------------------------------------------------")
+
+    \State $datos\_csv \gets "DATOS|"$
+
+    \For{$i \gets 0$ to $num\_columnas - 1$}
+
+        \If{$i = 0$}
+            \State Escribir("Ingrese el dato para la columna ", i+1, " (LLAVE PRIMARIA): ")
+        \Else
+            \State Escribir("Ingrese el dato para la columna ", i+1, ": ")
+        \EndIf
+
+        \State LeerEntrada(entrada\_temporal)
+
+        \State Concatenar$(datos\_csv, entrada\_temporal)$
+
+        \If{$i < num\_columnas - 1$}
+            \State Concatenar$(datos\_csv, ",")$
+        \EndIf
+
+    \EndFor
+
+    \State Escribir("\textbackslash n[Enviando paquete]: ", datos\_csv)
+    \State Enviar$(sock, datos\_csv)$
+
+    \State Limpiar(respuesta\_servidor)
+    \State Recibir$(sock, respuesta\_servidor)$
+
+    \State Escribir("[Respuesta del Servidor]: ", respuesta\_servidor)
+
+\Else
+
+    \State Escribir("\textbackslash n[Servidor rechazo la peticion]: ", respuesta\_servidor)
+
+\EndIf
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== ELIMINACION =====================
+
+\Procedure{realizar\_eliminacion}{sock}
+
+\State Definir $tabla, llave, paquete\_envio, respuesta\_servidor$
+
+\State Escribir("\textbackslash n--- MODO ELIMINACION ---")
+\State Escribir("Ingresa el numero de tabla (0-13): ")
+\State LeerEntrada(tabla)
+
+\State Escribir("Ingresa el ID (llave primaria) a eliminar: ")
+\State LeerEntrada(llave)
+
+\State $paquete\_envio \gets "3|" + tabla + "|" + llave$
+\State Enviar$(sock, paquete\_envio)$
+
+\State Limpiar(respuesta\_servidor)
+\State Recibir$(sock, respuesta\_servidor)$
+
+\State Escribir("\textbackslash n[Respuesta del Servidor]: ", respuesta\_servidor)
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== ACTUALIZACION =====================
+
+\Procedure{realizar\_actualizacion}{sock}
+
+\State Definir $tabla, llave\_vieja, paquete\_envio, respuesta\_servidor$
+\State Definir $datos\_csv \gets ""$
+\State Definir $entrada\_temporal$
+
+\State Escribir("\textbackslash n--- MODO ACTUALIZACION ---")
+\State Escribir("Ingresa el numero de tabla (0-13): ")
+\State LeerEntrada(tabla)
+
+\State Escribir("Ingresa la llave ORIGINAL del registro a modificar: ")
+\State LeerEntrada(llave\_vieja)
+
+\State $paquete\_envio \gets "4|" + tabla + "|" + llave\_vieja$
+\State Enviar$(sock, paquete\_envio)$
+
+\State Limpiar(respuesta\_servidor)
+\State Recibir$(sock, respuesta\_servidor)$
+
+\If{EmpiezaCon(respuesta\_servidor,"COLUMNAS|")}
+
+    \State $num\_columnas \gets$ ConvertirEntero$(respuesta\_servidor + 9)$
+
+    \State Escribir("[*] Registro encontrado. Ingresa los nuevos datos (", num\_columnas, " columnas).")
+    \State Escribir("--------------------------------------------------")
+
+    \State $datos\_csv \gets "DATOS|"$
+
+    \For{$i \gets 0$ to $num\_columnas - 1$}
+
+        \If{$i = 0$}
+            \State Escribir("NUEVA Llave Primaria (Puede ser la misma '", llave\_vieja, "'): ")
+        \Else
+            \State Escribir("NUEVO dato para la columna ", i+1, ": ")
+        \EndIf
+
+        \State LeerEntrada(entrada\_temporal)
+
+        \State Concatenar$(datos\_csv, entrada\_temporal)$
+
+        \If{$i < num\_columnas - 1$}
+            \State Concatenar$(datos\_csv, ",")$
+        \EndIf
+
+    \EndFor
+
+    \State Escribir("\textbackslash n[Enviando actualizacion]: ", datos\_csv)
+    \State Enviar$(sock, datos\_csv)$
+
+    \State Limpiar(respuesta\_servidor)
+    \State Recibir$(sock, respuesta\_servidor)$
+
+    \State Escribir("[Respuesta del Servidor]: ", respuesta\_servidor)
+
+\Else
+
+    \State Escribir("\textbackslash n[Servidor rechazo la peticion]: ", respuesta\_servidor)
+
+\EndIf
+
+\EndProcedure
+
+\end{algorithmic}
+\end{tcolorbox}
+
+%----- PSEUDOCODIGO SERVIDOR.C ------
+
+\begin{tcolorbox}[colback=white, colframe=azul_unam, 
+title=Pseudocódigo: servidor.c, breakable]
+
+\textbf{Algoritmo} Servidor
+
+% ===================== DEFINICIONES =====================
+
+\textbf{Constantes y Variables Globales}
+
+\begin{algorithmic}[1]
+
+\State \textbf{Definir} $PUERTO \gets 3000$
+
+\State \textbf{Definir} $directorio \in \text{ARCHIVERO}$
+
+\State \textbf{Definir} $escritura \gets$ ``./buffer/''
+\State \textbf{Definir} $carpeta \gets$ ``./Datos/''
+\State \textbf{Definir} $extension \gets$ ``.csv''
+
+\State \textbf{Definir} $archivos \gets$ \{
+``Estudiante'', ``Direccion'', ``Carrera'', ``Historial'',
+``Inscripcion'', ``Seccion'', ``Profesor'', ``Departamento'',
+``Niveles'', ``Horario'', ``Grado'', ``Curso'', ``Años'', ``Semestre''
+\}
+
+\State \textbf{Definir} $tamano \gets$ Tamaño$(archivos)$
+
+\State \textbf{Definir} $TAM\_MAX \gets 1024$
+
+\vspace{0.3cm}
+
+% ===================== MAIN =====================
+
+\Procedure{main}{}
+
+\State Crear hilo\_directorio
+\State Crear hilo\_red
+
+\State datos\_dir $\gets$ \{directorio, carpeta, escritura, archivos, extension, tamano\}
+\State datos\_red $\gets$ \{PUERTO, -1\}
+
+\State Escribir("[Servidor] Iniciando hilos de preparacion...")
+
+\State CrearHilo$(hilo\_directorio, funcion\_h1, datos\_dir)$
+\State CrearHilo$(hilo\_red, funcion\_h2, datos\_red)$
+
+\State EsperarHilo$(hilo\_directorio)$
+\State EsperarHilo$(hilo\_red)$
+
+\State $server\_fd \gets datos\_red.socket\_fd\_resultado$
+
+\State Escribir("[+] Servidor iniciado. Esperando conexion...")
+
+\State $nuevo\_socket \gets$ AceptarConexion$(server\_fd)$
+
+\If{$nuevo\_socket < 0$}
+    \State Error("ERROR: Falla al intentar conectar")
+    \State Cerrar$(server\_fd)$
+    \State \Return
+\EndIf
+
+\State Escribir("[+] Cliente conectado. Iniciando sesion única.")
+\State $Enviar$(nuevo\_socket, "Conexion establecida, el servidor finalizara despues de la sesion.\textbackslash n")
+
+\vspace{0.2cm}
+
+% ===================== LOOP =====================
+
+\While{Verdadero}
+
+    \State Limpiar$(buffer)$
+    \State $bytes\_leidos \gets$ Recibir$(nuevo\_socket, buffer)$
+
+    \If{$bytes\_leidos \leq 0 \lor \text{CompararIgnoreCase(buffer, "OFF")} = 0$}
+        \State Escribir("Cliente desconectado o se recibio comando OFF. Finalizando...")
+        \State Romper
+    \EndIf
+
+    \State $op\_str \gets$ Token$(buffer, "|")$
+    \If{$op\_str = NULL$}
+        \State Continuar
+    \EndIf
+
+    \State $operacion \gets$ ConvertirEntero$(op\_str)$
+
+    \State $tabla\_str \gets$ Token$(NULL, "|")$
+    \If{$tabla\_str = NULL$}
+        \State Continuar
+    \EndIf
+
+    \State $tabla \gets$ ConvertirEntero$(tabla\_str)$
+
+    % ===================== CONSULTA =====================
+
+    \If{$operacion = 1$}
+        \State $llave \gets$ Token$(NULL, "|")$
+        \State $mascara \gets$ Token$(NULL, RESTO)$
+        \State procesar\_consulta$(nuevo\_socket, tabla, llave, mascara, directorio)$
+
+    % ===================== INSERCION =====================
+
+    \ElsIf{$operacion = 2$}
+
+        \State $ruta \gets directorio.rutas[tabla]$
+        \State $analisis \gets analizar\_archivo(ruta)$
+
+        \State Enviar(nuevo\_socket, "COLUMNAS\textbar" + ConvertirCadena(analisis.num\_columnas))
+        \State Limpiar(buffer)
+        \State bytes\_datos $\gets$ Recibir(nuevo\_socket, buffer)
+
+        \If{bytes\_datos > 0 \textbf{Y} EmpiezaCon(buffer, "DATOS|")}
+
+            \State $datos\_csv \gets buffer + 6$
+
+            \State Crear peticion\_ins
+            \State peticion\_ins.numero\_tabla $\gets tabla$
+            \State peticion\_ins.datos $\gets datos\_csv$
+            \State peticion\_ins.error $\gets NULL$
+
+            \State solicitud\_insercion$(peticion\_ins, directorio)$
+
+            \If{$peticion\_ins.error \neq NULL$}
+                \State Enviar$(nuevo\_socket, peticion\_ins.error)$
+                \State Liberar$(peticion\_ins.error)$
+            \Else
+                \State $Enviar$(nuevo\_socket, "ERROR: Fallo desconocido en insercion.\textbackslash n")
+            \EndIf
+
+        \Else
+            \State $Enviar$(nuevo\_socket, "ERROR: Se rompio el protocolo de insercion.\textbackslash n")
+        \EndIf
+
+    % ===================== ELIMINACION =====================
+
+    \ElsIf{$operacion = 3$}
+
+        \State $llave \gets$ Token$(NULL, RESTO)$
+
+        \If{$llave \neq NULL$}
+
+            \State Crear peticion\_del
+            \State peticion\_del.num\_tabla $\gets tabla$
+            \State peticion\_del.primary\_key $\gets llave$
+
+            \State solicitud\_eliminacion$(peticion\_del, directorio)$
+
+            \If{$peticion\_del.error \neq NULL$}
+                \State Enviar$(nuevo\_socket, peticion\_del.error)$
+                \State Liberar$(peticion\_del.error)$
+            \Else
+                \State $Enviar$(nuevo\_socket, "ERROR: Fallo desconocido en eliminacion.\textbackslash n")
+            \EndIf
+
+        \EndIf
+
+    % ===================== UPDATE =====================
+
+    \ElsIf{$operacion = 4$}
+
+        \State $llave\_vieja \gets$ Token$(NULL, RESTO)$
+
+        \State $ruta \gets directorio.rutas[tabla]$
+        \State $estado \gets validar\_llave(llave\_vieja, tabla, ruta)$
+
+        \If{Comparar$(estado, "EXITO") = 0$}
+            \State $Enviar$(nuevo\_socket, "ERROR: El registro que intentas actualizar no existe.\textbackslash n")
+            \State Continuar
+        \EndIf
+
+        \State Copiar$(llave\_respaldo, llave\_vieja)$
+
+        \State analisis $\gets$ analizar\_archivo(ruta)
+        \State Enviar(nuevo\_socket, "COLUMNAS\textbar" + ConvertirCadena(analisis.num\_columnas))
+
+        \State Limpiar(buffer)
+        \State bytes\_datos $\gets$ Recibir(nuevo\_socket, buffer)
+
+        \If{bytes\_datos > 0 \textbf{Y} EmpiezaCon(buffer, "DATOS|")}
+
+            \State $datos\_csv \gets buffer + 6$
+
+            \State Crear peticion\_upd
+            \State peticion\_upd.num\_tabla $\gets tabla$
+            \State peticion\_upd.primary\_key $\gets llave\_respaldo$
+            \State peticion\_upd.parametros $\gets datos\_csv$
+
+            \State solicitud\_update$(peticion\_upd, directorio)$
+
+            \If{$peticion\_upd.error \neq NULL$}
+                \State Enviar$(nuevo\_socket, peticion\_upd.error)$
+                \State Liberar$(peticion\_upd.error)$
+            \Else
+                \State $Enviar$(nuevo\_socket, "EXITO: El registro fue actualizado correctamente en el servidor.\textbackslash n")
+            \EndIf
+
+        \Else
+            \State $Enviar$(nuevo\_socket, "ERROR: Se rompio el protocolo de actualizacion.\textbackslash n")
+        \EndIf
+
+    \EndIf
+
+\EndWhile
+
+\State Cerrar$(nuevo\_socket)$
+\State Cerrar$(server\_fd)$
+
+\State Escribir("[*] Servidor apagado...")
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== HILOS =====================
+
+\Procedure{funcion\_h1}{args}
+\State crear\_directorio$(args)$
+\EndProcedure
+
+\Procedure{funcion\_h2}{args}
+\State args.socket\_fd\_resultado $\gets$ levantar\_servicio$(args.puerto)$
+\EndProcedure
+
+\end{algorithmic}
+\end{tcolorbox}
+
+%--------- PSEUDOCODIGO FUNCIONES.C ----------
+
+\begin{tcolorbox}[colback=white, colframe=azul_unam, 
+title=Pseudocódigo: funciones.c, breakable]
+
+\textbf{Algoritmo} Funciones
+
+\begin{algorithmic}[1]
+
+% ===================== CREAR DIRECTORIO =====================
+
+\Procedure{crear\_directorio}{dir, carpeta, archivos, tipo, update, cantidad\_archivos}
+
+\State Escribir("Se esta creando un directorio con ", cantidad\_archivos, " rutas de archivos ", tipo)
+
+\For{$i \gets 0$ to $cantidad\_archivos - 1$}
+
+    \State $len\_carpeta \gets$ Longitud$(carpeta)$ + Longitud$(archivos[i])$ + Longitud$(tipo)$ + 1
+    \State $len\_update \gets$ Longitud$(update)$ + Longitud$(archivos[i])$ + Longitud$(tipo)$ + 1
+
+    \State $ruta\_completa \gets$ malloc$(len\_carpeta)$
+    \State $ruta\_updates \gets$ malloc$(len\_update)$
+
+    \If{$ruta\_completa = NULL \lor ruta\_updates = NULL$}
+        \State Escribir("ERROR: Memoria insuficiente para crear rutas.")
+        \State \Return
+    \EndIf
+
+    \State Copiar$(ruta\_completa, carpeta)$
+    \State Concatenar$(ruta\_completa, archivos[i])$
+    \State Concatenar$(ruta\_completa, tipo)$
+
+    \State Copiar$(ruta\_updates, update)$
+    \State Concatenar$(ruta\_updates, archivos[i])$
+    \State Concatenar$(ruta\_updates, tipo)$
+
+    \State $dir.rutas[i] \gets ruta\_completa$
+    \State $dir.rutas\_update[i] \gets ruta\_updates$
+    \State $dir.cantidad \gets i + 1$
+
+\EndFor
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== ANALIZAR ARCHIVO =====================
+
+\Procedure{analizar\_archivo}{ruta}
+
+\State $analisis \gets \{0,0\}$
+\State $archivo \gets$ Abrir$(ruta)$
+
+\State $primera\_linea \gets 1$
+
+\While{LeerLinea$(archivo, linea)$}
+
+    \State $analisis.num\_lineas \gets analisis.num\_lineas + 1$
+
+    \If{$primera\_linea = 1$}
+
+        \State $ptr \gets linea$
+
+        \While{$ptr \neq FIN$}
+            \If{$ptr = ','$}
+                \State $analisis.num\_columnas \gets analisis.num\_columnas + 1$
+            \EndIf
+            \State Avanzar$(ptr)$
+        \EndWhile
+
+        \State $analisis.num\_columnas \gets analisis.num\_columnas + 1$
+        \State $primera\_linea \gets 0$
+
+    \EndIf
+
+\EndWhile
+
+\State Cerrar$(archivo)$
+\State \Return $analisis$
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== VALIDAR LLAVE =====================
+
+\Procedure{validar\_llave}{llave, num\_table, ruta}
+
+\State $analisis \gets analizar\_archivo(ruta)$
+\State $columnas \gets analisis.num\_columnas$
+
+\State $mascara \gets$ malloc$(columnas + 1)$
+
+\If{$mascara = NULL$}
+    \State \Return "ERROR: Memoria insuficiente"
+\EndIf
+
+\State $mascara[0] \gets '1'$
+
+\For{$i \gets 1$ to $columnas - 1$}
+    \State $mascara[i] \gets '0'$
+\EndFor
+
+\State $mascara[columnas] \gets$ '\textbackslash 0'
+
+\State $tmp.numero\_tabla \gets num\_table$
+\State $tmp.error \gets NULL$
+\State $tmp.llave \gets llave$
+\State $tmp.cantidad\_resultados \gets 0$
+\State $tmp.resultado \gets NULL$
+\State $tmp.parametros \gets mascara$
+
+\State consulta\_tabla$(tmp, directorio, columnas)$
+
+\State Liberar$(mascara)$
+
+\If{$tmp.cantidad\_resultados > 0$}
+
+    \For{$i \gets 0$ to $tmp.cantidad\_resultados - 1$}
+        \State Liberar$(tmp.resultado[i])$
+    \EndFor
+
+    \State Liberar$(tmp.resultado)$
+
+    \State \Return "ERROR: La llave se repite en la tabla\textbackslash n"
+
+\EndIf
+
+\State \Return "EXITO"
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== LEVANTAR SERVICIO =====================
+
+\Procedure{levantar\_servicio}{puerto}
+
+\State $servidor\_fd \gets socket(AF\_INET, SOCK\_STREAM)$
+
+\If{$servidor\_fd = 0$}
+    \State Error("ERROR: Fallo al crear el socket TCP")
+    \State Terminar
+\EndIf
+
+\State setsockopt$(servidor\_fd, SO\_REUSEADDR)$
+
+\State Limpiar$(direct)$
+\State $direct.sin\_family \gets AF\_INET$
+\State $direct.sin\_addr \gets INADDR\_ANY$
+\State $direct.sin\_port \gets htons(puerto)$
+
+\If{bind$(servidor\_fd, direct) < 0$}
+    \State Error("ERROR: Fallo en bind (¿Puerto en uso?)")
+    \State Terminar
+\EndIf
+
+\If{listen$(servidor\_fd, 5) < 0$}
+    \State Error("ERROR: Fallo en listen")
+    \State Terminar
+\EndIf
+
+\State Escribir("[+] Servicio TCP levantado. Escuchando en el puerto ", puerto)
+
+\State \Return $servidor\_fd$
+
+\EndProcedure
+
+\end{algorithmic}
+\end{tcolorbox}
+
+% ------- PSEUDOCODIGO CONSULTA -------
+
+\begin{tcolorbox}[colback=white, colframe=azul_unam, 
+title=Pseudocódigo: consulta.c, breakable]
+
+\textbf{Algoritmo} Consulta
+
+\begin{algorithmic}[1]
+
+% ===================== PROCESAR CONSULTA =====================
+
+\Procedure{procesar\_consulta}{socket\_cliente, tabla, llave, mascara, dir}
+
+\If{$llave = NULL \lor mascara = NULL$}
+    \State $msj \gets$ ``ERROR: Faltan parametros en la consulta.\textbackslash n''
+    \State Enviar$(socket\_cliente, msj)$
+    \State \Return
+\EndIf
+
+\State $c \gets \{tabla, NULL, mascara, llave, 0, NULL\}$
+\State solicitud\_consulta$(c, dir)$
+
+\If{$c.error \neq NULL$}
+    \If{Subcadena$(c.error,0,5) = $ ``ERROR''}
+        \State Enviar$(socket\_cliente, c.error)$
+        \State Liberar$(c.error)$
+        \State \Return
+    \EndIf
+    \State Liberar$(c.error)$
+\EndIf
+
+\If{$c.cantidad\_resultados = 0$}
+    \State $msj \gets$ ``No se encontraron registros coincidentes.\textbackslash n''
+    \State Enviar$(socket\_cliente, msj)$
+    \State \Return
+\EndIf
+
+\State $metadatos \gets$ ``CANTIDAD|'' $+$ Convertir\_Cadena$(c.cantidad\_resultados)$
+\State Enviar$(socket\_cliente, metadatos)$
+
+\State Recibir$(socket\_cliente, buffer\_ack)$
+
+\For{$i \gets 0$ to $c.cantidad\_resultados - 1$}
+    \State Enviar$(socket\_cliente, c.resultado[i])$
+    \State Recibir$(socket\_cliente, buffer\_ack)$
+    \State Liberar$(c.resultado[i])$
+\EndFor
+
+\State Liberar$(c.resultado)$
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== SOLICITUD CONSULTA =====================
+
+\Procedure{solicitud\_consulta}{cliente, dir}
+
+\If{$cliente.numero\_tabla < 0 \lor cliente.numero\_tabla \geq dir.cantidad$}
+    \State $cliente.error \gets$ ``ERROR: LA TABLA SOLICITADA NO EXISTE\textbackslash n''
+    \State \Return
+\EndIf
+
+\State $ruta \gets dir.rutas[cliente.numero\_tabla]$
+\State $analisis \gets analizar\_archivo(ruta)$
+\State $columnas\_reales \gets analisis.num\_columnas$
+
+\If{Longitud$(cliente.parametros) \neq columnas\_reales$}
+    \State $cliente.error \gets$ ``ERROR: La mascara ingresada no coincide. Esta tabla requiere exactamente'' 
+    \State $cliente.error \gets$ cliente.error + Convertir\_Cadena(columnas\_reales) + ``parametros (Bits 1/0).''
+\Else
+    \State consulta\_tabla$(cliente, dir, columnas\_reales)$
+\EndIf
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== CONSULTA TABLA =====================
+
+\Procedure{consulta\_tabla}{cliente, dir, num\_columnas}
+
+\State $analisis \gets analizar\_archivo(dir.rutas[cliente.numero\_tabla])$
+\State $archivo \gets$ Abrir$(dir.rutas[cliente.numero\_tabla])$
+
+\State $hallados \gets 0$
+\State $cliente.resultado \gets$ Arreglo$(analisis.num\_lineas)$
+
+\While{LeerLinea$(archivo, linea)$}
+
+    \State $linea \gets$ EliminarSalto$(linea)$
+
+    \State $tokens \gets$ Separar$(linea, ",")$
+    \State $col \gets 0$
+
+    \For{$i \gets 0$ \textbf{mientras} $tokens[i] \neq NULL \land col < num\_columnas$}
+        \State $col \gets col + 1$
+    \EndFor
+
+    \If{$col = 0$}
+        \State \textbf{continuar}
+    \EndIf
+
+    \State $es\_full \gets (cliente.llave \neq NULL \land cliente.llave = ``full'')$
+    \State $es\_low \gets (cliente.llave \neq NULL \land cliente.llave = ``low'')$
+    \State $match \gets 0$
+
+    \If{$es\_full \lor es\_low$}
+        \State $match \gets 1$
+    \ElsIf{$cliente.llave = NULL$}
+        \State $match \gets 1$
+    \ElsIf{$tokens[0] \neq NULL \land tokens[0] = cliente.llave$}
+        \State $match \gets 1$
+    \EndIf
+
+    \If{$match = 0$}
+        \State \textbf{continuar}
+    \EndIf
+
+    \State $buffer \gets ""$
+    \State $primero \gets 1$
+
+    \If{$es\_full$}
+        \For{$i \gets 0$ to $col - 1$}
+            \If{$primero = 0$}
+                \State $buffer \gets buffer + ","$
+            \EndIf
+            \State $buffer \gets buffer + tokens[i]$
+            \State $primero \gets 0$
+        \EndFor
+    \Else
+        \For{$i \gets 0$ to $num\_columnas - 1$}
+            \If{$i < col$}
+                \If{$cliente.parametros[i] = '1'$}
+                    \If{$primero = 0$}
+                        \State $buffer \gets buffer + ","$
+                    \EndIf
+                    \State $buffer \gets buffer + tokens[i]$
+                    \State $primero \gets 0$
+                \EndIf
+            \EndIf
+        \EndFor
+    \EndIf
+
+    \State $cliente.resultado[hallados] \gets buffer$
+    \State $hallados \gets hallados + 1$
+
+\EndWhile
+
+\State $cliente.cantidad\_resultados \gets hallados$
+
+\If{$hallados > 0 \land hallados < analisis.num\_lineas$}
+    \State Redimensionar$(cliente.resultado, hallados)$
+\EndIf
+
+\If{$hallados = 0$}
+    \State Liberar$(cliente.resultado)$
+    \State $cliente.resultado \gets NULL$
+    \State $cliente.error \gets$ ``ERROR: No se encontro ningun registro en la tabla consultada\textbackslash n''
+\Else
+    \State $cliente.error \gets$ ``EXITO: Se encontro al menos 1 registro en la tabla\textbackslash n''
+\EndIf
+
+\State Cerrar$(archivo)$
+
+\EndProcedure
+
+\end{algorithmic}
+\end{tcolorbox}
+
+% ----------- PSEUDOCODIGO INSERCION.H ------------
+\begin{tcolorbox}[colback=white, colframe=azul_unam, 
+title=Pseudocódigo: insercion.c, breakable]
+
+\textbf{Algoritmo} Insercion y Eliminacion
+
+\begin{algorithmic}[1]
+
+% ===================== SOLICITUD INSERCION =====================
+
+\Procedure{solicitud\_insercion}{cliente, dir}
+
+\If{$cliente.numero\_tabla < 0 \lor cliente.numero\_tabla > 13$}
+    \State $cliente.error \gets$ ``ERROR: Tabla no valida para insercion''
+    \State \Return
+\EndIf
+
+\State $cond \gets$ Buscar$(cliente.datos, ",,") \neq NULL$
+\State $cond \gets cond \lor \text{cliente.datos[0] = ','}$
+\State $cond \gets cond \lor \text{cliente.datos[Longitud(cliente.datos)-1] = ','}$
+
+\If{$cond$}
+    \State $cliente.error \gets$ ``ERROR: Los datos contienen campos vacios.''
+    \State \Return
+\EndIf
+
+\State Copiar$(datos\_copia, cliente.datos)$
+\State $llave\_nueva \gets$ Token$(datos\_copia, ",")$
+
+\If{$llave\_nueva = NULL$}
+    \State $cliente.error \gets$ ``ERROR: Formato de datos invalido.''
+    \State \Return
+\EndIf
+
+\State $ruta\_archivo \gets dir.rutas[cliente.numero\_tabla]$
+
+\State $estado \gets$ validar\_llave$(llave\_nueva, cliente.numero\_tabla, ruta\_archivo)$
+
+\If{Comparar$(estado, "EXITO") \neq 0$}
+    \State $cliente.error \gets$ ``ERROR: La llave primaria ya existe en la base de datos.''
+    \State \Return
+\EndIf
+
+\State $archivo \gets$ Abrir$(ruta\_archivo, "a")$
+
+\If{$archivo = NULL$}
+    \State $cliente.error \gets$ ``ERROR: No se pudo abrir el archivo para insertar.''
+    \State \Return
+\EndIf
+
+\State $EscribirArchivo$(archivo, cliente.datos + "\textbackslash n")
+\State Cerrar$(archivo)$
+
+\State $cliente.error \gets$ ``EXITO: Registro insertado correctamente.''
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== SOLICITUD ELIMINACION =====================
+
+\Procedure{solicitud\_eliminacion}{cliente, dir}
+
+\State argumentos $\gets$ cliente.primary\_key, cliente.num\_tabla, dir.rutas[cliente.num\_tabla]
+\State estado $\gets$ validar\_llaves(argumentos)
+
+\If{Comparar$(estado, "EXITO") = 0$}
+    \State $cliente.error \gets$ ``ERROR: La llave no existe. No se puede eliminar un registro fantasma.''
+    \State \Return
+\EndIf
+
+\State $ruta\_original \gets dir.rutas[cliente.num\_tabla]$
+\State $ruta\_temporal \gets dir.rutas\_update[cliente.num\_tabla]$
+
+\State $archivo\_lectura \gets$ Abrir$(ruta\_original, "r")$
+\State $archivo\_escritura \gets$ Abrir$(ruta\_temporal, "w")$
+
+\If{$archivo\_lectura = NULL \lor archivo\_escritura = NULL$}
+    \State $cliente.error \gets$ ``ERROR: Fallo critico al abrir los archivos para eliminacion.''
+    \If{$archivo\_lectura \neq NULL$}
+        \State Cerrar$(archivo\_lectura)$
+    \EndIf
+    \If{$archivo\_escritura \neq NULL$}
+        \State Cerrar$(archivo\_escritura)$
+    \EndIf
+    \State \Return
+\EndIf
+
+\While{LeerLinea$(archivo\_lectura, linea)$}
+
+    \State Copiar$(linea\_copia, linea)$
+    \State $llave\_actual \gets$ Token$(linea\_copia, ",")$
+
+    \If{$llave\_actual \neq NULL \land Comparar$(llave\_actual, cliente.primary\_key$) = 0$}
+        \State \textbf{continuar}
+    \Else
+        \State EscribirArchivo$(archivo\_escritura, linea)$
+    \EndIf
+
+\EndWhile
+
+\State Cerrar$(archivo\_lectura)$
+\State Cerrar$(archivo\_escritura)$
+
+\State EliminarArchivo$(ruta\_original)$
+
+\If{Renombrar$(ruta\_temporal, ruta\_original) = 0$}
+    \State $cliente.error \gets$ ``EXITO: Registro eliminado permanentemente.''
+\Else
+    \State $cliente.error \gets$ ``ERROR: No se pudo completar la eliminacion fisica.''
+\EndIf
+
+\EndProcedure
+
+\end{algorithmic}
+\end{tcolorbox}
+
+% ---------- PSEUDOCODIGO UPDATE.C -----------
+
+\begin{tcolorbox}[colback=white, colframe=azul_unam, 
+title=Pseudocódigo: update.c, breakable]
+
+\textbf{Algoritmo} Update
+
+\begin{algorithmic}[1]
+
+% ===================== SOLICITUD UPDATE =====================
+
+\Procedure{solicitud\_update}{cliente, dir}
+
+\State argumentos $\gets$ cliente.primary\_key, cliente.num\_tabla, dir.rutas[cliente.num\_tabla]
+\State estado\_origen $\gets$ validar\_llaves(argumentos)
+
+\If{Comparar$(estado\_origen, "EXITO") = 0$}
+    \State $cliente.error \gets$ ``ERROR: El registro que intentas actualizar no existe.\textbackslash n''
+    \State \Return
+\EndIf
+
+\State Copiar$(parametros\_copia, cliente.parametros)$
+\State $nueva\_llave \gets$ Token$(parametros\_copia, ",")$
+
+\If{$nueva\_llave \neq NULL \land Comparar$(cliente.primary\_key, nueva\_llave$) \neq 0$}
+
+    \State args\_destino $\gets$ nueva\_llave, cliente.num\_tabla, dir.rutas[cliente.num\_tabla]
+    \State estado\_destino $\gets$ validar\_llave(args\_destino)
+
+    \If{Comparar$(estado\_destino, "EXITO") \neq 0$}
+        \State $cliente.error \gets$ ``ERROR: La nueva llave primaria ya esta en uso por otro registro.\textbackslash n''
+        \State \Return
+    \EndIf
+
+\EndIf
+
+\State $cliente.error \gets NULL$
+\State update\_archivo$(cliente, dir)$
+
+\EndProcedure
+
+\vspace{0.3cm}
+
+% ===================== UPDATE ARCHIVO =====================
+
+\Procedure{update\_archivo}{cliente, dir}
+
+\State $ruta\_original \gets dir.rutas[cliente.num\_tabla]$
+\State $ruta\_temporal \gets dir.rutas\_update[cliente.num\_tabla]$
+
+\State $archivo\_lectura \gets$ Abrir$(ruta\_original, "r")$
+\State $archivo\_escritura \gets$ Abrir$(ruta\_temporal, "w")$
+
+\If{$archivo\_lectura = NULL \lor archivo\_escritura = NULL$}
+    \State $cliente.error \gets$ ``ERROR: Fallo critico al abrir/crear los archivos.\textbackslash n''
+    \If{$archivo\_lectura \neq NULL$}
+        \State Cerrar$(archivo\_lectura)$
+    \EndIf
+    \If{$archivo\_escritura \neq NULL$}
+        \State Cerrar$(archivo\_escritura)$
+    \EndIf
+    \State \Return
+\EndIf
+
+\While{LeerLinea$(archivo\_lectura, linea)$}
+
+    \State Copiar$(linea\_copia, linea)$
+    \State $llave\_actual \gets$ Token$(linea\_copia, ",")$
+
+    \If{$llave\_actual \neq NULL \land Comparar$(llave\_actual, cliente.primary\_key$) = 0$}
+        \State $EscribirArchivo$(archivo\_escritura, cliente.parametros + "\textbackslash n")
+    \Else
+        \State EscribirArchivo$(archivo\_escritura, linea)$
+    \EndIf
+
+\EndWhile
+
+\State Cerrar$(archivo\_lectura)$
+\State Cerrar$(archivo\_escritura)$
+
+\State EliminarArchivo$(ruta\_original)$
+
+\If{Renombrar$(ruta\_temporal, ruta\_original) \neq 0$}
+    \State $cliente.error \gets$ ``ERROR: No se pudo mover el archivo temporal.\textbackslash n''
+    \State \Return
+\EndIf
+
+\State Escribir("EXITO: Se actualizo el registro ", cliente.primary\_key)
+
+\EndProcedure
+
+\end{algorithmic}
+\end{tcolorbox}
 
 \section{Conclusiónes}
 
@@ -1653,7 +2758,6 @@ void update_archivo(UPDATE *cliente, ARCHIVERO *dir)
     \item CRUD - Glosario de MDN Web Docs | MDN. (s. f.). \url{https://developer.mozilla.org/es/docs/Glossary/CRUD}
     \item Amazon Web Services. (s. f.). ¿Qué es un cliente ligero? Amazon Web Services, Inc. \url{https://aws.amazon.com/es/what-is/thin-client/}
     \item Amazon Web Services. (s. f.-b). Qué es una CLI (interfaz de la línea de comandos)? Amazon Web Services, Inc. Amazon Web Services. (s. f.-b). Qué es una CLI (interfaz de la línea de comandos)? Amazon Web Services, Inc. \url {https://aws.amazon.com/es/what-is/cli}
-    
 \end{itemize}
 
 \end{document}
