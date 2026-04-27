@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.26)  27 APR 2026 11:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.26)  27 APR 2026 17:52
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -732,385 +732,563 @@ Package pdftex.def Info: logo_fi.png  used on input line 126.
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 177.
  (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
+) (./tablas.tex
 <Diagrama Entidad-Relacion.jpeg, id=30, 1528.71124pt x 897.3525pt>
 File: Diagrama Entidad-Relacion.jpeg Graphic file (type jpg)
 <use Diagrama Entidad-Relacion.jpeg>
-Package pdftex.def Info: Diagrama Entidad-Relacion.jpeg  used on input line 189.
+Package pdftex.def Info: Diagrama Entidad-Relacion.jpeg  used on input line 7.
 (pdftex.def)             Requested size: 528.93675pt x 310.47694pt.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 195.
+Package pdftex.def Info: logo_fi.png  used on input line 13.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [2{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc} <./Diagrama Entidad-Relacion.jpeg>]
 <Estudiantes.png, id=43, 1425.325pt x 503.8825pt>
 File: Estudiantes.png Graphic file (type png)
 <use Estudiantes.png>
-Package pdftex.def Info: Estudiantes.png  used on input line 200.
+Package pdftex.def Info: Estudiantes.png  used on input line 18.
 (pdftex.def)             Requested size: 528.93675pt x 186.98718pt.
 <Direccion.png, id=44, 1214.5375pt x 497.86pt>
 File: Direccion.png Graphic file (type png)
 <use Direccion.png>
-Package pdftex.def Info: Direccion.png  used on input line 209.
+Package pdftex.def Info: Direccion.png  used on input line 27.
 (pdftex.def)             Requested size: 528.93675pt x 216.82564pt.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 215.
+Package pdftex.def Info: logo_fi.png  used on input line 33.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [3 <./Estudiantes.png> <./Direccion.png>]
 <Carrera.png, id=53, 534.99875pt x 365.365pt>
 File: Carrera.png Graphic file (type png)
 <use Carrera.png>
-Package pdftex.def Info: Carrera.png  used on input line 218.
+Package pdftex.def Info: Carrera.png  used on input line 36.
 (pdftex.def)             Requested size: 211.57147pt x 144.48763pt.
 <Historial.png, id=54, 386.44376pt x 661.47125pt>
 File: Historial.png Graphic file (type png)
 <use Historial.png>
-Package pdftex.def Info: Historial.png  used on input line 227.
+Package pdftex.def Info: Historial.png  used on input line 45.
 (pdftex.def)             Requested size: 169.26363pt x 289.72603pt.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 231.
+Package pdftex.def Info: logo_fi.png  used on input line 49.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [4 <./Carrera.png> <./Historial.png>]
 <Inscripcion.png, id=63, 276.03125pt x 453.695pt>
 File: Inscripcion.png Graphic file (type png)
 <use Inscripcion.png>
-Package pdftex.def Info: Inscripcion.png  used on input line 236.
+Package pdftex.def Info: Inscripcion.png  used on input line 54.
 (pdftex.def)             Requested size: 148.10164pt x 243.43402pt.
 <Seccion.png, id=64, 987.69pt x 458.71375pt>
 File: Seccion.png Graphic file (type png)
 <use Seccion.png>
-Package pdftex.def Info: Seccion.png  used on input line 245.
+Package pdftex.def Info: Seccion.png  used on input line 63.
 (pdftex.def)             Requested size: 396.70256pt x 184.23817pt.
 <Profesor.png, id=65, 1065.9825pt x 276.03125pt>
 File: Profesor.png Graphic file (type png)
 <use Profesor.png>
-Package pdftex.def Info: Profesor.png  used on input line 254.
+Package pdftex.def Info: Profesor.png  used on input line 72.
 (pdftex.def)             Requested size: 528.93675pt x 136.97072pt.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 256.
+Package pdftex.def Info: logo_fi.png  used on input line 74.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [5 <./Inscripcion.png> <./Seccion.png>]
 <Departamento.png, id=74, 1233.60875pt x 181.67876pt>
 File: Departamento.png Graphic file (type png)
 <use Departamento.png>
-Package pdftex.def Info: Departamento.png  used on input line 263.
+Package pdftex.def Info: Departamento.png  used on input line 81.
 (pdftex.def)             Requested size: 528.93675pt x 77.90132pt.
 <Niveles.png, id=75, 232.87pt x 94.3525pt>
 File: Niveles.png Graphic file (type png)
 <use Niveles.png>
-Package pdftex.def Info: Niveles.png  used on input line 272.
+Package pdftex.def Info: Niveles.png  used on input line 90.
 (pdftex.def)             Requested size: 185.13109pt x 75.01274pt.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 276.
+Package pdftex.def Info: logo_fi.png  used on input line 94.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [6 <./Profesor.png> <./Departamento.png> <./Niveles.png>]
 <Horario.png, id=85, 199.74625pt x 74.2775pt>
 File: Horario.png Graphic file (type png)
 <use Horario.png>
-Package pdftex.def Info: Horario.png  used on input line 282.
+Package pdftex.def Info: Horario.png  used on input line 100.
 (pdftex.def)             Requested size: 132.23418pt x 49.17517pt.
 <Grado.png, id=86, 505.89pt x 457.71pt>
 File: Grado.png Graphic file (type png)
 <use Grado.png>
-Package pdftex.def Info: Grado.png  used on input line 291.
+Package pdftex.def Info: Grado.png  used on input line 109.
 (pdftex.def)             Requested size: 211.57147pt x 191.42674pt.
 <Curso.png, id=87, 290.08376pt x 249.93375pt>
 File: Curso.png Graphic file (type png)
 <use Curso.png>
-Package pdftex.def Info: Curso.png  used on input line 300.
+Package pdftex.def Info: Curso.png  used on input line 118.
 (pdftex.def)             Requested size: 158.68263pt x 136.7203pt.
 <Años.png, id=88, 158.5925pt x 92.345pt>
 File: Años.png Graphic file (type png)
 <use Años.png>
-Package pdftex.def Info: Años.png  used on input line 309.
+Package pdftex.def Info: Años.png  used on input line 127.
 (pdftex.def)             Requested size: 132.23418pt x 77.0028pt.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 311.
+Package pdftex.def Info: logo_fi.png  used on input line 129.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [7 <./Horario.png> <./Grado.png> <./Curso.png>]
 <Semestre.png, id=101, 241.90375pt x 119.44624pt>
 File: Semestre.png Graphic file (type png)
 <use Semestre.png>
-Package pdftex.def Info: Semestre.png  used on input line 318.
+Package pdftex.def Info: Semestre.png  used on input line 136.
 (pdftex.def)             Requested size: 185.13109pt x 91.41798pt.
- (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+) (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2023/02/27 1.9 listings language file
 ) (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
 )
 LaTeX Font Info:    Font shape `OT1/lmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `OT1/lmtt/b/n' tried instead on input line 332.
+(Font)              Font shape `OT1/lmtt/b/n' tried instead on input line 195.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 343.
+Package pdftex.def Info: logo_fi.png  used on input line 206.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [8 <./Años.png> <./Semestre.png>]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 386.
+Package pdftex.def Info: logo_fi.png  used on input line 249.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [9]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 425.
+Package pdftex.def Info: logo_fi.png  used on input line 288.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [10{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 467.
+Package pdftex.def Info: logo_fi.png  used on input line 330.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [11]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 510.
+Package pdftex.def Info: logo_fi.png  used on input line 373.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [12]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 555.
+Package pdftex.def Info: logo_fi.png  used on input line 418.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [13]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 595.
+Package pdftex.def Info: logo_fi.png  used on input line 458.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [14]
 LaTeX Font Info:    Font shape `OT1/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `OT1/lmtt/b/n' tried instead on input line 622.
+(Font)              Font shape `OT1/lmtt/b/n' tried instead on input line 485.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 637.
+Package pdftex.def Info: logo_fi.png  used on input line 500.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [15]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 676.
+Package pdftex.def Info: logo_fi.png  used on input line 539.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [16]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 718.
+Package pdftex.def Info: logo_fi.png  used on input line 581.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [17]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 764.
+Package pdftex.def Info: logo_fi.png  used on input line 627.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [18]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 809.
+Package pdftex.def Info: logo_fi.png  used on input line 672.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [19]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 855.
+Package pdftex.def Info: logo_fi.png  used on input line 718.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [20]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 898.
+Package pdftex.def Info: logo_fi.png  used on input line 761.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [21]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 939.
+Package pdftex.def Info: logo_fi.png  used on input line 802.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [22]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 983.
+Package pdftex.def Info: logo_fi.png  used on input line 846.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [23]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1023.
+Package pdftex.def Info: logo_fi.png  used on input line 888.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [24]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1052.
+Package pdftex.def Info: logo_fi.png  used on input line 916.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [25]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1095.
+Package pdftex.def Info: logo_fi.png  used on input line 957.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [26]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1143.
+Package pdftex.def Info: logo_fi.png  used on input line 1005.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [27]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1191.
+Package pdftex.def Info: logo_fi.png  used on input line 1053.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [28]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1235.
+Package pdftex.def Info: logo_fi.png  used on input line 1097.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [29]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1280.
+Package pdftex.def Info: logo_fi.png  used on input line 1143.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [30]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1326.
+Package pdftex.def Info: logo_fi.png  used on input line 1188.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [31]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1373.
+Package pdftex.def Info: logo_fi.png  used on input line 1235.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [32]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1410.
+Package pdftex.def Info: logo_fi.png  used on input line 1269.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [33]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1451.
+Package pdftex.def Info: logo_fi.png  used on input line 1313.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [34]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1492.
+Package pdftex.def Info: logo_fi.png  used on input line 1355.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [35]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1539.
+Package pdftex.def Info: logo_fi.png  used on input line 1401.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [36]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1570.
+Package pdftex.def Info: logo_fi.png  used on input line 1435.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [37]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1613.
+Package pdftex.def Info: logo_fi.png  used on input line 1478.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
- [38]
-LaTeX Font Info:    Trying to load font information for OMS+lmr on input line 1699.
+ [38] (./pseudocode.tex
+LaTeX Font Info:    Trying to load font information for OMS+lmr on input line 53.
  (/usr/share/texmf/tex/latex/lm/omslmr.fd
 File: omslmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 1699.
+(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 53.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1972.
+Package pdftex.def Info: logo_fi.png  used on input line 326.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [39{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rmsc.enc}]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1972.
+Package pdftex.def Info: logo_fi.png  used on input line 326.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [40]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1972.
+Package pdftex.def Info: logo_fi.png  used on input line 326.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [41]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1972.
+Package pdftex.def Info: logo_fi.png  used on input line 326.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [42]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 1972.
+Package pdftex.def Info: logo_fi.png  used on input line 326.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [43]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2199.
+Package pdftex.def Info: logo_fi.png  used on input line 553.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [44]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2199.
+Package pdftex.def Info: logo_fi.png  used on input line 553.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [45]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2199.
+Package pdftex.def Info: logo_fi.png  used on input line 553.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [46]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2370.
+Package pdftex.def Info: logo_fi.png  used on input line 724.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [47]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2370.
+Package pdftex.def Info: logo_fi.png  used on input line 724.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [48]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2540.
+Package pdftex.def Info: logo_fi.png  used on input line 894.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [49]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2540.
+Package pdftex.def Info: logo_fi.png  used on input line 894.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [50]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2540.
+Package pdftex.def Info: logo_fi.png  used on input line 894.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [51]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2657.
+Package pdftex.def Info: logo_fi.png  used on input line 1011.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [52]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2657.
+Package pdftex.def Info: logo_fi.png  used on input line 1011.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
  [53]
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2751.
+Package pdftex.def Info: logo_fi.png  used on input line 1105.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
- [54]
+ [54]) (./Diagrama.tex
+<Cliente/main.png, id=1465, 3247.13126pt x 7932.63625pt>
+File: Cliente/main.png Graphic file (type png)
+<use Cliente/main.png>
+Package pdftex.def Info: Cliente/main.png  used on input line 9.
+(pdftex.def)             Requested size: 259.1819pt x 633.17137pt.
 File: logo_fi.png Graphic file (type png)
 <use logo_fi.png>
-Package pdftex.def Info: logo_fi.png  used on input line 2763.
+Package pdftex.def Info: logo_fi.png  used on input line 12.
 (pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
- [55] (./Examen.aux)
+ [55]
+Overfull \vbox (4.96513pt too high) has occurred while \output is active []
+
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 12.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [56 <./Cliente/main.png>]
+<Cliente/realizar_actualizacion.png, id=1477, 2667.9675pt x 4726.65875pt>
+File: Cliente/realizar_actualizacion.png Graphic file (type png)
+<use Cliente/realizar_actualizacion.png>
+Package pdftex.def Info: Cliente/realizar_actualizacion.png  used on input line 15.
+(pdftex.def)             Requested size: 343.80565pt x 609.078pt.
+<Cliente/realizar_consulta.png, id=1478, 1993.4475pt x 4864.1725pt>
+File: Cliente/realizar_consulta.png Graphic file (type png)
+<use Cliente/realizar_consulta.png>
+Package pdftex.def Info: Cliente/realizar_consulta.png  used on input line 21.
+(pdftex.def)             Requested size: 253.88737pt x 619.45015pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 24.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [57 <./Cliente/realizar_actualizacion.png>]
+<Cliente/realizar_eliminacion.png, id=1485, 782.925pt x 1192.455pt>
+File: Cliente/realizar_eliminacion.png Graphic file (type png)
+<use Cliente/realizar_eliminacion.png>
+Package pdftex.def Info: Cliente/realizar_eliminacion.png  used on input line 27.
+(pdftex.def)             Requested size: 253.88737pt x 386.68811pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 29.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [58 <./Cliente/realizar_consulta.png>]
+<Cliente/realizar_insercion.png, id=1492, 2653.915pt x 4630.29875pt>
+File: Cliente/realizar_insercion.png Graphic file (type png)
+<use Cliente/realizar_insercion.png>
+Package pdftex.def Info: Cliente/realizar_insercion.png  used on input line 33.
+(pdftex.def)             Requested size: 343.80565pt x 599.76974pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 36.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [59 <./Cliente/realizar_eliminacion.png>]
+<Servidor/servidor.png, id=1499, 7397.6375pt x 13328.79625pt>
+File: Servidor/servidor.png Graphic file (type png)
+<use Servidor/servidor.png>
+Package pdftex.def Info: Servidor/servidor.png  used on input line 45.
+(pdftex.def)             Requested size: 343.80565pt x 619.29453pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 48.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [60 <./Cliente/realizar_insercion.png>]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 51.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [61 <./Servidor/servidor.png>]
+<funciones/crear_directorio.png, id=1513, 1541.76pt x 3263.19125pt>
+File: funciones/crear_directorio.png Graphic file (type png)
+<use funciones/crear_directorio.png>
+Package pdftex.def Info: funciones/crear_directorio.png  used on input line 57.
+(pdftex.def)             Requested size: 238.01991pt x 503.74794pt.
+<funciones/analizar_archivo.png, id=1514, 1462.46375pt x 3626.54875pt>
+File: funciones/analizar_archivo.png Graphic file (type png)
+<use funciones/analizar_archivo.png>
+Package pdftex.def Info: funciones/analizar_archivo.png  used on input line 63.
+(pdftex.def)             Requested size: 238.01991pt x 590.22026pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 66.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [62 <./funciones/crear_directorio.png>]
+<funciones/validar_llave.png, id=1521, 1638.12pt x 4796.92125pt>
+File: funciones/validar_llave.png Graphic file (type png)
+<use funciones/validar_llave.png>
+Package pdftex.def Info: funciones/validar_llave.png  used on input line 69.
+(pdftex.def)             Requested size: 211.57147pt x 619.52275pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 72.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [63 <./funciones/analizar_archivo.png>]
+<funciones/levantar_servicio.png, id=1528, 1866.975pt x 3217.01875pt>
+File: funciones/levantar_servicio.png Graphic file (type png)
+<use funciones/levantar_servicio.png>
+Package pdftex.def Info: funciones/levantar_servicio.png  used on input line 75.
+(pdftex.def)             Requested size: 317.36526pt x 546.83687pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 78.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [64 <./funciones/validar_llave.png>]
+<consulta/solicitud_consulta.png, id=1535, 1740.5025pt x 2625.81pt>
+File: consulta/solicitud_consulta.png Graphic file (type png)
+<use consulta/solicitud_consulta.png>
+Package pdftex.def Info: consulta/solicitud_consulta.png  used on input line 87.
+(pdftex.def)             Requested size: 317.36526pt x 478.79567pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 90.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [65 <./funciones/levantar_servicio.png>]
+<consulta/procesar_consulta.png, id=1542, 2585.66pt x 5631.0375pt>
+File: consulta/procesar_consulta.png Graphic file (type png)
+<use consulta/procesar_consulta.png>
+Package pdftex.def Info: consulta/procesar_consulta.png  used on input line 93.
+(pdftex.def)             Requested size: 264.46837pt x 575.93921pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 96.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [66 <./consulta/solicitud_consulta.png>]
+<consulta/consulta_tabla.png, id=1549, 2543.5025pt x 9221.45125pt>
+File: consulta/consulta_tabla.png Graphic file (type png)
+<use consulta/consulta_tabla.png>
+Package pdftex.def Info: consulta/consulta_tabla.png  used on input line 99.
+(pdftex.def)             Requested size: 158.68263pt x 575.21364pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 102.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [67 <./consulta/procesar_consulta.png>]
+<insercion/solicitud_insercion.png, id=1558, 3750.01pt x 5910.08pt>
+File: insercion/solicitud_insercion.png Graphic file (type png)
+<use insercion/solicitud_insercion.png>
+Package pdftex.def Info: insercion/solicitud_insercion.png  used on input line 111.
+(pdftex.def)             Requested size: 343.80565pt x 541.80411pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 114.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [68 <./consulta/consulta_tabla.png>]
+<insercion/solicitud_eliminacion.png, id=1565, 3345.49875pt x 6087.74374pt>
+File: insercion/solicitud_eliminacion.png Graphic file (type png)
+<use insercion/solicitud_eliminacion.png>
+Package pdftex.def Info: insercion/solicitud_eliminacion.png  used on input line 117.
+(pdftex.def)             Requested size: 343.80565pt x 625.53049pt.
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 120.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [69 <./insercion/solicitud_insercion.png>]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 123.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [70 <./insercion/solicitud_eliminacion.png>]
+<update/solicitud_update.png, id=1578, 1734.48pt x 4496.8pt>
+File: update/solicitud_update.png Graphic file (type png)
+<use update/solicitud_update.png>
+Package pdftex.def Info: update/solicitud_update.png  used on input line 129.
+(pdftex.def)             Requested size: 211.57147pt x 548.51276pt.
+<update/update_archivo.png, id=1579, 3362.5625pt x 4770.82375pt>
+File: update/update_archivo.png Graphic file (type png)
+<use update/update_archivo.png>
+Package pdftex.def Info: update/update_archivo.png  used on input line 135.
+(pdftex.def)             Requested size: 423.151pt x 600.35535pt.
+)
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 1508.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [71 <./update/solicitud_update.png>]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 1509.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [72 <./update/update_archivo.png>]
+File: logo_fi.png Graphic file (type png)
+<use logo_fi.png>
+Package pdftex.def Info: logo_fi.png  used on input line 1538.
+(pdftex.def)             Requested size: 29.99474pt x 35.56593pt.
+ [73] (./Examen.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 28421 strings out of 476106
- 510718 string characters out of 5793933
+ 28594 strings out of 476106
+ 515669 string characters out of 5793933
  2629975 words of memory out of 5000000
- 48774 multiletter control sequences out of 15000+600000
+ 48903 multiletter control sequences out of 15000+600000
  604355 words of font info for 69 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
- 89i,16n,93p,746b,2181s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 89i,16n,93p,991b,2181s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
-Output written on Examen.pdf (55 pages, 2034059 bytes).
+Output written on Examen.pdf (73 pages, 7605991 bytes).
 PDF statistics:
- 1855 PDF objects out of 2073 (max. 8388607)
- 1734 compressed objects within 18 object streams
- 1244 named destinations out of 1440 (max. 500000)
- 250 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1990 PDF objects out of 2073 (max. 8388607)
+ 1816 compressed objects within 19 object streams
+ 1279 named destinations out of 1440 (max. 500000)
+ 335 words of extra memory for PDF output out of 10000 (max. 10000000)
 
