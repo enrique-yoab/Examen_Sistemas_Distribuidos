@@ -19,6 +19,19 @@
 \usepackage{caption}
 \usepackage{amssymb} % Necesario para los símbolos N y Z
 \usepackage{amsmath} % Recomendado para texto dentro de fórmulas
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% Traducción a español
+\algrenewcommand\algorithmicprocedure{\textbf{Procedimiento}}
+\algrenewcommand\algorithmicif{\textbf{Si}}
+\algrenewcommand\algorithmicthen{\textbf{Entonces}}
+\algrenewcommand\algorithmicelse{\textbf{Sino}}
+\algrenewcommand\algorithmicend{\textbf{Fin}}
+\algrenewcommand\algorithmicfor{\textbf{Para}}
+\algrenewcommand\algorithmicwhile{\textbf{Mientras}}
+\algrenewcommand\algorithmicdo{\textbf{Hacer}}
+\algrenewcommand\algorithmicreturn{\textbf{Salir}}
 
 % Configuración para quitar "Listing #:"
 \DeclareCaptionFormat{listing}{\textbf{#3}}
@@ -121,7 +134,7 @@
     \textbf{No. cuenta:} 317302992 \\[0.25cm]
     \textbf{Firma:} \\[0.25cm]
     \textbf{Nombre:} Mendoza Gonzáles Mario\\[0.25cm]
-    \textbf{No. cuenta:} \\[0.25cm]
+    \textbf{No. cuenta:} 316284828 \\[0.25cm]
     \textbf{Firma:}
 \end{flushleft}
 \vspace{0.5cm}
@@ -310,8 +323,9 @@ Esta tabla solo almacena el semestre en el que se encuentra el estudiante.
     \item \textbf{Estructura del Cliente}
 \end{itemize}
 
-El cliente no contiene nada de lógica ni verificación; esto se realiza exclusivamente en el servidor, el cual también se encarga de reportar los errores al cliente. Para que el usuario pueda interactuar correctamente con la base de datos, debemos sincronizar nuestras peticiones con los parámetros que necesita el servidor para poder realizar de manera exitosa las consultas, inserciones, eliminaciones y actualizaciones. \\
-Para que el cliente tenga interacción con el servidor, le agregamos un pequeño submenú que se encarga de indicarle qué comandos son posibles de solicitar. Al utilizar cadenas de texto para interpretar las instrucciones, nos apoyamos en funciones de token o búsqueda de coincidencias para saber si el usuario solicita algún comando en específico.
+El cliente está diseñado bajo el patrón arquitectónico de \textbf{Cliente Ligero} (\textit{Thin Client}). Carece de lógica de negocio o rutinas de verificación locales; delega el 100\% del procesamiento transaccional y la validación de integridad al servidor, el cual se encarga de reportar cualquier anomalía. Para asegurar una interacción exitosa con la base de datos, el cliente se encarga exclusivamente de sincronizar y empaquetar las peticiones siguiendo el protocolo y los parámetros exigidos por el servidor.
+
+Para establecer la interacción bidireccional, se implementó una interfaz de línea de comandos (CLI) que presenta un menú interactivo con las operaciones disponibles. La captura de instrucciones se procesa mediante el análisis de cadenas de texto (\textit{parsing}), utilizando funciones de tokenización para enrutar la petición del usuario hacia el submódulo correspondiente.
 
 %Inicia el codigo C del cliente
 \begin{lstlisting}[style=estiloC ,title={Código 1. Cliente TCP (MAIN)}]
@@ -613,125 +627,42 @@ void realizar_actualizacion(int sock) {
 
 Con esto definido por parte del cliente, el servidor debe solucionar la comunicación entrante, la lectura de los archivos y la identificación de las llaves dentro de las tablas, además de informar sobre los errores internos que no permiten completar la petición del cliente.
 
-%---------------------------- AQUI VA LO DEL PSEUDOCODIGO Y LOS DIAGRAMAS -----------------------------------
-\newpage
 \begin{itemize}
-    \item \textbf{Pseudocódigo (Cliente)}
+    \item \textbf{Estructura del Servidor (\texttt{servidor.c})}
 \end{itemize}
 
-\begin{tcolorbox}[colback=white, colframe=azul_unam, title=Pseudocódigo: Cliente de Base de Datos Distribuida (Completo), breakable]
-\begin{small}
-\begin{tabbing}
-\hspace{0.6cm} \= \hspace{0.6cm} \= \hspace{0.6cm} \= \hspace{0.6cm} \= \hspace{0.6cm} \kill
-\textbf{Algoritmo} cliente\_bd \\
-\> \textbf{Definir} $sock, total\_filas, num\_columnas \in \mathbb{Z}$ \\
-\> \textbf{Definir} $serv\_addr \in sockaddr\_in$ \\
-\> \textbf{Definir} $\{ c \in \text{Alfabeto} \}, buffer, respuesta, paquete, datos\_csv, |buffer| = 1024$ \\
-\> \textbf{Definir} $ip\_serv \in \text{Alfabeto}, ip\_serv =$ "192.168.1.20" \\
-\> \textbf{Definir} $puerto \in \mathbb{N}, puerto = 3000$ \\
-\\
-\> /* 1. Conexión Inicial TCP */ \\
-\> $sock = \text{Crear\_Socket}(\text{AF\_INET}, \text{SOCK\_STREAM})$ \\
-\> $\text{Configurar\_Direccion}(serv\_addr, ip\_serv, puerto)$ \\
-\> \textbf{SI} $\text{Conectar}(sock, serv\_addr) < 0$ \textbf{ENTONCES} \textbf{SALIR} \\
-\> $\text{Recibir}(sock, respuesta)$ \quad // Mensaje de bienvenida \\
-\\
-\> /* 2. Bucle de Interacción Principal */ \\
-\> \textbf{MIENTRAS} (Verdadero) \textbf{HACER} \\
-\> \> \textbf{ESCRIBIR} "Comandos (CONSULTA, INSERCION, ELIMINACION, \\
-\> \> ACTUALIZACION, OFF): " \\
-\> \> \textbf{LEER} $buffer$ \\
-\\
-\> \> \textbf{CASO} $buffer$ \textbf{SEA}: \\
-\> \> \> "OFF": \\
-\> \> \> \> $\text{Enviar}(sock, \text{"OFF"})$ \\
-\> \> \> \> \textbf{ROMPER\_CICLO} \\
-\\
-\> \> \> "CONSULTA": \textbf{LLAMAR} realizar\_consulta($sock$) \\
-\> \> \> "INSERCION": \textbf{LLAMAR} realizar\_insercion($sock$) \\
-\> \> \> "ELIMINACION": \textbf{LLAMAR} realizar\_eliminacion($sock$) \\
-\> \> \> "ACTUALIZACION": \textbf{LLAMAR} realizar\_actualizacion($sock$) \\
-\> \> \> \textbf{OTRO}: \textbf{ESCRIBIR} "Comando no reconocido" \\
-\> \> \textbf{FINCASO} \\
-\> \textbf{FINMIENTRAS} \\
-\> $\text{Cerrar\_Socket}(sock)$ \\
-\textbf{FinAlgoritmo} \\
-\\
-\textbf{Procedimiento} realizar\_consulta($sock$) \\
-\> \textbf{LEER} $tabla, llave, mascara$ \\
-\> $paquete = \text{Concatenar}(\text{"1|"}, tabla, \text{"|"}, llave, \text{"|"}, mascara)$ \\
-\> $\text{Enviar}(sock, paquete)$ \\
-\> $\text{Recibir}(sock, respuesta)$ \\
-\> \textbf{SI} $\text{Subcadena}(respuesta, 0, 9) == \text{"CANTIDAD|"}$ \textbf{ENTONCES} \\
-\> \> $total\_filas = \text{Convertir\_Entero}(respuesta + 9)$ \\
-\> \> $\text{Enviar}(sock, \text{"ACK"})$ \\
-\> \> \textbf{PARA} $i=0$ \textbf{HASTA} $total\_filas - 1$ \textbf{HACER} \\
-\> \> \> $\text{Recibir}(sock, respuesta)$ \\
-\> \> \> \textbf{ESCRIBIR} $respuesta$ \quad // Mostrar fila recibida \\
-\> \> \> $\text{Enviar}(sock, \text{"ACK"})$ \\
-\> \> \textbf{FINPARA} \\
-\> \textbf{SINO} \textbf{ESCRIBIR} $respuesta$ \\
-\textbf{FinProcedimiento} \\
-\\
-\textbf{Procedimiento} realizar\_insercion($sock$) \\
-\> \textbf{LEER} $tabla$ \\
-\> $\text{Enviar}(sock, \text{"2|"} + tabla)$ \\
-\> $\text{Recibir}(sock, respuesta)$ \\
-\> \textbf{SI} $\text{Subcadena}(respuesta, 0, 9) == \text{"COLUMNAS|"}$ \textbf{ENTONCES} \\
-\> \> $num\_columnas = \text{Convertir\_Entero}(respuesta + 9)$ \\
-\> \> $datos\_csv = \text{"DATOS|"}$ \\
-\> \> \textbf{PARA} $i=1$ \textbf{HASTA} $num\_columnas$ \textbf{HACER} \\
-\> \> \> \textbf{LEER} $dato\_temporal$ \\
-\> \> \> $datos\_csv = datos\_csv + dato\_temporal$ \\
-\> \> \> \textbf{SI} $i < num\_columnas$ \textbf{ENTONCES} $datos\_csv = datos\_csv + \text{","}$ \\
-\> \> \textbf{FINPARA} \\
-\> \> $\text{Enviar}(sock, datos\_csv)$ \\
-\> \> $\text{Recibir}(sock, respuesta\_final)$ \\
-\> \> \textbf{ESCRIBIR} $respuesta\_final$ \\
-\> \textbf{SINO} \textbf{ESCRIBIR} $respuesta$ \\
-\textbf{FINSI} \\
-\textbf{FinProcedimiento} \\
-\\
-\textbf{Procedimiento} realizar\_eliminacion($sock$) \\
-\> \textbf{LEER} $tabla, llave$ \\
-\> $paquete = \text{Concatenar}(\text{"3|"}, tabla, \text{"|"}, llave)$ \\
-\> $\text{Enviar}(sock, paquete)$ \\
-\> $\text{Recibir}(sock, respuesta)$ \\
-\> \textbf{ESCRIBIR} $respuesta$ \\
-\textbf{FinProcedimiento} \\
-\\
-\textbf{Procedimiento} realizar\_actualizacion($sock$) \\
-\> \textbf{LEER} $tabla, llave\_vieja$ \\
-\> $paquete = \text{Concatenar}(\text{"4|"}, tabla, \text{"|"}, llave\_vieja)$ \\
-\> $\text{Enviar}(sock, paquete)$ \\
-\> $\text{Recibir}(sock, respuesta)$ \\
-\> \textbf{SI} $\text{Subcadena}(respuesta, 0, 9) == \text{"COLUMNAS|"}$ \textbf{ENTONCES} \\
-\> \> $num\_columnas = \text{Convertir\_Entero}(respuesta + 9)$ \\
-\> \> $datos\_csv = \text{"DATOS|"}$ \\
-\> \> \textbf{PARA} $i=1$ \textbf{HASTA} $num\_columnas$ \textbf{HACER} \\
-\> \> \> \textbf{LEER} $dato\_temporal$ \\
-\> \> \> $datos\_csv = datos\_csv + dato\_temporal$ \\
-\> \> \> \textbf{SI} $i < num\_columnas$ \textbf{ENTONCES} $datos\_csv = datos\_csv + \text{","}$ \\
-\> \> \textbf{FINPARA} \\
-\> \> $\text{Enviar}(sock, datos\_csv)$ \\
-\> \> $\text{Recibir}(sock, respuesta\_final)$ \\
-\> \> \textbf{ESCRIBIR} $respuesta\_final$ \\
-\> \textbf{SINO} \textbf{ESCRIBIR} $respuesta$ \\
-\textbf{FINSI} \\
-\textbf{FinProcedimiento}
-\end{tabbing}
-\end{small}
-\end{tcolorbox}
+El servidor representa el núcleo de procesamiento de este proyecto. Su labor no solo consiste en recibir y discretizar las cadenas de texto enviadas por el cliente, sino en mantener el código estrictamente modulado. Dado que concentrar toda la lógica en un solo archivo es una mala práctica de diseño, se tomó la decisión arquitectónica de generar archivos de cabecera e implementación independientes para cada una de las cuatro operaciones principales (CONSULTA, INSERCIÓN, ELIMINACIÓN y ACTUALIZACIÓN).
 
-%---------------------------- AQUI TERMINA LO DEL CLIENTE, PSEUDOCODIGO Y DIAGRAMAS -----------------------------------
+El archivo principal, \texttt{servidor.c}, actúa exclusivamente como el orquestador o controlador de tráfico del sistema, dividiendo su ejecución en tres fases críticas:
 
-\begin{itemize}
-    \item \textbf{Estructura del Servidor.}
+\begin{itemize}[label=]
+    \item \textbf{1. Inicialización Concurrente (Multihilo)}
 \end{itemize}
 
-El servidor es el verdadero reto de este problema, ya que su labor no solo consiste en recibir y discretizar las cadenas de texto que envía el cliente, sino mantener el código modulado. Ya que tener todo el código en un solo archivo no es una buena práctica, se tomó la decisión de generar 4 archivos más, los cuales contendrán las funciones esenciales de cada una de las 4 operaciones principales (CONSULTA, INSERCIÓN, ELIMINACIÓN Y ACTUALIZACIÓN).\\
-Antes de iniciar la conexion entre el servidor y el cliente, este debe de crear un directorio de rutas globales y rutas de escritura temporales, fundamentales para que todas las funciones que utiliza el servidor funcionen correctamente, ya que necesitan de las tablas para realizar, las consultas y sobre todo la verificación de las llaves.
-Ademas de crear el directorio, debemos generar las estructuras de cada una de las peticiones, lo que permite tener un mejor control de estas y evitar reciclar variables.
+Antes de iniciar la conexión con el cliente, el servidor debe preparar su entorno. Para minimizar el tiempo de arranque, el sistema emplea la biblioteca \texttt{pthread.h} para lanzar dos hilos de ejecución en paralelo:
+\begin{itemize}
+    \item \textbf{Hilo de Directorios (\texttt{funcion\_h1}):} Se encarga de construir dinámicamente y almacenar en memoria todas las rutas absolutas hacia los archivos físicos (\texttt{.csv}) y hacia el entorno de \textit{buffer} (archivos temporales), los cuales son fundamentales para las operaciones transaccionales.
+    \item \textbf{Hilo de Red (\texttt{funcion\_h2}):} Simultáneamente, interactúa con el sistema operativo para instanciar el socket TCP, realizar el \textit{bind} al puerto 3000 y poner el servicio en modo de escucha.
+\end{itemize}
+El hilo principal espera a que ambos procesos concluyan mediante barreras de sincronización que nos ofrecen las liberias (\texttt{pthread\_join}) antes de proceder a aceptar clientes.
+
+\begin{itemize}[label=]
+    \item \textbf{2. Ciclo de Escucha y Desempaquetado}
+\end{itemize}
+
+Una vez establecida la sesión con el cliente, el servidor entra en un bucle de escucha activa. Cuando recibe una trama de datos, utiliza funciones de manipulación de cadenas (\texttt{strtok}) para extraer la cabecera del mensaje utilizando la barra vertical (\texttt{|}) como carácter delimitador de protocolo. El primer segmento de la trama siempre indica la operación a realizar (1=Consulta, 2=Inserción, 3=Eliminación, 4=Actualización), permitiendo al servidor enrutar la petición correctamente.
+
+\begin{itemize}[label=]
+    \item \textbf{3. Enrutador de Operaciones (Mini-Switch)}
+\end{itemize}
+
+Dependiendo del código de operación recibido, el servidor delega la carga de trabajo a los módulos correspondientes:
+\begin{itemize}
+    \item \textbf{Consultas e Eliminaciones:} Extrae la llave primaria de la trama y transfiere el control a las funciones \texttt{procesar\_consulta} o \texttt{solicitud\_eliminacion}, las cuales resuelven la petición y devuelven el resultado.
+    \item \textbf{Inserciones y Actualizaciones (Descubrimiento de Esquema):} Para estas operaciones, el servidor implementa un protocolo interactivo en dos fases. Primero, intercepta la petición, invoca al analizador de archivos físicos para descubrir cuántas columnas tiene la tabla seleccionada, y le informa este número al cliente mediante la etiqueta \texttt{COLUMNAS|N}. Posteriormente, se queda a la espera de un segundo paquete (etiquetado como \texttt{DATOS|}) con la fila completa preformateada por el cliente, la cual finalmente se inyecta en las rutinas de modificación física.
+\end{itemize}
+
+Además de coordinar el flujo, el servidor implementa rutinas de seguridad de bajo nivel, como la clonación de llaves primarias en variables de respaldo (\textit{backup}) durante las actualizaciones, evitando así errores críticos de segmentación o punteros huérfanos provocados por la sobreescritura de los \textit{buffers} de red.
 
 \begin{lstlisting}[style=estiloC ,title={Código 1. Servidor TCP (MAIN)}]
 #include <stdio.h>
@@ -980,9 +911,19 @@ void* funcion_h2(void *arg) {
     \item \textbf{Archivos de Cabecera (.h)}
 \end{itemize}
 
-El primer archivo que se generó es el de entidades.h, el cual tiene declarado todas las estructuras utilizadas dentro de nuestro servidor, En total son 8 esructuras principales,
-1 para el directorio que almacena las rutas de todos las tablas, 4 para las operaciones principales de la base de datos, 2 para los hilos generados en el servidor y 1 para el analis de archivos de texto.
-Junto con la declaracion de 4 funciones, el que crea el directorio, el que levanta el servicio, la que valida la llave dentro de una tabla, y el analisis breve de la tabla que lee.
+El archivo \texttt{entidades.h} actúa como el diccionario de datos principal y la interfaz base del sistema. Contiene la definición de todos los tipos de datos abstractos (estructuras) y los prototipos de las funciones fundamentales de bajo nivel que son compartidas por los distintos módulos del servidor. 
+
+En total, se definen 8 estructuras principales, categorizadas lógicamente según su propósito operativo:
+
+\begin{itemize}
+    \item \textbf{Gestión de Sistema de Archivos (1):} La estructura \texttt{ARCHIVERO} es la encargada de almacenar dinámicamente en memoria las rutas absolutas de las tablas físicas y sus correspondientes archivos temporales (\textit{buffers}) de actualización.
+    \item \textbf{Control Transaccional CRUD (4):} Las estructuras principales son \texttt{CONSULTA}, \texttt{INSERCION}, \texttt{UPDATE} y \texttt{ELIMINACION}. Estas encapsulan los parámetros, las llaves primarias, los resultados y los búferes de error necesarios para ejecutar el ciclo de vida de los datos de manera aislada y segura.
+    \item \textbf{Concurrencia e Inicialización (2):} Las estructuras \texttt{HILO\_DIR} y \texttt{HILO\_RED} están diseñadas específicamente para el empaquetado y transmisión limpia de parámetros hacia los hilos de ejecución (\texttt{pthreads}) durante el arranque paralelo del servidor.
+    
+    \item \textbf{Descubrimiento de Esquemas (1):} \texttt{ANALISIS\_ARCHIVO} sirve como contenedor de metadatos espaciales para registrar el conteo dinámico de filas y columnas de cualquier tabla física evaluada.
+\end{itemize}
+
+Adicionalmente, este archivo de cabecera expone las firmas (prototipos) de cuatro funciones utilitarias críticas del núcleo: la inicialización del mapa de rutas (\texttt{crear\_directorio}), la configuración e instanciación del socket TCP (\texttt{levantar\_servicio}), el algoritmo de verificación de integridad referencial (\texttt{validar\_llave}), y el analizador estructural de archivos (\texttt{analizar\_archivo}).
 
 \begin{lstlisting}[style=estiloC ,title={Código 1. Servidor TCP (entidades.h)}]
 #ifndef ENTIDADES_H
@@ -1060,7 +1001,25 @@ typedef struct {
 #endif
 \end{lstlisting}
 
-Los ultimos 3 archivos de cabecera solo declaran las funciones que utiliza cada operación consulta, inserción, actualización y eliminación.
+\begin{itemize}
+    \item \textbf{Interfaces de Operación (\texttt{.h})}
+\end{itemize}
+
+Los últimos tres archivos de cabecera (\texttt{consulta.h}, \texttt{insercion.h} y \texttt{update.h}) funcionan como las interfaces de programación (API) internas del motor. Su propósito es declarar de forma estricta las funciones que el servidor puede invocar para interactuar con los datos, aislando la lógica de red de la lógica de manipulación de archivos.
+
+\begin{itemize}
+    \item \textbf{Interfaces de Operación (\texttt{.h})}
+\end{itemize}
+
+Los últimos tres archivos de cabecera (\texttt{consulta.h}, \texttt{insercion.h} y \texttt{update.h}) funcionan como las interfaces de programación (API) internas del motor. Su propósito es declarar de forma estricta las funciones que el servidor puede invocar para interactuar con los datos, aislando la lógica de red de la lógica de manipulación de archivos.
+
+\begin{itemize}
+    \item \textbf{\texttt{consulta.h}:} Define los prototipos necesarios para la recuperación de información. Incluye la función de alto nivel \texttt{solicitud\_consulta}, que actúa como punto de entrada, y \texttt{consulta\_tabla}, que ejecuta el escaneo físico y la aplicación de máscaras de bits sobre el archivo.
+    \item \textbf{\texttt{insercion.h}:} Expone los métodos para la creación y erradicación de registros. Centraliza las funciones \texttt{solicitud\_insercion}, que gestiona el flujo de nuevos datos, y \texttt{solicitud\_eliminacion}, encargada de coordinar el proceso de filtrado y reemplazo de archivos para el borrado de información.
+    \item \textbf{\texttt{update.h}:} Declara la interfaz para la modificación de registros existentes. Define la función \texttt{solicitud\_update} para la validación previa de datos y \texttt{update\_archivo} para la ejecución del algoritmo de reescritura mediante archivos temporales.
+\end{itemize}
+
+Esta arquitectura de cabeceras permite que el archivo principal del servidor (\texttt{servidor.c}) pueda ejecutar cualquier operación CRUD simplemente incluyendo la interfaz correspondiente, lo que facilita el mantenimiento y la escalabilidad del sistema ante futuras expansiones de las reglas de negocio.
 
 \begin{lstlisting}[style=estiloC ,title={Código 2. Servidor TCP (consulta.h)}]
 #ifndef CONSULTA_H 
@@ -1084,25 +1043,22 @@ void solicitud_eliminacion(ELIMINACION *cliente, ARCHIVERO *dir);
 #endif
 \end{lstlisting}
 
-\begin{lstlisting}[style=estiloC ,title={Código 4. Servidor TCP (update.h)}]
-#ifndef UPDATE_H 
-#define UPDATE_H
-#include "entidades.h"
-
-void solicitud_update(UPDATE *cliente, ARCHIVERO *dir);
-void update_archivo(UPDATE *cliente, ARCHIVERO *dir);
-
-#endif
-\end{lstlisting}
-
 \begin{itemize}
     \item \textbf{Archivos fuente (.c)}
 \end{itemize}
 
-Estos archivos son los que contienen la logica de cada uno de los archivos de cabecera, que resultan en 4 archivos fuente. \\
-El primer archivo es el que crea el directorio, el cual solo consta de las rutas principales en donde se encuentra las tablas principales y otro donde se almacenaran temporalmente los registros que no son actualizados y posteriormente copiarlos al original.
-Además "analizar archivo" se encarga de leer cuantas columnas y filas hay en cada archivo lo que permite que otras funciones mantengan sus limites lo que permite a validar llave saber en que tabla se encuentra, cuantos parametros ocupa y finalmente lanzar una consulta a la primera columna de la tabla, si esto no se hace simplemente no podra reutilizar la funcion que hace una consulta.
-El que valida la llave se encarga de revisar que la llave proporcionada no se repita, de lo contrario no existe o esta libre. Por ultimo el que levanta el servicio solo se encarga de eso para poder realizar exitosamente la conexion entre el servidor y el cliente.
+Este archivo \texttt{(servidor.c)} representa el nucleo del operativo de bajo nivel del servidor, tiene la logica fundacional que administra la memoria dinámica, el mapeo del sistema de archivos y la configuracion de red, sirviendo como soporte vital para la correcta ejecución de los módulos transaccionales (CRUD). Se compone de cuatro rutinas principales:
+
+\begin{itemize}
+    \item \textbf{Géstion de Rutas y Memoria} \texttt{(crear\_directorio)}: \\
+    Funcion encargada de la asignacion dinamica de memoria para estructurar los accesos a la base de datos fisica. Genera y almacena simultáneamente las rutas hacia el buffer (archivos temporales). Esta dualidad de rutas es la pieza clave que permite realizar las operaciones de actualización y eliminación de forma segura mediante el intercambio de archivos.
+    \item \textbf{Descubrimiento Dinámico de Esquema} \texttt{(analizar\_archivo)}:\\
+    Actúa como el analizador de metadatos del sistema. Mediante la lectura directa del archivo fisico \texttt{.csv}, calculando en tiempo real la cantidad de columnas (delimitadores) y el número total de filas. Esto dota de al servidor de una arquitectura agnóstica, permitiendo que el resto de las funciones adapten sus limites de memoria e iteraciones a cualquier tabla sin importar su tamaño, evitando la necesidad de constantes en el código.
+    \item \textbf{Validación de integridad Referencial} \texttt{(validar\_llave)}: \\
+    Es el escudo de seguridad de la base de datos para garantizar la unicidad de los registros. Apoyándose en el analizador de archivos, construye dinámicamente una máscara de bits para aislar exclusivamente la primera columna (Llave Primaria). Reutiliza el motor de consultas para escanear la tabla y determinar si un identificador ya está en uso (evitando sobreescritura) o si se encuentra libre.
+    \item \textbf{Inicialización del Red TCP} \texttt{(inicilizar\_servicio)}: \\
+    Abstrae la complejida de la pila de protocolos de comunicación. Se encarga de instanciar un socket bajo el protocolo IPv4 \texttt{(AF\_INET)} y el protocolo orientado a conexión TCP \texttt{(SOCK\_STREAM)}. Configurar la reutilización de direcciones, enlaza el servicio a un puerto especifico \texttt{(bind)} y establece el estado de escucha activa \texttt{(listen)}, retornando al hilo principal el descriptor de red listo para gestionar las peticiones de los clientes.
+\end{itemize}
 
 \begin{lstlisting}[style=estiloC ,title={Código 1. Servidor TCP (funciones.h)}]
 #include <stdio.h>
@@ -1279,7 +1235,7 @@ Adicionalmente, el motor cuenta con la lógica necesaria para procesar tres nive
     \item \textbf{Unica:} Localiza un registro en especifico mediante su llave primaria y extra exclusivamente las columnas que el usuario desea observar de dicho registro.
 \end{itemize}
 
-\begin{lstlisting}[style=estiloC ,title={Código 2. Servidor TCP (consulta.h)}]
+\begin{lstlisting}[style=estiloC ,title={Código 2. Servidor TCP (consulta.c)}]
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -1445,5 +1401,268 @@ void consulta_tabla(CONSULTA *cliente, ARCHIVERO *dir, int num_columnas)
     fclose(tabla);
 }
 \end{lstlisting}
+
+El siguiente archivo (insercion.h) concentra las funciones encargadas de alterar la estructura física de los datos almacenados, garantizando en todo momento la integridad referencial y estructural de los archivos de texto secuenciales (.csv). Se divide en dos operaciones fundamentales: inserción y eliminación.
+
+\begin{itemize}
+    \item \textbf{Operacion de inserción} \\
+    Esta función gestiona la agregación de nuevos registros a la base de datos aplicando un modelo de validación estricto antes de realizar cualquier escritura en disco. Su flujo de ejecución consiste en:
+    \begin{enumerate}
+        \item \textbf{Validación de Integridad Estructural:} Analiza la cadena de datos entrante para asegurar que no exstan campos nulos o vacios (detectando las comas contiguas)
+        \item \textbf{Extracción y Validación de llave primaria:} Realiza una copia en memoria de la cadena original para extraer la llave primaria sin corromper el paquete de datos. Posteriormente, verifica mediante el motor de busqueda que dicha llave está completamente libre; si detecta un colision (duplicidad), la operación se aborta para proteger la unicidad de los registros. 
+        \item \textbf{Escritura Fisica:} Una vez superados los filtros de seguridad, el sistema abre el archivo en modo de escritura e inserta la nueva fila de manera limpia al final del documento, cerrando el flujo de datos para confirmar la persistencia.
+    \end{enumerate}
+    \item \textbf{Operacion de Eliminación} \\
+    La función implementa un mecanismo de borrado logico y fisico utilizando una arquitectura de archivos temporales (buffer) para evitar la corrupción de datos. Su proceso se define en los siguiente pasos:
+    \begin{enumerate}
+        \item \textbf{Comprobación de Existencia:} Antes de iniciar cualquier manipulación de archivos, verifica que la llave primaria solicitada realmente exista en el sistema, evitando procesar "Registros fantasmas"
+        \item \textbf{Tránsito por Buffer Temporal:} El sistema abre simultáneamente el archivo original en modo lectura y una archivo temporal en modo escritura.
+        \item \textbf{Filtrado y Reemplazo:} El motor lee el archivo original linea por linea. Cuando detecta la fila que coincide con la llave primaria a eliminar, la ignora deliberadamente(omite su escritura) y el resto de los registros se copian intactos al archivo temporal.
+        \item \textbf{Persistencia Final:} Al terminar el ciclo, los flujos de memoria se cierran y elimina el archivo original fisicamente, para que el archivo temporal se renombre al archivo antiguo tomando asi su lugar, permitiendo asi la eliminacion del registro. 
+    \end{enumerate}
+\end{itemize}
+
+\begin{lstlisting}[style=estiloC ,title={Código 3. Servidor TCP (insercion.c)}]
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "../extensiones/entidades.h"
+#include "../extensiones/insercion.h"
+
+void solicitud_insercion(INSERCION *cliente, ARCHIVERO *dir)
+{
+    // 1. Verificamos que la tabla sea válida
+    if (cliente->numero_tabla < 0 || cliente->numero_tabla > 13) {
+        cliente->error = strdup("ERROR: Tabla no valida para insercion");
+        return;
+    }
+
+    // 2. Validar campos vacíos rápidamente
+    // Buscamos si hay dos comas juntas (,,) o si empieza/termina con coma
+    if (strstr(cliente->datos, ",,") != NULL || 
+        cliente->datos[0] == ',' || 
+        cliente->datos[strlen(cliente->datos) - 1] == ',') 
+    {
+        cliente->error = strdup("ERROR: Los datos contienen campos vacios.");
+        return;
+    }
+
+    // 3. Extraer la llave primaria de los datos para validarla
+    char datos_copia[1024];
+    strcpy(datos_copia, cliente->datos);
+    char *llave_nueva = strtok(datos_copia, ",");
+
+    if (llave_nueva == NULL) {
+        cliente->error = strdup("ERROR: Formato de datos invalido.");
+        return;
+    }
+
+    char *ruta_archivo = dir->rutas[cliente->numero_tabla];
+
+    // 4. Validamos que la llave NO exista (Para INSERT, "EXITO" significa que la llave está libre)
+    char *estado = validar_llave(llave_nueva, cliente->numero_tabla, ruta_archivo);
+    
+    if (strcmp(estado, "EXITO") != 0) {
+        // Si no es EXITO, es porque validar_llave encontró duplicados o hubo un error
+        cliente->error = strdup("ERROR: La llave primaria ya existe en la base de datos.");
+        return;
+    }
+
+    // 5. Procedemos a insertar al final del archivo (Modo "a" - Append)
+    FILE *archivo = fopen(ruta_archivo, "a");
+    if (archivo == NULL) {
+        cliente->error = strdup("ERROR: No se pudo abrir el archivo para insertar.");
+        return;
+    }
+
+    // Escribimos la línea completa directamente
+    fprintf(archivo, "%s\n", cliente->datos);
+    fclose(archivo);
+
+    cliente->error = strdup("EXITO: Registro insertado correctamente.");
+}
+
+void solicitud_eliminacion(ELIMINACION *cliente, ARCHIVERO *dir)
+{
+    // 1. Validamos que el registro SI EXISTA
+    // Recordamos que si validar_llave retorna "EXITO", significa que la llave está libre (No existe)
+    char *estado = validar_llave(cliente->primary_key, cliente->num_tabla, dir->rutas[cliente->num_tabla]);
+    if(strcmp(estado, "EXITO") == 0) 
+    {
+        cliente->error = strdup("ERROR: La llave no existe. No se puede eliminar un registro fantasma.");
+        return;
+    }
+
+    // 2. Rutas
+    char *ruta_original = dir->rutas[cliente->num_tabla];
+    char *ruta_temporal = dir->rutas_update[cliente->num_tabla]; // Usamos la misma carpeta ./buffer/
+
+    FILE *archivo_lectura = fopen(ruta_original, "r");
+    FILE *archivo_escritura = fopen(ruta_temporal, "w");
+
+    if (!archivo_lectura || !archivo_escritura) {
+        cliente->error = strdup("ERROR: Fallo critico al abrir los archivos para eliminacion.");
+        if(archivo_lectura) fclose(archivo_lectura);
+        if(archivo_escritura) fclose(archivo_escritura);
+        return;
+    }
+
+    char linea[1024];
+
+    // 3. Procesamiento de líneas
+    while (fgets(linea, sizeof(linea), archivo_lectura)) {
+        
+        char linea_copia[1024];
+        strcpy(linea_copia, linea);
+        char *llave_actual = strtok(linea_copia, ",");
+
+        // 4. Si encuentra la llave hace un salto de linea y la "elimina"
+        if (llave_actual != NULL && strcmp(llave_actual, cliente->primary_key) == 0) {
+            // ENCONTRAMOS EL REGISTRO
+            // Para eliminarlo, simplemente usamos 'continue' para saltarnos la escritura
+            // y pasar a la siguiente línea del while.
+            continue; 
+        } else {
+            // Si no es la llave que buscamos, lo copiamos al archivo temporal
+            fputs(linea, archivo_escritura);
+        }
+    }
+
+    // 5. Limpieza y reemplazo
+    fclose(archivo_lectura);
+    fclose(archivo_escritura);
+
+    remove(ruta_original);
+    
+    if (rename(ruta_temporal, ruta_original) == 0) {
+        cliente->error = strdup("EXITO: Registro eliminado permanentemente.");
+    } else {
+        cliente->error = strdup("ERROR: No se pudo completar la eliminacion fisica.");
+    }
+}
+\end{lstlisting}
+
+Por ultimo el archivo \texttt{(update.c)} concentra la logica de transaccional encargada de registros exsistentes. Su diseño divide el proceso en dos fases criticas para garantizar la integridad referencial y prevenir la corrupción de la base de datos durante las operaciones de escritura.
+
+\begin{itemize}
+    \item \textbf{Fase 1:} Validación y Prevención de Colisiones \texttt{(solicitud\_update)} \\
+    Antes de interactuar con los archivos fisicos, está función actúa como un filtro estricto de regla de negocio:
+    \begin{enumerate}
+        \item \textbf{Comprobación de Existencia:} Verifica mediante el analizador de llaves que el registro original que se desea modificar efectivamente existen en el sistema.
+        \item \textbf{Extracción Segura:} Realiza una copia profunda \texttt{deep copy} de la cadena de la cadena de nuevos parametros para extraer la nueva llave primaria sin alterar el paquete de datos original.
+        \item \textbf{Control de Alteración de Llave:} Si el sistema detecta que la actualización incluye un cambio de nueva llave primaria (es decir, la llave nueva es diferente a la original), lanza una validación secundaria. Está comprobación garantiza que la nueva llave está completamente libre. Si la llave de destino ya está en uso por otro registro, la transacción se aborta inmediatamente para evitar duplicidad y proteger la unicidad de las entidades.
+    \end{enumerate}
+    \item \textbf{Fase 2:} Ejecución y Persistencia Física \texttt{(update\_archivo)}\\
+    Una vez que los datos son catalogados como seguros, el sistema procede con la sobreescritura utilizando una estrategia de buffer temporal:
+    \begin{enumerate}
+        \item \textbf{Apertura Dual:} Se establece un flujo de lectura desde el archivo original (en \texttt{./Datos/}) y un flujo de escritura hacia un nuevo archivo temporal (en \texttt{./buffer/}).
+        \item \textbf{Reemplazo Condicional:} El motor lee el archivo original linea por linea. Cuando el curso detecta la fila cuya llave primaria coincide con la del registro a modificar, el sistema omite la linea y, en su lugar, inyecta la nueva cadena parametros o datos proporcionados por el cliente. El resto de los registros se transcribe de forma idéntica.
+        \item \textbf{Consolidación (commit físico):} Al finalizar la lectura, los flujos de memoria se liberan. El sistema operativo elimina el archivo \texttt{.csv} original y reubica el archivo temporal en el directorio principal, renombrandolo como el original para que tome el lugar de su predecesor, completando así la transacción de manera atómica. 
+    \end{enumerate}
+\end{itemize}
+
+\begin{lstlisting}[style=estiloC ,title={Código 4. Servidor TCP (update.c)}]
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include "../extensiones/entidades.h"
+#include "../extensiones/update.h"
+
+void solicitud_update(UPDATE *cliente, ARCHIVERO *dir)
+{
+    // 1. Validamos que el registro ORIGINAL exista
+    char *estado_origen = validar_llave(cliente->primary_key, cliente->num_tabla, dir->rutas[cliente->num_tabla]);
+    if(strcmp(estado_origen, "EXITO") == 0) 
+    {
+        cliente->error = strdup("ERROR: El registro que intentas actualizar no existe.\n");
+        return;
+    }
+
+    // 2. Extraemos la NUEVA llave de forma segura (sin destruir cliente->parametros)
+    char parametros_copia[500];
+    strcpy(parametros_copia, cliente->parametros);
+    char *nueva_llave = strtok(parametros_copia, ",");
+
+    // 3. Verificamos si el usuario está intentando CAMBIAR la llave primaria
+    if (nueva_llave != NULL && strcmp(cliente->primary_key, nueva_llave) != 0)
+    {
+        // Como son diferentes, validamos que la nueva llave NO esté ocupada
+        char *estado_destino = validar_llave(nueva_llave, cliente->num_tabla, dir->rutas[cliente->num_tabla]);
+        
+        // Si NO retorna "EXITO", significa que la llave ya la tiene otro registro (Duplicado)
+        if (strcmp(estado_destino, "EXITO") != 0) 
+        {
+            cliente->error = strdup("ERROR: La nueva llave primaria ya esta en uso por otro registro.\n");
+            return;
+        }
+    }
+
+    // 4. Si llegamos aquí, todo es válido (la llave es la misma o la nueva está libre)
+    cliente->error = NULL;
+    update_archivo(cliente, dir);
+}
+
+void update_archivo(UPDATE *cliente, ARCHIVERO *dir)
+{
+    char *ruta_original = dir->rutas[cliente->num_tabla];
+    char *ruta_temporal = dir->rutas_update[cliente->num_tabla]; 
+
+    FILE *archivo_lectura = fopen(ruta_original, "r");
+    
+    // [MOMENTO 1: NACIMIENTO] 
+    // Aquí el sistema operativo CREA el archivo físicamente en la carpeta ./buffer/
+    FILE *archivo_escritura = fopen(ruta_temporal, "w"); 
+
+    if (!archivo_lectura || !archivo_escritura) {
+        cliente->error = strdup("ERROR: Fallo critico al abrir/crear los archivos.\n");
+        if(archivo_lectura) fclose(archivo_lectura);
+        if(archivo_escritura) fclose(archivo_escritura);
+        return;
+    }
+
+    // [MOMENTO 2: CRECIMIENTO]
+    // Copiamos datos y metemos el registro actualizado
+    char linea[1024];
+    while (fgets(linea, sizeof(linea), archivo_lectura)) {
+        char linea_copia[1024];
+        strcpy(linea_copia, linea);
+        char *llave_actual = strtok(linea_copia, ",");
+
+        if (llave_actual != NULL && strcmp(llave_actual, cliente->primary_key) == 0) {
+            fprintf(archivo_escritura, "%s\n", cliente->parametros);
+        } else {
+            fputs(linea, archivo_escritura);
+        }
+    }
+
+    // Cerramos para liberar la memoria RAM
+    fclose(archivo_lectura);
+    fclose(archivo_escritura);
+
+    // [MOMENTO 3: DESTRUCCION DEL VIEJO]
+    // Borramos el archivo original de la carpeta ./Datos/
+    remove(ruta_original);
+
+    // [MOMENTO 4: REENCARNACION]
+    // Movemos el archivo temporal de ./buffer/ hacia ./Datos/ y le cambiamos el nombre
+    if (rename(ruta_temporal, ruta_original) != 0){
+        cliente->error = strdup("ERROR: No se pudo mover el archivo temporal.\n");
+        return;
+    }
+    printf("EXITO: Se actualizo el registro %s\n", cliente->primary_key);
+}
+\end{lstlisting}
+
+\section{Conclusiónes}
+
+
+\section{Referencias}
+\begin{itemize}
+    \item CRUD - Glosario de MDN Web Docs | MDN. (s. f.). \url{https://developer.mozilla.org/es/docs/Glossary/CRUD}
+    \item Amazon Web Services. (s. f.). ¿Qué es un cliente ligero? Amazon Web Services, Inc. \url{https://aws.amazon.com/es/what-is/thin-client/}
+    \item Amazon Web Services. (s. f.-b). Qué es una CLI (interfaz de la línea de comandos)? Amazon Web Services, Inc. Amazon Web Services. (s. f.-b). Qué es una CLI (interfaz de la línea de comandos)? Amazon Web Services, Inc. \url {https://aws.amazon.com/es/what-is/cli}
+    
+\end{itemize}
 
 \end{document}
