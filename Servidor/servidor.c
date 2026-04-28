@@ -116,7 +116,7 @@ int main(void){
                 peticion_ins.datos = datos_csv;
                 peticion_ins.error = NULL;
 
-                // Delegamos al motor físico (el que programamos en insercion.c)
+                // Delegamos al motor físico (el se programo en insercion.c)
                 solicitud_insercion(&peticion_ins, &directorio);
 
                 // FASE 3: Respondemos el resultado final (EXITO o ERROR de llave duplicada)

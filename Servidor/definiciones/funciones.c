@@ -134,7 +134,7 @@ int levantar_servicio(int puerto)
     }
 
     // Opcional pero recomendado: Permite reutilizar el puerto inmediatamente 
-    // si reinicias el servidor rápido durante tus pruebas
+    // si se reinicia el servidor rápido durante las pruebas
     setsockopt(servidor_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
     // 2. Configurar la estructura de la dirección
