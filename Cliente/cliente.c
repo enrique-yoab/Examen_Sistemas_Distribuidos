@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#define IP_SERVIDOR "127.0.0.1" // Esta es la ip del servidor 
+#define IP_SERVIDOR "192.168.1.20" // Esta es la ip del servidor 
 #define PUERTO 3000
 #define TAM_MAX 1024
 

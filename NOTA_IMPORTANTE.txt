@@ -1,0 +1,9 @@
+********************** SERVIDOR ********************** 
+Para compilar el codigo del servidor se descarga la carpeta "CODIGO SERVIDOR", se entra a la carpeta y ejecuta el siguiente comando:
+---- gcc servidor.c definiciones/*.c -o servidor
+Esto es para evitar agregar todos los archivos .c en el comando de compilación
+
+********************** CLIENTE **********************
+Y para el cliente de igual manera se descarga la carpeta "CODIGO CLIENTE", entramos a la carpeta y se ejecuta el siguiente comando:
+---- gcc cliente.c -o cliente
+
