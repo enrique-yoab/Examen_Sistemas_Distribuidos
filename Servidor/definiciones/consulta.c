@@ -50,6 +50,7 @@ void procesar_consulta(int socket_cliente, int tabla, char *llave, char *mascara
 
         for (int i = 0; i < c.cantidad_resultados; i++) {
             send(socket_cliente, c.resultado[i], strlen(c.resultado[i]), 0);
+            printf("%s\n", c.resultado[i]);
             
             bzero(buffer_ack, TAM_MAX);
             recv(socket_cliente, buffer_ack, TAM_MAX, 0); // Esperamos siguiente ACK

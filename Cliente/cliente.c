@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#define IP_SERVIDOR "192.168.1.20" // Esta es la ip del servidor 
+#define IP_SERVIDOR "127.0.0.1" // Esta es la ip del servidor 
 #define PUERTO 3000
 #define TAM_MAX 1024
 
@@ -99,8 +99,6 @@ void realizar_consulta(int sock) {
     if (strncmp(respuesta_servidor, "CANTIDAD|", 9) == 0) {
         // Extraemos el número que viene después de "CANTIDAD|"
         int total_filas = atoi(respuesta_servidor + 9);
-        if(strstr(llave, "full") != NULL || strstr(llave, "FULL") != NULL || strstr(llave, "low") != NULL || strstr(llave, "LOW") != NULL ) total_filas--;
-        printf("\n--- RESULTADOS DE LA BD (%d registros) ---\n", total_filas);
         // Abrimos el archivo en donde se guardara la consulta
         FILE *archivo = fopen("./consulta.csv", "w");
         // Le decimos al servidor: "Estoy listo, manda el primero" (ACK)
