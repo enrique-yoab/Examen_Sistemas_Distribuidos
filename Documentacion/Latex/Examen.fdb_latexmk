@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1777333970.15402 "/home/enrique/Documents/Sistemas Distribuidos/Examen Practico/Documentacion/Latex/Examen.tex" "Examen.pdf" "Examen" 1777333984.69007 0
+["pdflatex"] 1777337704.84915 "/home/enrique/Documents/Sistemas Distribuidos/Examen Practico/Documentacion/Latex/Examen.tex" "Examen.pdf" "Examen" 1777337719.63447 0
   "/etc/texmf/web2c/texmf.cnf" 1771219098.53345 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/enrique/Documents/Sistemas Distribuidos/Examen Practico/Documentacion/Latex/Examen.tex" 1777333953.78326 74279 6e75d7561f4511abf95222f600ddc332 ""
+  "/home/enrique/Documents/Sistemas Distribuidos/Examen Practico/Documentacion/Latex/Examen.tex" 1777337710.51746 74285 c119147ed0b7cdbad7f07888bcbe3603 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm" 1246382020 928 2dc8d444221b7a635bb58038579b861a ""
@@ -204,11 +204,11 @@
   "Curso.png" 1777183648.46204 19688 019aac86e743d165d0bdcbee8e124c28 ""
   "Departamento.png" 1777182468.39903 119739 e426690950f4623174e6b8390627bc0d ""
   "Diagrama Entidad-Relacion.jpeg" 1777232030.34737 264034 e043835ad862364b16f70287bd9e2f70 ""
-  "Diagrama.tex" 1777329079.68149 3643 560d2d174f31f84b8327bca51b530f7a ""
+  "Diagrama.tex" 1777334982.45813 3643 560d2d174f31f84b8327bca51b530f7a ""
   "Direccion.png" 1777172490.63048 299490 b2acef579cae06f5b5c79b8bd1d41377 ""
   "Estudiantes.png" 1777170278.91748 423279 0efb2d57f7786e84e1753557ff9de173 ""
-  "Examen.aux" 1777333984.57341 9679 ab3c46ffa9ebae0a51c288beae39ab1f "pdflatex"
-  "Examen.tex" 1777333953.78326 74279 6e75d7561f4511abf95222f600ddc332 ""
+  "Examen.aux" 1777337719.51884 9679 ab3c46ffa9ebae0a51c288beae39ab1f "pdflatex"
+  "Examen.tex" 1777337710.51746 74285 c119147ed0b7cdbad7f07888bcbe3603 ""
   "Grado.png" 1777183456.97958 93784 13781a90185a2ee048da8500291b09e8 ""
   "Historial.png" 1777176050.27367 54600 c15a2c1253a9fee138657191305bc462 ""
   "Horario.png" 1777183039.75892 5240 37c8cfd5eebdc7a6648d1eb704fcdee3 ""
